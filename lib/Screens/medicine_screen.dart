@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'medicine/medicine_add.dart';
 
@@ -27,8 +29,9 @@ class _MedicineScreen extends State<MedicineScreen> {
               child: Column(
                 children: [
                   Align(alignment: Alignment.topLeft,
+                  
                    child: Text("알람"),
-
+                        
                   ),
                   SizedBox(
                     height :100,
