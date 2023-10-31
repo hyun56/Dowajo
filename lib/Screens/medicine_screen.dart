@@ -28,11 +28,14 @@ class _MedicineScreen extends State<MedicineScreen> {
             child:Center(
               child: Column(
                 children: [
-                  Align(alignment: Alignment.topLeft,
-                  
-                   child: Text("알람"),
-                        
+                 Align(
+                  alignment:Alignment.topLeft,
+                  child:Text("알람",
+                  style: TextStyle(fontSize: 20, 
+                  fontWeight: FontWeight.bold,
+                  color:Colors.black),
                   ),
+                 ),
                   SizedBox(
                     height :100,
                   ),
@@ -41,12 +44,8 @@ class _MedicineScreen extends State<MedicineScreen> {
                     child: Text("알람 추가하기+"),
                   )
                 ],
-
               )
-
             ),
-
-        //alignment: Alignment.center,
           )
         ],
       ),
