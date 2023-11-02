@@ -1,8 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:dowajo/Screens/home_screen.dart';
+import 'package:dowajo/Widgets/infinite_scroll.dart';
 import 'package:flutter/material.dart';
 import 'medicine/medicine_add.dart';
 import 'package:flutter/rendering.dart';
+import '../widgets/infinite_scroll.dart';
 
 class MedicineScreen extends StatefulWidget {
   const MedicineScreen({super.key});
@@ -73,11 +76,11 @@ class _AppBar extends StatelessWidget {
       centerTitle: true,
       leading: IconButton(
         icon: Icon(Icons.arrow_back, color: Colors.black),
-        onPressed: () {  /* 메인 화면으로 돌아가기
+        onPressed: () {
             Navigator.push(
                 context, MaterialPageRoute(
                 builder: (context) => const HomeScreen())
-            );  */
+            ); 
         },
       ),
     );
@@ -101,7 +104,7 @@ class _WeeklyScroll extends StatelessWidget {
               padding: EdgeInsets.only(
                   top: 12.0
               ),
-              //child: MonthDay(), < 월/일 출력 함수
+              child: MonthDay(), // 월/일 출력
             ),
             Icon(
               Icons.keyboard_arrow_down,
@@ -112,7 +115,7 @@ class _WeeklyScroll extends StatelessWidget {
             Container(
                 height: 100.0,
                 width: double.infinity,
-                //child: InfiniteScrollButton() < 날짜 무한 스크롤 버튼
+                child: InfiniteScrollButton() // 날짜 무한 스크롤 버튼
             ),
           ],
         ),
