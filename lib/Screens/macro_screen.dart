@@ -12,15 +12,15 @@ class _MacroScreen extends State<MacroScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('매크로 설정'),
+        title: const Text('매크로 설정'),
       ),
       body: Container(
-        child: Center(
+        child: const Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text('매크로 설정'),
             ],
-            mainAxisAlignment: MainAxisAlignment.center,
           ),
         ),
       ),
