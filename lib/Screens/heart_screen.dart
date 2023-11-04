@@ -12,15 +12,15 @@ class _HeartScreen extends State<HeartScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('심박수'),
+        title: const Text('심박수'),
       ),
       body: Container(
-        child: Center(
+        child: const Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text('심박수'),
             ],
-            mainAxisAlignment: MainAxisAlignment.center,
           ),
         ),
       ),

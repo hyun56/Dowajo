@@ -12,15 +12,15 @@ class _AlarmsScreen extends State<AlarmsScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('알림 모아보기'),
+        title: const Text('알림 모아보기'),
       ),
       body: Container(
-        child: Center(
+        child: const Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Text('알림 모아보기'),
             ],
-            mainAxisAlignment: MainAxisAlignment.center,
           ),
         ),
       ),

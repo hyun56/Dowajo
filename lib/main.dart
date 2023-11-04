@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         //primarySwatch: ,
         useMaterial3: true,
       ),
-      home: HomeScreen(),
+      home: const HomeScreen(),
     );
   }
 }
