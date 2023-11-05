@@ -108,8 +108,7 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Padding(
-              padding:
-                  EdgeInsets.only(left: 14.0, right: 14.0, bottom: 10),
+              padding: EdgeInsets.only(left: 14.0, right: 14.0, bottom: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
