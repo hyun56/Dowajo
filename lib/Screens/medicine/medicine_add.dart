@@ -1,11 +1,14 @@
 // ignore_for_file: camel_case_types, prefer_const_constructors
 
 import 'dart:io';
+
+import 'package:dowajo/Screens/medicine_screen.dart';
 import 'package:dowajo/components/weekday_buttons.dart';
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:image_picker/image_picker.dart';
 import '../../components/models/medicine.dart';
+import 'package:dowajo/database/medicine_database.dart';
 
 class medicine_add extends StatefulWidget {
   const medicine_add({Key? key}) : super(key: key);
@@ -54,10 +57,10 @@ class _medicine_addState extends State<medicine_add> {
           medicineName(), //약 이름 입력창
           textWeekday(), //요일설정
           WeekdayButtons(
-            onSelectedDaysChanged: (selectedDays) {
+            onSelectedDaysChanged: (days) {
               // 선택된 요일을 medicineDay에 저장
               setState(() {
-                selectedDays = selectedDays;
+                selectedDays = days;
               });
             },
           ), // 요일설정 - 스위치, 월 ~ 일 선택버튼
@@ -68,6 +71,7 @@ class _medicine_addState extends State<medicine_add> {
 
           //알람 추가 버튼
          addAlram(),
+
         ],
       ),
     );
@@ -239,7 +243,7 @@ class _medicine_addState extends State<medicine_add> {
         SizedBox(
           width: 40,
         ),
-        Container(
+        SizedBox(
           width: 350, // TextField 크기
           child: Flexible(
             child: TextField(
