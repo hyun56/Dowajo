@@ -14,11 +14,11 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Color.fromARGB(255, 235, 238, 240),
+        backgroundColor: const Color.fromARGB(255, 235, 238, 240),
         //backgroundColor: Color.fromARGB(255, 219, 225, 228),
         appBar: AppBar(
           backgroundColor: Colors.transparent,
-          title: Padding(
+          title: const Padding(
             padding: EdgeInsets.only(left: 5),
             child: Text(
               "도와조",
@@ -88,9 +88,9 @@ class HomeScreen extends StatelessWidget {
 
   Padding buildHeading() {
     return Padding(
-      padding: EdgeInsets.only(top: 30, bottom: 25, left: 5, right: 5),
+      padding: const EdgeInsets.only(top: 30, bottom: 25, left: 5, right: 5),
       child: Container(
-        padding: EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(10.0),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(30.0),
@@ -107,13 +107,13 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
+            const Padding(
               padding:
-                  const EdgeInsets.only(left: 14.0, right: 14.0, bottom: 10),
+                  EdgeInsets.only(left: 14.0, right: 14.0, bottom: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     '환자 정보',
                     style: TextStyle(
                         // color: Colors.black,
@@ -146,23 +146,23 @@ class HomeScreen extends StatelessWidget {
                   //   ),
                   // ),
                 ),
-                Column(
+                const Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       '백현',
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(
+                    SizedBox(
                       height: 18,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Text(
                           '나이: ',
                           style: TextStyle(
@@ -190,12 +190,12 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(
+                    SizedBox(
                       height: 8,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: const [
+                      children: [
                         Text(
                           '병명: ',
                           style: TextStyle(
@@ -247,7 +247,7 @@ class HomeScreen extends StatelessWidget {
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const HeartScreen()));
             },
-            iconColor: Color.fromARGB(255, 241, 161, 161),
+            iconColor: const Color.fromARGB(255, 241, 161, 161),
           ),
           const SizedBox(width: 23),
           MenuItem(
@@ -257,7 +257,7 @@ class HomeScreen extends StatelessWidget {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => const MedicineScreen()));
             },
-            iconColor: Color.fromARGB(255, 137, 182, 112),
+            iconColor: const Color.fromARGB(255, 137, 182, 112),
           ),
         ],
       ),
@@ -278,7 +278,7 @@ class HomeScreen extends StatelessWidget {
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const MacroScreen()));
             },
-            iconColor: Color.fromARGB(255, 113, 161, 183),
+            iconColor: const Color.fromARGB(255, 113, 161, 183),
           ),
           const SizedBox(width: 23),
           MenuItem(
@@ -288,7 +288,7 @@ class HomeScreen extends StatelessWidget {
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (context) => const AlarmsScreen()));
             },
-            iconColor: Color.fromARGB(255, 249, 196, 150),
+            iconColor: const Color.fromARGB(255, 249, 196, 150),
           ),
         ],
       ),
