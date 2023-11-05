@@ -1,8 +1,13 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'dart:io';
+
+import 'package:dowajo/components/models/medicine.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'medicine/medicine_add.dart';
+
+import 'package:dowajo/database/medicine_database.dart';
 
 class MedicineScreen extends StatefulWidget {
   const MedicineScreen({super.key});
@@ -12,6 +17,15 @@ class MedicineScreen extends StatefulWidget {
 }
 
 class _MedicineScreen extends State<MedicineScreen> {
+  var dbHelper = DatabaseHelper.instance;
+  late Future<List<Medicine>> futureMedicines;
+
+  @override
+  void initState() {
+    super.initState();
+    futureMedicines = dbHelper.getAllMedicines();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,18 +33,12 @@ class _MedicineScreen extends State<MedicineScreen> {
       body: Column(
         children: <Widget>[
           _AppBar(),
-          _WeeklyScroll(),
-          _MedicineData(),
-          Expanded(
-            flex: 1,
-            child: Container(
-              color: Colors.black,
-            ),
-          ),
+          //_WeeklyScroll(),
+          //_MedicineData(),r
+
           Expanded(
             flex: 10,
-            child: Center(
-                child: Column(
+            child: Column(
               children: [
                 Align(
                   alignment: Alignment.topLeft,
@@ -42,19 +50,146 @@ class _MedicineScreen extends State<MedicineScreen> {
                         color: Colors.black),
                   ),
                 ),
-                SizedBox(
-                  height: 100,
+                Expanded(
+                  child: FutureBuilder<List<Medicine>>(
+                    future: futureMedicines, // 데이터베이스에서 모든 약 정보를 가져오는 Future
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<Medicine>> snapshot) {
+                      // Future가 완료되었을 때
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        // 에러가 발생했을 때
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
+
+                        // 데이터가 없을 때
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return Column(
+                            children: [
+                              Text("등록된 알람이 없어요\n새로 추가할까요?"),
+                              ElevatedButton(
+                                onPressed: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (_) => medicine_add()),
+                                  );
+                                  setState(() {
+                                    futureMedicines =
+                                        dbHelper.getAllMedicines();
+                                  });
+                                },
+                                child: Text("알람 추가하기+"),
+                              ),
+                            ],
+                          );
+                        }
+
+                        // 데이터가 있을 때
+                        List<Medicine>? medicines = snapshot.data;
+                        return ListView.builder(
+                          itemCount: medicines!.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return ListTile(
+                              title: Text(medicines[index].medicineName),
+                              subtitle: Text(
+                                  '복용 일자: ${medicines[index].medicineDay}, 반복: ${medicines[index].medicineRepeat}'),
+                              leading: Image.file(
+                                  File(medicines[index].medicinePicture)),
+                              onTap: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('선택해주세요'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text('수정하기'),
+                                          onPressed: () {
+                                            // 수정하기 기능 구현
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: Text('삭제하기'),
+                                          onPressed: () async {
+                                            // id가 null인지 확인
+                                            if (medicines[index].id != null) {
+                                              // id가 null이 아니라면 삭제
+                                              await DatabaseHelper.instance
+                                                  .delete(medicines[index].id!);
+
+                                              // 삭제가 완료되면 FutureBuilder를 다시 빌드
+                                              setState(() {
+                                                futureMedicines =
+                                                    dbHelper.getAllMedicines();
+                                              });
+                                            }
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        TextButton(
+                                          child: Text('닫기'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        );
+                      }
+
+                      // Future가 아직 완료되지 않았을 때
+                      return CircularProgressIndicator(); // 로딩 인디케이터 표시
+                    },
+                  ),
                 ),
-                Text("등록된 알람이 없어요\n  새로 추가할까요?"),
-                ElevatedButton(
-                  onPressed: () => Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => medicine_add())),
-                  child: Text("알람 추가하기+"),
-                )
               ],
-            )),
-          )
+            ),
+          ),
         ],
+      ),
+      // floatingActionButton: FloatingActionButton(
+      //   onPressed: () async {
+      //     await Navigator.push(
+      //       context,
+      //       MaterialPageRoute(builder: (_) => medicine_add()),
+      //     );
+      //     setState(() {
+      //       futureMedicines = dbHelper.getAllMedicines();
+      //     });
+      //   },
+      //   child: Icon(Icons.add),
+      // ),
+      floatingActionButton: FutureBuilder<List<Medicine>>(
+        future: futureMedicines,
+        builder:
+            (BuildContext context, AsyncSnapshot<List<Medicine>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              return FloatingActionButton(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => medicine_add()),
+                  );
+                  setState(() {
+                    futureMedicines = dbHelper.getAllMedicines();
+                  });
+                },
+                child: Icon(Icons.add),
+              );
+            } else {
+              return Container(); // 데이터가 없으면 빈 컨테이너를 반환하여 버튼을 표시하지 않음
+            }
+          }
+          return Container(); // Future가 아직 완료되지 않았을 때도 빈 컨테이너를 반환하여 버튼을 표시하지 않음
+        },
       ),
     );
   }
@@ -77,58 +212,6 @@ class _AppBar extends StatelessWidget {
           Navigator.push(context,
               MaterialPageRoute(builder: (context) => const HomeScreen()));
         },
-      ),
-    );
-  }
-}
-
-class _WeeklyScroll extends StatelessWidget {
-  const _WeeklyScroll({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    //  var date = SelectedDate();
-    return Flexible(
-      // 날짜 정보 (설정 날짜, 슬라이드 위클리)
-      flex: 2,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            Container(
-              padding: EdgeInsets.only(top: 12.0),
-              //child: MonthDay(), < 월/일 출력 함수
-            ),
-            Icon(
-              Icons.keyboard_arrow_down,
-              color: Colors.black,
-              size: 25.0,
-              // weight: 300,
-            ),
-            SizedBox(
-              height: 100.0,
-              width: double.infinity,
-              //child: InfiniteScrollButton() < 날짜 무한 스크롤 버튼
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _MedicineData extends StatelessWidget {
-  const _MedicineData();
-
-  @override
-  Widget build(BuildContext context) {
-    return Flexible(
-      // 복용 약 정보
-      flex: 5,
-      child: Container(
-        color: Colors.grey,
-        //LoadScreen(),
-        // 날짜에 따라 화면 setState
       ),
     );
   }
