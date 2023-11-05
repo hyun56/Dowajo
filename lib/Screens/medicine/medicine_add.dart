@@ -10,6 +10,8 @@ class medicine_add extends StatefulWidget{
 }
 
 class _medicine_addState extends State<medicine_add> {
+  get name => null;
+
   @override
   Widget build(BuildContext context){
     return Scaffold(
@@ -51,6 +53,7 @@ class _medicine_addState extends State<medicine_add> {
             ),
           ),
 
+      
 
 
 
@@ -65,11 +68,23 @@ class _medicine_addState extends State<medicine_add> {
               letterSpacing: 4.0, // 자간
             ),
           ),
-          TextField(
-              decoration: InputDecoration(
+          Row(
+             children: <Widget>[
 
-              ),
-         ),
+                SizedBox(width: 40,),
+                Container(
+                  child: new Flexible(
+                    child: new TextField(
+                      controller: name,
+                      style: Theme.of(context).textTheme.bodyText1,
+                    ),
+                  ),
+                  width: 300, //TextField 크기
+                ),
+              ],
+          ),
+          
+         
          Align(
            alignment: Alignment.topCenter,
            child : ElevatedButton(onPressed: ()=>Navigator.push(context,MaterialPageRoute(builder: (_)=>medicine_add())),
