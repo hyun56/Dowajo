@@ -12,7 +12,7 @@ import 'package:dowajo/database/medicine_database.dart';
 
 class medicine_add extends StatefulWidget {
   const medicine_add({Key? key}) : super(key: key);
-  
+
   @override
   State<medicine_add> createState() => _medicine_addState();
 }
@@ -23,11 +23,11 @@ class _medicine_addState extends State<medicine_add> {
   // get name => null;
   XFile? _pickedFile;
   // var isOn = false;
-  DateTime dateTime = DateTime.now();    
+  DateTime dateTime = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
   final TextEditingController _medicineNameController = TextEditingController();
   List<String> selectedDays = []; // 선택된 요일을 저장하는 리스트
-  
+
   void _showTimePicker() async {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
@@ -40,7 +40,7 @@ class _medicine_addState extends State<medicine_add> {
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -66,12 +66,11 @@ class _medicine_addState extends State<medicine_add> {
           ), // 요일설정 - 스위치, 월 ~ 일 선택버튼
           numOfTitle(), // 복용횟수- 타이틀
           numOfTakeMedicine(), // 복용횟수 - 횟수 설정
-        //복용시간 추가
-        addTime(),
+          //복용시간 추가
+          addTime(),
 
           //알람 추가 버튼
-         addAlram(),
-
+          addAlram(),
         ],
       ),
     );
@@ -335,46 +334,48 @@ class _medicine_addState extends State<medicine_add> {
     );
   }
 
-  Widget addTime(){
+  Widget addTime() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-            Text('복용시간'),
-            TextButton(
-              onPressed: () {
-                _showTimePicker(); // 버튼을 누를 때 텍스트 업데이트
-              },
-              child: Text('${selectedTime.format(context)}'),
-            ),
+        Text('복용시간'),
+        TextButton(
+          onPressed: () {
+            _showTimePicker(); // 버튼을 누를 때 텍스트 업데이트
+          },
+          child: Text('${selectedTime.format(context)}'),
+        ),
       ],
     );
   }
 
-  Widget addAlram(){
-     return SizedBox(
-            width: 1000,
-            height: 40,
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: ElevatedButton(
-                // onPressed: () => Navigator.push(
-                //     context, MaterialPageRoute(builder: (_) => medicine_add())),
-                onPressed: () {
-                  Medicine newMedicine = Medicine(
-                    medicineName: _medicineNameController.text,
-                    medicinePicture: _pickedFile?.path ?? '',
-                    medicineDay: selectedDays
-                        .join(','), // selectedDays 리스트를 문자열로 변환하여 저장
-                    medicineRepeat: int.parse(selectedRepeat), // 복용 횟수에 해당하는 값
-                    //medicineTime: selectedTime, // 시간에 해당하는 값
-                  );
-                  Navigator.of(context).pop(newMedicine); // 현재 화면 닫고, 이전 화면으로
-                },
-                child: Text("알람 추가하기"),
-              ),
-            ),
-          );
+  Widget addAlram() {
+    return SizedBox(
+      width: 1000,
+      height: 40,
+      child: Align(
+        alignment: Alignment.topCenter,
+        child: ElevatedButton(
+          // onPressed: () => Navigator.push(
+          //     context, MaterialPageRoute(builder: (_) => medicine_add())),
+          onPressed: () async {
+            Medicine newMedicine = Medicine(
+              medicineName: _medicineNameController.text,
+              medicinePicture: _pickedFile?.path ?? '',
+              medicineDay:
+                  selectedDays.join(','), // selectedDays 리스트를 문자열로 변환하여 저장
+              medicineRepeat: int.parse(selectedRepeat), // 복용 횟수에 해당하는 값
+              //medicineTime: selectedTime, // 시간에 해당하는 값
+            );
+            // 데이터베이스에 newMedicine 객체 저장
+            var dbHelper = DatabaseHelper.instance;
+            await dbHelper.insert(newMedicine);
+
+            Navigator.of(context).pop(newMedicine); // 현재 화면 닫고, 이전 화면으로
+          },
+          child: Text("알람 추가하기"),
+        ),
+      ),
+    );
   }
 }
- 
-
