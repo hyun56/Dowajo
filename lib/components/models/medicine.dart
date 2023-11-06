@@ -5,7 +5,7 @@ class Medicine {
   final String medicinePicture; // 사진 파일의 경로를 저장
   final String medicineDay; // 요일
   final int medicineRepeat; // 반복 횟수
-  //final String medicineTime;
+  final String medicineTime;
 
   Medicine({
     // required this.notificationIDs,
@@ -14,7 +14,7 @@ class Medicine {
     required this.medicinePicture,
     required this.medicineDay,
     required this.medicineRepeat,
-    //required this.medicineTime,
+    required this.medicineTime,
   });
 
   // List<dynamic> get getIDs => notificationIDs;
@@ -33,7 +33,18 @@ class Medicine {
       'medicinePicture': medicinePicture,
       'medicineDay': medicineDay,
       'medicineRepeat': medicineRepeat,
-      //'medicineTime': medicineTime,
+      'medicineTime': medicineTime,
     };
+  }
+
+  factory Medicine.fromMap(Map<String, dynamic> map) {
+    return Medicine(
+      id: map['id'],
+      medicineName: map['medicineName'],
+      medicinePicture: map['medicinePicture'],
+      medicineDay: map['medicineDay'],
+      medicineRepeat: map['medicineRepeat'],
+      medicineTime: map['medicineTime'],
+    );
   }
 }
