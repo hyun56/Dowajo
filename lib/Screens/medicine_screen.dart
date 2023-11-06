@@ -42,12 +42,15 @@ class _MedicineScreen extends State<MedicineScreen> {
               children: [
                 Align(
                   alignment: Alignment.topLeft,
-                  child: Text(
-                    "알람",
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 15.0),
+                    child: Text(
+                      "알람",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
                   ),
                 ),
                 Expanded(
@@ -66,21 +69,67 @@ class _MedicineScreen extends State<MedicineScreen> {
                         if (!snapshot.hasData || snapshot.data!.isEmpty) {
                           return Column(
                             children: [
-                              Text("등록된 알람이 없어요\n새로 추가할까요?"),
-                              ElevatedButton(
-                                onPressed: () async {
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (_) => medicine_add()),
-                                  );
-                                  setState(() {
-                                    futureMedicines =
-                                        dbHelper.getAllMedicines();
-                                  });
-                                },
-                                child: Text("알람 추가하기+"),
+                              Spacer(flex: 1),
+                              Text(
+                                "등록된 알람이 없어요",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color:
+                                      const Color.fromARGB(255, 123, 123, 123),
+                                ),
                               ),
+                              SizedBox(
+                                height: 1,
+                              ),
+                              Text(
+                                "새로운 알람을 추가할까요?",
+                                style: TextStyle(
+                                  fontSize: 15,
+                                  color:
+                                      const Color.fromARGB(255, 123, 123, 123),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 12,
+                              ),
+                              SizedBox(
+                                width: 210,
+                                child: ElevatedButton(
+                                  onPressed: () async {
+                                    await Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (_) => medicine_add()),
+                                    );
+                                    setState(() {
+                                      futureMedicines =
+                                          dbHelper.getAllMedicines();
+                                    });
+                                  },
+                                  style: ButtonStyle(
+                                    backgroundColor:
+                                        MaterialStateProperty.all<Color>(
+                                            Color(0xFFA6CBA5)),
+                                    shape: MaterialStateProperty.all<
+                                        RoundedRectangleBorder>(
+                                      RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                    ),
+                                    elevation:
+                                        MaterialStateProperty.all<double>(0),
+                                  ),
+                                  child: Text(
+                                    "알람 추가하기 +",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Spacer(flex: 2),
                             ],
                           );
                         }
@@ -182,7 +231,16 @@ class _MedicineScreen extends State<MedicineScreen> {
                     futureMedicines = dbHelper.getAllMedicines();
                   });
                 },
-                child: Icon(Icons.add),
+                child: Image.asset(
+                  'repo/icons/plus.png', // Image asset 사용
+                  //width: 24.0, // 원하는 너비로 조절
+                  //height: 24.0, // 원하는 높이로 조절
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                backgroundColor: Colors.transparent,
+                elevation: 0.0,
               );
             } else {
               return Container(); // 데이터가 없으면 빈 컨테이너를 반환하여 버튼을 표시하지 않음

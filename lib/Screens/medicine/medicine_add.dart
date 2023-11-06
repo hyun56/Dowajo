@@ -2,12 +2,10 @@
 
 import 'dart:io';
 
-import 'package:dowajo/Screens/medicine_screen.dart';
 import 'package:dowajo/components/weekday_buttons.dart';
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:image_picker/image_picker.dart';
-
 import '../../components/models/medicine.dart';
 import 'package:dowajo/database/medicine_database.dart';
 
@@ -24,67 +22,72 @@ class _medicine_addState extends State<medicine_add> {
   // get name => null;
   XFile? _pickedFile;
   // var isOn = false;
-
+  DateTime dateTime = DateTime.now();
+  TimeOfDay selectedTime = TimeOfDay.now();
   final TextEditingController _medicineNameController = TextEditingController();
   List<String> selectedDays = []; // 선택된 요일을 저장하는 리스트
+
+  void _showTimePicker() async {
+    final TimeOfDay? newTime = await showTimePicker(
+      context: context,
+      initialTime: selectedTime,
+    );
+
+    if (newTime != null) {
+      setState(() {
+        selectedTime = newTime;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
       backgroundColor: Colors.white,
-      body: Column(
-        children: <Widget>[
-          AppBar(
-            backgroundColor: Colors.white,
-            iconTheme: IconThemeData(color: Colors.black),
-          ),
-          topMessage(), // 상단 안내문
-          addPhoto(), //사진등록
-          medicineName(), //약 이름 입력창
-          textWeekday(), //요일설정
-          WeekdayButtons(
-            onSelectedDaysChanged: (days) {
-              // 선택된 요일을 medicineDay에 저장
-              setState(() {
-                selectedDays = days;
-              });
-            },
-          ), // 요일설정 - 스위치, 월 ~ 일 선택버튼
-          numOfTitle(), // 복용횟수- 타이틀
-          numOfTakeMedicine(), // 복용횟수 - 횟수 설정
-
-          //복용횟수 - 시간 설정
-
-          //알람 추가 버튼
-          SizedBox(
-            width: 1000,
-            height: 40,
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: ElevatedButton(
-                // onPressed: () => Navigator.push(
-                //     context, MaterialPageRoute(builder: (_) => medicine_add())),
-                onPressed: () async {
-                  Medicine newMedicine = Medicine(
-                    medicineName: _medicineNameController.text,
-                    medicinePicture: _pickedFile?.path ?? '',
-                    medicineDay: selectedDays
-                        .join(','), // selectedDays 리스트를 문자열로 변환하여 저장
-                    medicineRepeat: int.parse(selectedRepeat), // 복용 횟수에 해당하는 값
-                    //medicineTime: selectedTime, // 시간에 해당하는 값
-                  );
-                  // 데이터베이스에 newMedicine 객체 저장
-                  var dbHelper = DatabaseHelper.instance;
-                  await dbHelper.insert(newMedicine);
-
-                  Navigator.of(context).pop(newMedicine); // 현재 화면 닫고, 이전 화면으로
-                },
-                child: Text("알람 추가하기"),
-              ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            AppBar(
+              backgroundColor: Colors.white,
+              iconTheme: IconThemeData(color: Colors.black),
             ),
-          ),
-        ],
+            topMessage(), // 상단 안내문
+            addPhoto(), // 사진등록
+            medicineName(), // 약 이름 입력창
+
+            SizedBox(height: 20),
+            // 경계선 추가
+            Divider(
+              color: Color.fromARGB(255, 236, 236, 236),
+              thickness: 4.0,
+            ),
+            SizedBox(height: 15),
+
+            textWeekday(), // 요일설정
+            WeekdayButtons(
+              onSelectedDaysChanged: (days) {
+                // 선택된 요일을 medicineDay에 저장
+                setState(() {
+                  selectedDays = days;
+                });
+              },
+            ), // 요일설정 - 스위치, 월 ~ 일 선택버튼
+
+            // 경계선 추가
+            Divider(
+              color: Color.fromARGB(255, 236, 236, 236),
+              thickness: 4.0,
+            ),
+            SizedBox(height: 15),
+
+            numOfTitle(), // 복용횟수- 타이틀
+            numOfTakeMedicine(), // 복용횟수 - 횟수 설정
+
+            addTime(), // 복용시간 추가
+            addAlram(), //알람 추가 버튼
+          ],
+        ),
       ),
     );
   }
@@ -103,27 +106,35 @@ class _medicine_addState extends State<medicine_add> {
           mainAxisSize: MainAxisSize.min,
           children: [
             const SizedBox(
-              height: 20,
+              height: 15,
             ),
             ElevatedButton(
               onPressed: () => _getCameraImage(),
-              child: const Text('사진찍기'),
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+              ),
+              child: const Text('사진 찍기'),
             ),
             const SizedBox(
-              height: 10,
+              height: 5,
             ),
             const Divider(
-              thickness: 3,
+              thickness: 4,
             ),
             const SizedBox(
-              height: 10,
+              height: 5,
             ),
             ElevatedButton(
               onPressed: () => _getPhotoLibraryImage(),
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+              ),
               child: const Text('라이브러리에서 불러오기'),
             ),
             const SizedBox(
-              height: 20,
+              height: 18,
             ),
           ],
         );
@@ -161,16 +172,24 @@ class _medicine_addState extends State<medicine_add> {
 
   Widget topMessage() {
     return Row(
-      children: const [
-        Icon(
-          Icons.medication,
-          color: Colors.red,
-          size: 35.0,
+      children: [
+        // Icon(
+        //   Icons.medication,
+        //   color: Colors.red,
+        //   size: 35.0,
+        // ),
+        Padding(
+          padding: EdgeInsets.only(left: 15.0, right: 10.0),
+          child: Image.asset(
+            'repo/icons/pill.png',
+            width: 25.0,
+            height: 25.0,
+          ),
         ),
         Text(
           "어떤 약을 드시나요?",
           style: TextStyle(
-            fontSize: 20.0, // 글자크기
+            fontSize: 17.0, // 글자크기
             fontWeight: FontWeight.bold, // 볼드체
             color: Colors.black, // 색상
             //  letterSpacing: 2.0, // 자간
@@ -186,10 +205,11 @@ class _medicine_addState extends State<medicine_add> {
 
     return Column(
       children: [
+        SizedBox(height: 15),
         Align(
-          alignment: Alignment.topLeft,
+          alignment: Alignment.center,
           child: Text(
-            "\n\t\t복용하는 약의 사진을 등록하세요",
+            "복용하는 약의 사진을 등록하세요",
             style: TextStyle(
               fontSize: 15.0, // 글자크기
               color: Colors.black, // 색상
@@ -197,9 +217,7 @@ class _medicine_addState extends State<medicine_add> {
             ),
           ),
         ),
-        SizedBox(
-          height: 20,
-        ),
+        SizedBox(height: 10),
         if (_pickedFile == null)
           Container(
             constraints: BoxConstraints(
@@ -211,10 +229,15 @@ class _medicine_addState extends State<medicine_add> {
                 _showBottomSheet();
               },
               child: Center(
-                child: Icon(
-                  Icons.photo_camera,
-                  size: imageSize,
+                child: Image.asset(
+                  'repo/icons/photo.png',
+                  width: 75.0,
+                  height: 75.0,
                 ),
+                // Icon(
+                //   Icons.photo_camera,
+                //   size: imageSize,
+                // ),
               ),
             ),
           )
@@ -242,9 +265,9 @@ class _medicine_addState extends State<medicine_add> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Align(
-          alignment: Alignment.centerLeft,
+          alignment: Alignment.center,
           child: Text(
-            "\n\t\t약의 이름을 입력하세요",
+            "약의 이름을 입력하세요",
             style: TextStyle(
               fontSize: 15.0, // 글자크기
               color: Colors.black, // 색상
@@ -253,14 +276,36 @@ class _medicine_addState extends State<medicine_add> {
           ),
         ),
         SizedBox(
-          width: 40,
+          height: 10,
         ),
         SizedBox(
-          width: 350, // TextField 크기
+          width: 330, // TextField 가로 길이
+          height: 45,
           child: Flexible(
             child: TextField(
               controller: _medicineNameController,
-              style: Theme.of(context).textTheme.bodyLarge,
+              decoration: InputDecoration(
+                hintText: '예) 혈압약',
+                hintStyle: TextStyle(
+                  fontSize: 13.0,
+                  color: Color.fromARGB(255, 171, 171, 171),
+                ),
+                contentPadding: EdgeInsets.fromLTRB(15.0, 10.0, 10.0, 10.0),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(
+                    color: Color.fromARGB(255, 221, 221, 221),
+                    width: 2.0,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide(
+                    color: Color(0xFFA6CBA5),
+                    width: 2.0,
+                  ),
+                ),
+              ),
             ),
           ),
         ),
@@ -273,18 +318,26 @@ class _medicine_addState extends State<medicine_add> {
       mainAxisAlignment: MainAxisAlignment.start,
       // ignore: prefer_const_literals_to_create_immutables
       children: [
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Icon(
-            Icons.calendar_month,
-            color: const Color.fromARGB(255, 82, 77, 77),
-            size: 35.0,
+        // Align(
+        //   alignment: Alignment.bottomCenter,
+        //   child: Icon(
+        //     Icons.calendar_month,
+        //     color: const Color.fromARGB(255, 82, 77, 77),
+        //     size: 35.0,
+        //   ),
+        // ),
+        Padding(
+          padding: EdgeInsets.only(left: 15.0, right: 10.0),
+          child: Image.asset(
+            'repo/icons/calendar.png',
+            width: 25.0,
+            height: 25.0,
           ),
         ),
         Text(
-          "\t요일을 선택하세요",
+          "요일을 선택하세요",
           style: TextStyle(
-            fontSize: 20.0, // 글자크기
+            fontSize: 17.0, // 글자크기
             //fontStyle: FontStyle.italic, // 이텔릭체
             fontWeight: FontWeight.bold, // 볼드체
             color: Colors.black, // 색상
@@ -300,22 +353,30 @@ class _medicine_addState extends State<medicine_add> {
       mainAxisAlignment: MainAxisAlignment.start,
       // ignore: prefer_const_literals_to_create_immutables
       children: [
-        Align(
-          alignment: Alignment.bottomCenter,
-          child: Icon(
-            Icons.schedule,
-            color: const Color.fromARGB(255, 82, 77, 77),
-            size: 35.0,
+        // Align(
+        //   alignment: Alignment.bottomCenter,
+        //   child: Icon(
+        //     Icons.schedule,
+        //     color: const Color.fromARGB(255, 82, 77, 77),
+        //     size: 35.0,
+        //   ),
+        // ),
+        Padding(
+          padding: EdgeInsets.only(left: 15.0, right: 10.0),
+          child: Image.asset(
+            'repo/icons/alarm.png',
+            width: 26.0,
+            height: 26.0,
           ),
         ),
         Text(
-          "\t하루에 몇 번 복용하세요?",
+          "하루에 몇 번 복용하세요?",
           style: TextStyle(
-            fontSize: 20.0, // 글자크기
+            fontSize: 17.0, // 글자크기
             //fontStyle: FontStyle.italic, // 이텔릭체
             fontWeight: FontWeight.bold, // 볼드체
             color: Colors.black, // 색상
-            // letterSpacing: 2.0, // 자간
+            // letterSpacing: 2.0tt, // 자간
           ),
         ),
       ],
@@ -344,6 +405,100 @@ class _medicine_addState extends State<medicine_add> {
         ),
         Text("회"),
       ],
+    );
+  }
+
+  Widget addTime() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text('복용시간'),
+        TextButton(
+          onPressed: () {
+            _showTimePicker(); // 버튼을 누를 때 텍스트 업데이트
+          },
+          child: Text(selectedTime.format(context)),
+        ),
+      ],
+    );
+  }
+
+  Widget addAlram() {
+    return SizedBox(
+      width: 350,
+      height: 50,
+      child: GestureDetector(
+        onTap: () {
+          if (_medicineNameController.text.isNotEmpty &&
+              selectedDays.isNotEmpty &&
+              selectedRepeat.isNotEmpty &&
+              _pickedFile != null) {
+            // 모든 정보가 입력되었다면 Medicine 객체를 생성하고 데이터베이스에 저장
+            Medicine newMedicine = Medicine(
+              medicineName: _medicineNameController.text,
+              medicinePicture: _pickedFile?.path ?? '',
+              medicineDay: selectedDays.join(','),
+              medicineRepeat: int.parse(selectedRepeat),
+            );
+            var dbHelper = DatabaseHelper.instance;
+            dbHelper.insert(newMedicine);
+            Navigator.of(context).pop(newMedicine);
+          } else {
+            // 정보가 입력되지 않았다면 경고창 띄우기
+            showDialog(
+              context: context,
+              builder: (context) {
+                return AlertDialog(
+                  backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                  content: Padding(
+                    // Padding 위젯 사용
+                    padding: EdgeInsets.only(top: 20.0),
+                    child: Text(
+                      '정보를 모두 입력하세요',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  //contentPadding: EdgeInsets.symmetric(vertical: 100.0),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text(
+                        '확인',
+                        style: TextStyle(
+                            //color: Color(0xFFA6CBA5),
+                            fontWeight: FontWeight.bold),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          }
+        },
+        child: ElevatedButton(
+          onPressed: null, // onPressed를 null로 설정하여 버튼을 비활성화
+          style: ButtonStyle(
+            backgroundColor:
+                MaterialStateProperty.all<Color>(Color(0xFFA6CBA5)),
+            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+            ),
+            elevation: MaterialStateProperty.all<double>(0),
+          ),
+          child: Text(
+            "알람 추가하기 +",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 15.5,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
