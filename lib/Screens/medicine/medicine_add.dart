@@ -18,24 +18,33 @@ class medicine_add extends StatefulWidget {
 
 class _medicine_addState extends State<medicine_add> {
   final valueList = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
-  var selectedRepeat = '1';
+  int selectedRepeat = 1;
   // get name => null;
   XFile? _pickedFile;
   // var isOn = false;
-  DateTime dateTime = DateTime.now();
-  TimeOfDay selectedTime = TimeOfDay.now();
+  //DateTime dateTime = DateTime.now();
+  //TimeOfDay selectedTime = TimeOfDay.now();
   final TextEditingController _medicineNameController = TextEditingController();
   List<String> selectedDays = []; // 선택된 요일을 저장하는 리스트
+  List<TimeOfDay> selectedTimes = [];
 
-  void _showTimePicker() async {
+  @override
+  void initState() {
+    super.initState();
+    for (int i = 0; i < selectedRepeat; i++) {
+      selectedTimes.add(TimeOfDay.now());
+    }
+  }
+
+  void _showTimePicker(int index) async {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
-      initialTime: selectedTime,
+      initialTime: selectedTimes[index],
     );
 
     if (newTime != null) {
       setState(() {
-        selectedTime = newTime;
+        selectedTimes[index] = newTime;
       });
     }
   }
@@ -84,8 +93,12 @@ class _medicine_addState extends State<medicine_add> {
             numOfTitle(), // 복용횟수- 타이틀
             numOfTakeMedicine(), // 복용횟수 - 횟수 설정
 
-            addTime(), // 복용시간 추가
+            //복용시간 추가
+            for (int i = 1; i < selectedRepeat + 1; i++) addTime(i),
+
+            SizedBox(height: 25),
             addAlram(), //알람 추가 버튼
+            SizedBox(height: 30),
           ],
         ),
       ),
@@ -387,19 +400,40 @@ class _medicine_addState extends State<medicine_add> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        DropdownButton(
+        DropdownButton<int>(
           value: selectedRepeat,
-          items: valueList.map(
-            (value) {
-              return DropdownMenuItem(
-                value: value,
-                child: Text(value),
-              );
-            },
-          ).toList(),
+          // ignore: prefer_const_literals_to_create_immutables
+          items: [
+            DropdownMenuItem(
+              value: 1,
+              child: Text('1'),
+            ),
+            DropdownMenuItem(
+              value: 2,
+              child: Text('2'),
+            ),
+            DropdownMenuItem(
+              value: 3,
+              child: Text('3'),
+            ),
+            DropdownMenuItem(
+              value: 4,
+              child: Text('4'),
+            ),
+            DropdownMenuItem(
+              value: 5,
+              child: Text('5'),
+            ),
+          ],
           onChanged: (value) {
             setState(() {
-              if (value != null) selectedRepeat = value;
+              selectedRepeat = value!;
+              selectedTimes = List<TimeOfDay>.generate(
+                selectedRepeat,
+                (index) => selectedTimes.length > index
+                    ? selectedTimes[index]
+                    : TimeOfDay.now(),
+              );
             });
           },
         ),
@@ -408,18 +442,22 @@ class _medicine_addState extends State<medicine_add> {
     );
   }
 
-  Widget addTime() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text('복용시간'),
-        TextButton(
-          onPressed: () {
-            _showTimePicker(); // 버튼을 누를 때 텍스트 업데이트
-          },
-          child: Text(selectedTime.format(context)),
-        ),
-      ],
+  Widget addTime(int i) {
+    return SizedBox(
+      height: 35, // 간격 설정
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text('복용시간 ' + i.toString()),
+          TextButton(
+            onPressed: () {
+              _showTimePicker(i - 1); // 버튼을 누를 때 텍스트 업데이트
+            },
+            child: Text(
+                '${selectedTimes[i - 1].hour.toString().padLeft(2, '0')}:${selectedTimes[i - 1].minute.toString().padLeft(2, '0')}'),
+          ),
+        ],
+      ),
     );
   }
 
@@ -431,14 +469,13 @@ class _medicine_addState extends State<medicine_add> {
         onTap: () {
           if (_medicineNameController.text.isNotEmpty &&
               selectedDays.isNotEmpty &&
-              selectedRepeat.isNotEmpty &&
               _pickedFile != null) {
             // 모든 정보가 입력되었다면 Medicine 객체를 생성하고 데이터베이스에 저장
             Medicine newMedicine = Medicine(
               medicineName: _medicineNameController.text,
               medicinePicture: _pickedFile?.path ?? '',
               medicineDay: selectedDays.join(','),
-              medicineRepeat: int.parse(selectedRepeat),
+              medicineRepeat: selectedRepeat,
             );
             var dbHelper = DatabaseHelper.instance;
             dbHelper.insert(newMedicine);
