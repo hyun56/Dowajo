@@ -19,32 +19,30 @@ class medicine_add extends StatefulWidget {
 class _medicine_addState extends State<medicine_add> {
   final valueList = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
   int selectedRepeat = 1;
-  // get name => null;
   XFile? _pickedFile;
-  // var isOn = false;
   //DateTime dateTime = DateTime.now();
-  //TimeOfDay selectedTime = TimeOfDay.now();
+  TimeOfDay selectedTime = TimeOfDay.now();
   final TextEditingController _medicineNameController = TextEditingController();
   List<String> selectedDays = []; // 선택된 요일을 저장하는 리스트
-  List<TimeOfDay> selectedTimes = [];
+  //List<TimeOfDay> selectedTimes = [];
 
-  @override
+  /*@override
   void initState() {
     super.initState();
     for (int i = 0; i < selectedRepeat; i++) {
       selectedTimes.add(TimeOfDay.now());
     }
-  }
+  }*/
 
-  void _showTimePicker(int index) async {
+  void _showTimePicker() async {
     final TimeOfDay? newTime = await showTimePicker(
       context: context,
-      initialTime: selectedTimes[index],
+      initialTime: selectedTime,
     );
 
     if (newTime != null) {
       setState(() {
-        selectedTimes[index] = newTime;
+        selectedTime = newTime;
       });
     }
   }
@@ -61,8 +59,10 @@ class _medicine_addState extends State<medicine_add> {
               backgroundColor: Colors.white,
               iconTheme: IconThemeData(color: Colors.black),
             ),
+            SizedBox(height: 5),
             topMessage(), // 상단 안내문
             addPhoto(), // 사진등록
+            SizedBox(height: 10),
             medicineName(), // 약 이름 입력창
 
             SizedBox(height: 20),
@@ -91,14 +91,14 @@ class _medicine_addState extends State<medicine_add> {
             SizedBox(height: 15),
 
             numOfTitle(), // 복용횟수- 타이틀
-            numOfTakeMedicine(), // 복용횟수 - 횟수 설정
-
+            //numOfTakeMedicine(), // 복용횟수 - 횟수 설정
+            SizedBox(height: 15),
             //복용시간 추가
             for (int i = 1; i < selectedRepeat + 1; i++) addTime(i),
 
-            SizedBox(height: 25),
+            SizedBox(height: 20),
             addAlram(), //알람 추가 버튼
-            SizedBox(height: 30),
+            //SizedBox(height: 30),
           ],
         ),
       ),
@@ -118,37 +118,41 @@ class _medicine_addState extends State<medicine_add> {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const SizedBox(
-              height: 15,
-            ),
+            const SizedBox(height: 15),
             ElevatedButton(
               onPressed: () => _getCameraImage(),
               style: ElevatedButton.styleFrom(
                 elevation: 0,
                 backgroundColor: Colors.transparent,
+                minimumSize: Size(MediaQuery.of(context).size.width, 60),
               ),
               child: const Text('사진 찍기'),
             ),
-            const SizedBox(
-              height: 5,
-            ),
-            const Divider(
-              thickness: 4,
-            ),
-            const SizedBox(
-              height: 5,
-            ),
+            const SizedBox(height: 5),
+            const Divider(thickness: 4),
+            const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () => _getPhotoLibraryImage(),
               style: ElevatedButton.styleFrom(
                 elevation: 0,
                 backgroundColor: Colors.transparent,
+                minimumSize: Size(MediaQuery.of(context).size.width, 60),
               ),
               child: const Text('라이브러리에서 불러오기'),
             ),
-            const SizedBox(
-              height: 18,
+            const SizedBox(height: 10),
+            const Divider(thickness: 4),
+            const SizedBox(height: 5),
+            ElevatedButton(
+              onPressed: () => Navigator.pop(context),
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                minimumSize: Size(MediaQuery.of(context).size.width, 60),
+              ),
+              child: const Text('닫기'),
             ),
+            const SizedBox(height: 18),
           ],
         );
       },
@@ -162,6 +166,7 @@ class _medicine_addState extends State<medicine_add> {
       setState(() {
         _pickedFile = pickedFile;
       });
+      Navigator.pop(context);
     } else {
       if (kDebugMode) {
         print('이미지 선택안함');
@@ -176,6 +181,7 @@ class _medicine_addState extends State<medicine_add> {
       setState(() {
         _pickedFile = _pickedFile;
       });
+      Navigator.pop(context);
     } else {
       if (kDebugMode) {
         print('이미지 선택안함');
@@ -329,16 +335,7 @@ class _medicine_addState extends State<medicine_add> {
   Widget textWeekday() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
-      // ignore: prefer_const_literals_to_create_immutables
       children: [
-        // Align(
-        //   alignment: Alignment.bottomCenter,
-        //   child: Icon(
-        //     Icons.calendar_month,
-        //     color: const Color.fromARGB(255, 82, 77, 77),
-        //     size: 35.0,
-        //   ),
-        // ),
         Padding(
           padding: EdgeInsets.only(left: 15.0, right: 10.0),
           child: Image.asset(
@@ -350,11 +347,9 @@ class _medicine_addState extends State<medicine_add> {
         Text(
           "요일을 선택하세요",
           style: TextStyle(
-            fontSize: 17.0, // 글자크기
-            //fontStyle: FontStyle.italic, // 이텔릭체
-            fontWeight: FontWeight.bold, // 볼드체
-            color: Colors.black, // 색상
-            // letterSpacing: 2.0, // 자간
+            fontSize: 17.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
       ],
@@ -364,16 +359,7 @@ class _medicine_addState extends State<medicine_add> {
   Widget numOfTitle() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
-      // ignore: prefer_const_literals_to_create_immutables
       children: [
-        // Align(
-        //   alignment: Alignment.bottomCenter,
-        //   child: Icon(
-        //     Icons.schedule,
-        //     color: const Color.fromARGB(255, 82, 77, 77),
-        //     size: 35.0,
-        //   ),
-        // ),
         Padding(
           padding: EdgeInsets.only(left: 15.0, right: 10.0),
           child: Image.asset(
@@ -383,88 +369,39 @@ class _medicine_addState extends State<medicine_add> {
           ),
         ),
         Text(
-          "하루에 몇 번 복용하세요?",
+          "몇 시에 드시는 약인가요?",
           style: TextStyle(
-            fontSize: 17.0, // 글자크기
-            //fontStyle: FontStyle.italic, // 이텔릭체
-            fontWeight: FontWeight.bold, // 볼드체
-            color: Colors.black, // 색상
-            // letterSpacing: 2.0tt, // 자간
+            fontSize: 17.0,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
         ),
-      ],
-    );
-  }
-
-  Widget numOfTakeMedicine() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        DropdownButton<int>(
-          value: selectedRepeat,
-          // ignore: prefer_const_literals_to_create_immutables
-          items: [
-            DropdownMenuItem(
-              value: 1,
-              child: Text('1'),
-            ),
-            DropdownMenuItem(
-              value: 2,
-              child: Text('2'),
-            ),
-            DropdownMenuItem(
-              value: 3,
-              child: Text('3'),
-            ),
-            DropdownMenuItem(
-              value: 4,
-              child: Text('4'),
-            ),
-            DropdownMenuItem(
-              value: 5,
-              child: Text('5'),
-            ),
-          ],
-          onChanged: (value) {
-            setState(() {
-              selectedRepeat = value!;
-              selectedTimes = List<TimeOfDay>.generate(
-                selectedRepeat,
-                (index) => selectedTimes.length > index
-                    ? selectedTimes[index]
-                    : TimeOfDay.now(),
-              );
-            });
-          },
-        ),
-        Text("회"),
       ],
     );
   }
 
   Widget addTime(int i) {
-    return SizedBox(
-      height: 35, // 간격 설정
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text('복용시간 ' + i.toString()),
-          TextButton(
-            onPressed: () {
-              _showTimePicker(i - 1); // 버튼을 누를 때 텍스트 업데이트
-            },
-            child: Text(
-                '${selectedTimes[i - 1].hour.toString().padLeft(2, '0')}:${selectedTimes[i - 1].minute.toString().padLeft(2, '0')}'),
-          ),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          '복용시간',
+          style: TextStyle(fontSize: 15),
+        ),
+        TextButton(
+          onPressed: () {
+            _showTimePicker(); // 버튼을 누를 때 텍스트 업데이트
+          },
+          child: Text(selectedTime.format(context)),
+        ),
+      ],
     );
   }
 
   Widget addAlram() {
     return SizedBox(
       width: 350,
-      height: 50,
+      height: 55,
       child: GestureDetector(
         onTap: () {
           if (_medicineNameController.text.isNotEmpty &&
@@ -476,6 +413,7 @@ class _medicine_addState extends State<medicine_add> {
               medicinePicture: _pickedFile?.path ?? '',
               medicineDay: selectedDays.join(','),
               medicineRepeat: selectedRepeat,
+              medicineTime: selectedTime.format(context),
             );
             var dbHelper = DatabaseHelper.instance;
             dbHelper.insert(newMedicine);
@@ -486,7 +424,7 @@ class _medicine_addState extends State<medicine_add> {
               context: context,
               builder: (context) {
                 return AlertDialog(
-                  backgroundColor: Color.fromARGB(255, 255, 255, 255),
+                  backgroundColor: Color.fromARGB(200, 255, 255, 255),
                   content: Padding(
                     // Padding 위젯 사용
                     padding: EdgeInsets.only(top: 20.0),

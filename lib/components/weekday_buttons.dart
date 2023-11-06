@@ -51,6 +51,7 @@ class _WeekdayButtonsState extends State<WeekdayButtons> {
                       selectedDays = [];
                     }
                   });
+                  widget.onSelectedDaysChanged(selectedDays); //매일 스위치로 일~월 받기
                 },
               ),
             ),
@@ -126,7 +127,7 @@ class _WeekdayButtonsState extends State<WeekdayButtons> {
                           style: TextStyle(
                             color: selectedButtons[e.key]
                                 ? Colors.white
-                                : Color(
+                                : const Color(
                                     0xFFA6CBA5), // 선택된 버튼의 글씨색을 흰색으로, 그 외의 버튼은 Color(0xFFA6CBA5)로 설정
                             fontSize: 15,
                             fontWeight: FontWeight.w600,

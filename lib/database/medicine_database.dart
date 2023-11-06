@@ -13,6 +13,7 @@ class DatabaseHelper {
   static const columnPicture = 'medicinePicture';
   static const columnDay = 'medicineDay';
   static const columnRepeat = 'medicineRepeat';
+  static const columnTime = 'medicineTime';
 
   // Singleton class
   DatabaseHelper._privateConstructor();
@@ -28,9 +29,21 @@ class DatabaseHelper {
 
   _initDatabase() async {
     String path = join(await getDatabasesPath(), _databaseName);
-    return await openDatabase(path,
-        version: _databaseVersion, onCreate: _onCreate);
+    return await openDatabase(
+      path,
+      version: _databaseVersion,
+      onCreate: _onCreate,
+      //onUpgrade: _onUpgrade,
+    );
   }
+
+  // Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+  //   if (newVersion > oldVersion) {
+  //     // 기존에 medicineTime 컬럼이 없었다면 추가합니다.
+  //     await db.execute(
+  //         "ALTER TABLE $table ADD COLUMN $columnTime TEXT NOT NULL DEFAULT ''");
+  //   }
+  // }
 
   Future _onCreate(Database db, int version) async {
     await db.execute('''
@@ -39,7 +52,8 @@ class DatabaseHelper {
             $columnName TEXT NOT NULL,
             $columnPicture TEXT NOT NULL,
             $columnDay TEXT NOT NULL,
-            $columnRepeat INTEGER NOT NULL
+            $columnRepeat INTEGER NOT NULL,
+            $columnTime TEXT NOT NULL
           )
           ''');
   }
@@ -60,6 +74,7 @@ class DatabaseHelper {
         medicinePicture: maps[i]['medicinePicture'],
         medicineDay: maps[i]['medicineDay'],
         medicineRepeat: maps[i]['medicineRepeat'],
+        medicineTime: maps[i]['medicineTime'],
       );
     });
   }

@@ -33,6 +33,7 @@ class _MedicineScreen extends State<MedicineScreen> {
       body: Column(
         children: <Widget>[
           _AppBar(),
+
           //_WeeklyScroll(),
           //_MedicineData(),r
 
@@ -142,25 +143,42 @@ class _MedicineScreen extends State<MedicineScreen> {
                             return ListTile(
                               title: Text(medicines[index].medicineName),
                               subtitle: Text(
-                                  '복용 일자: ${medicines[index].medicineDay}, 반복: ${medicines[index].medicineRepeat}'),
+                                  '복용 일자: ${medicines[index].medicineDay}, 복용 시간: ${medicines[index].medicineTime}'),
                               leading: Image.file(
                                   File(medicines[index].medicinePicture)),
                               onTap: () {
-                                showDialog(
+                                showModalBottomSheet(
                                   context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: Text('선택해주세요'),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: Text('수정하기'),
+                                  shape: const RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(25),
+                                    ),
+                                  ),
+                                  builder: (context) {
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        const SizedBox(height: 15),
+                                        ElevatedButton(
                                           onPressed: () {
                                             // 수정하기 기능 구현
                                             Navigator.of(context).pop();
                                           },
+                                          style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            backgroundColor: Colors.transparent,
+                                            minimumSize: Size(
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                60),
+                                          ),
+                                          child: const Text('수정하기'),
                                         ),
-                                        TextButton(
-                                          child: Text('삭제하기'),
+                                        const SizedBox(height: 5),
+                                        const Divider(thickness: 4),
+                                        const SizedBox(height: 10),
+                                        ElevatedButton(
                                           onPressed: () async {
                                             // id가 null인지 확인
                                             if (medicines[index].id != null) {
@@ -176,13 +194,35 @@ class _MedicineScreen extends State<MedicineScreen> {
                                             }
                                             Navigator.of(context).pop();
                                           },
+                                          style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            backgroundColor: Colors.transparent,
+                                            minimumSize: Size(
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                60),
+                                          ),
+                                          child: const Text('삭제하기'),
                                         ),
-                                        TextButton(
-                                          child: Text('닫기'),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
+                                        const SizedBox(height: 10),
+                                        const Divider(thickness: 4),
+                                        const SizedBox(height: 5),
+                                        ElevatedButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          style: ElevatedButton.styleFrom(
+                                            elevation: 0,
+                                            backgroundColor: Colors.transparent,
+                                            minimumSize: Size(
+                                                MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                60),
+                                          ),
+                                          child: const Text('닫기'),
                                         ),
+                                        const SizedBox(height: 18),
                                       ],
                                     );
                                   },
@@ -231,16 +271,16 @@ class _MedicineScreen extends State<MedicineScreen> {
                     futureMedicines = dbHelper.getAllMedicines();
                   });
                 },
-                child: Image.asset(
-                  'repo/icons/plus.png', // Image asset 사용
-                  //width: 24.0, // 원하는 너비로 조절
-                  //height: 24.0, // 원하는 높이로 조절
-                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),
                 backgroundColor: Colors.transparent,
                 elevation: 0.0,
+                child: Image.asset(
+                  'repo/icons/plus.png', // Image asset 사용
+                  //width: 24.0, // 원하는 너비로 조절
+                  //height: 24.0, // 원하는 높이로 조절
+                ),
               );
             } else {
               return Container(); // 데이터가 없으면 빈 컨테이너를 반환하여 버튼을 표시하지 않음
