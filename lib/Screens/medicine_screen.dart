@@ -2,6 +2,8 @@
 
 import 'dart:io';
 
+import 'package:dowajo/Screens/medicine/medicine_record.dart';
+import 'package:dowajo/Screens/medicine/medicine_update.dart';
 import 'package:dowajo/components/models/medicine.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
@@ -19,11 +21,18 @@ class MedicineScreen extends StatefulWidget {
 class _MedicineScreen extends State<MedicineScreen> {
   var dbHelper = DatabaseHelper.instance;
   late Future<List<Medicine>> futureMedicines;
+  int _currentIndex = 0;
 
   @override
   void initState() {
     super.initState();
     futureMedicines = dbHelper.getAllMedicines();
+  }
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
   }
 
   @override
@@ -79,9 +88,7 @@ class _MedicineScreen extends State<MedicineScreen> {
                                       const Color.fromARGB(255, 123, 123, 123),
                                 ),
                               ),
-                              SizedBox(
-                                height: 1,
-                              ),
+                              SizedBox(height: 1),
                               Text(
                                 "새로운 알람을 추가할까요?",
                                 style: TextStyle(
@@ -90,9 +97,7 @@ class _MedicineScreen extends State<MedicineScreen> {
                                       const Color.fromARGB(255, 123, 123, 123),
                                 ),
                               ),
-                              SizedBox(
-                                height: 12,
-                              ),
+                              SizedBox(height: 12),
                               SizedBox(
                                 width: 210,
                                 child: ElevatedButton(
@@ -161,8 +166,30 @@ class _MedicineScreen extends State<MedicineScreen> {
                                         const SizedBox(height: 15),
                                         ElevatedButton(
                                           onPressed: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    medicineUpdate(
+                                                        medicine:
+                                                            medicines[index]),
+                                              ),
+                                            ).then((_) {
+                                              // 수정 페이지에서 돌아온 후
+                                              setState(() {
+                                                // 화면을 갱신
+                                                futureMedicines =
+                                                    dbHelper.getAllMedicines();
+                                              });
+                                            });
+                                            /*Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      MedicineUpdatePage()),
+                                            );*/
                                             // 수정하기 기능 구현
-                                            Navigator.of(context).pop();
+                                            // Navigator.of(context).pop();
                                           },
                                           style: ElevatedButton.styleFrom(
                                             elevation: 0,
@@ -243,6 +270,7 @@ class _MedicineScreen extends State<MedicineScreen> {
           ),
         ],
       ),
+
       // floatingActionButton: FloatingActionButton(
       //   onPressed: () async {
       //     await Navigator.push(
@@ -287,6 +315,40 @@ class _MedicineScreen extends State<MedicineScreen> {
             }
           }
           return Container(); // Future가 아직 완료되지 않았을 때도 빈 컨테이너를 반환하여 버튼을 표시하지 않음
+        },
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: const <BottomNavigationBarItem>[
+          BottomNavigationBarItem(
+            icon: Icon(Icons.alarm, size: 25),
+            label: '알람',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.assignment),
+            label: '기록',
+          ),
+        ],
+        currentIndex: _currentIndex,
+        onTap: (int index) {
+          _onItemTapped(index);
+          if (_currentIndex == 0 && index == 0) {
+            return; // 이미 알람 화면이므로 아무것도 하지 않음
+          } else {
+            switch (index) {
+              case 0:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => MedicineScreen()),
+                );
+                break;
+              case 1:
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => medicineRecord()),
+                );
+                break;
+            }
+          }
         },
       ),
     );
