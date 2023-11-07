@@ -81,6 +81,7 @@ class _medicine_addState extends State<medicine_add> {
                   selectedDays = days;
                 });
               },
+              initialSelectedDays: [],
             ), // 요일설정 - 스위치, 월 ~ 일 선택버튼
 
             // 경계선 추가
@@ -268,7 +269,7 @@ class _medicine_addState extends State<medicine_add> {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                    width: 2, color: Theme.of(context).colorScheme.primary),
+                    width: 3, color: Color.fromARGB(255, 217, 217, 217)),
                 image: DecorationImage(
                     image: FileImage(File(_pickedFile!.path)),
                     fit: BoxFit.cover),

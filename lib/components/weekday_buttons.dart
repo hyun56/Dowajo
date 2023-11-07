@@ -4,8 +4,15 @@ import "package:flutter/material.dart";
 class WeekdayButtons extends StatefulWidget {
   // const WeekdayButtons({super.key});
   final Function(List<String>) onSelectedDaysChanged;
+  final List<String> initialSelectedDays;
 
-  const WeekdayButtons({Key? key, required this.onSelectedDaysChanged})
+  // const WeekdayButtons({Key? key, required this.onSelectedDaysChanged})
+  //     : super(key: key);
+
+  const WeekdayButtons(
+      {Key? key,
+      required this.onSelectedDaysChanged,
+      required this.initialSelectedDays})
       : super(key: key);
 
   @override
@@ -17,6 +24,16 @@ class _WeekdayButtonsState extends State<WeekdayButtons> {
       7, false); // 각 버튼의 선택 상태를 추적하는 리스트, 모든 버튼의 초기 상태는 '선택되지 않음(false)'
   bool isAllDaysSelected = false; // '매일' 스위치의 상태를 추적하는 변수
   List<String> selectedDays = []; // 선택된 요일을 저장하는 리스트
+
+  @override
+  void initState() {
+    super.initState();
+    selectedDays = widget.initialSelectedDays;
+    selectedButtons = ['일', '월', '화', '수', '목', '금', '토'].map((day) {
+      return selectedDays.contains(day);
+    }).toList();
+    isAllDaysSelected = selectedButtons.every((isSelected) => isSelected);
+  }
 
   @override
   Widget build(BuildContext context) {
