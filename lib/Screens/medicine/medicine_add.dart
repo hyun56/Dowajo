@@ -81,7 +81,7 @@ class _medicine_addState extends State<medicine_add> {
                   selectedDays = days;
                 });
               },
-              initialSelectedDays: [],
+              initialSelectedDays: const [],
             ), // 요일설정 - 스위치, 월 ~ 일 선택버튼
 
             // 경계선 추가

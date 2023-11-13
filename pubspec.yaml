@@ -39,7 +39,7 @@ dependencies:
   sqflite:
   path: ^1.8.3
   flutter_time_picker_spinner: ^2.0.0
-
+  table_calendar: ^3.0.8
 
 
 dev_dependencies:
