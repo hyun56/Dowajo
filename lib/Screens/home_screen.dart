@@ -88,7 +88,7 @@ class HomeScreen extends StatelessWidget {
 
   Padding buildHeading() {
     return Padding(
-      padding: const EdgeInsets.only(top: 30, bottom: 25, left: 5, right: 5),
+      padding: const EdgeInsets.only(top: 50, bottom: 25, left: 5, right: 5),
       child: Container(
         padding: const EdgeInsets.all(10.0),
         decoration: BoxDecoration(
@@ -108,16 +108,15 @@ class HomeScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Padding(
-              padding:
-                  EdgeInsets.only(left: 14.0, right: 14.0, bottom: 10),
+              padding: EdgeInsets.only(left: 14.0, right: 14.0, bottom: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
                     '환자 정보',
                     style: TextStyle(
-                        // color: Colors.black,
-                        fontSize: 22,
+                        color: Color.fromARGB(255, 0, 0, 0),
+                        fontSize: 20,
                         fontWeight: FontWeight.w800),
                   ),
                 ],
@@ -126,7 +125,12 @@ class HomeScreen extends StatelessWidget {
             Row(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(10.0),
+                  padding: const EdgeInsets.only(
+                    top: 10.0,
+                    bottom: 10.0,
+                    left: 10.0,
+                    right: 35.0,
+                  ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10), // 모서리를 둥글게 하는 정도
                     child: Image.network(
@@ -153,6 +157,7 @@ class HomeScreen extends StatelessWidget {
                     Text(
                       '백현',
                       style: TextStyle(
+                        color: Color.fromARGB(255, 98, 98, 98),
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                       ),
@@ -161,7 +166,7 @@ class HomeScreen extends StatelessWidget {
                       height: 18,
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      //mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           '나이: ',
@@ -174,9 +179,7 @@ class HomeScreen extends StatelessWidget {
                           '32',
                           style: TextStyle(fontSize: 15, color: Colors.grey),
                         ),
-                        SizedBox(
-                          width: 25,
-                        ),
+                        SizedBox(width: 20),
                         Text(
                           '성별: ',
                           style: TextStyle(
@@ -190,11 +193,9 @@ class HomeScreen extends StatelessWidget {
                         ),
                       ],
                     ),
-                    SizedBox(
-                      height: 8,
-                    ),
+                    SizedBox(height: 8),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                      //mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
                           '병명: ',
@@ -207,9 +208,12 @@ class HomeScreen extends StatelessWidget {
                           '몰루',
                           style: TextStyle(fontSize: 15, color: Colors.grey),
                         ),
-                        SizedBox(
-                          width: 25,
-                        ),
+                      ],
+                    ),
+                    SizedBox(height: 8),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
                         Text(
                           '병실: ',
                           style: TextStyle(

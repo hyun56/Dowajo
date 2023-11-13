@@ -6,25 +6,27 @@ import 'package:dowajo/components/weekday_buttons.dart';
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import '../../components/models/medicine.dart';
 import 'package:dowajo/database/medicine_database.dart';
 
-class medicine_add extends StatefulWidget {
-  const medicine_add({Key? key}) : super(key: key);
+class medicineUpdate extends StatefulWidget {
+  final Medicine medicine;
 
+  const medicineUpdate({Key? key, required this.medicine}) : super(key: key);
 
   @override
-  State<medicine_add> createState() => _medicine_addState();
+  State<medicineUpdate> createState() => _medicineUpdateState();
 }
 
-class _medicine_addState extends State<medicine_add> {
+class _medicineUpdateState extends State<medicineUpdate> {
   final valueList = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'];
   int selectedRepeat = 1;
   XFile? _pickedFile;
   //DateTime dateTime = DateTime.now();
   TimeOfDay selectedTime = TimeOfDay.now();
   final TextEditingController _medicineNameController = TextEditingController();
-  List<String> selectedDays = []; // 선택된 요일을 저장하는 리스트
+  late List<String> selectedDays; // 선택된 요일을 저장하는 리스트
   //List<TimeOfDay> selectedTimes = [];
 
   /*@override
@@ -34,6 +36,23 @@ class _medicine_addState extends State<medicine_add> {
       selectedTimes.add(TimeOfDay.now());
     }
   }*/
+
+  @override
+  void initState() {
+    super.initState();
+    _medicineNameController.text = widget.medicine.medicineName; // 약의 이름 설정
+    selectedDays = widget.medicine.medicineDay.split(','); // 선택된 요일 설정
+    selectedRepeat = widget.medicine.medicineRepeat; // 복용 횟수 설정
+    selectedTime =
+        _convertStringToTimeOfDay(widget.medicine.medicineTime); // 복용 시간 설정
+    _pickedFile = XFile(widget.medicine.medicinePicture); // 약의 사진 설정
+  }
+
+  TimeOfDay _convertStringToTimeOfDay(String time) {
+    final format = DateFormat.jm(); //"6:00 AM"
+    final DateTime temp = format.parse(time);
+    return TimeOfDay(hour: temp.hour, minute: temp.minute);
+  }
 
   void _showTimePicker() async {
     final TimeOfDay? newTime = await showTimePicker(
@@ -47,7 +66,6 @@ class _medicine_addState extends State<medicine_add> {
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -83,7 +101,7 @@ class _medicine_addState extends State<medicine_add> {
                   selectedDays = days;
                 });
               },
-              initialSelectedDays: const [],
+              initialSelectedDays: selectedDays,
             ), // 요일설정 - 스위치, 월 ~ 일 선택버튼
 
             // 경계선 추가
@@ -96,14 +114,13 @@ class _medicine_addState extends State<medicine_add> {
             numOfTitle(), // 복용횟수- 타이틀
             //numOfTakeMedicine(), // 복용횟수 - 횟수 설정
             SizedBox(height: 15),
-              //복용시간 추가
-              for (int i = 1; i < selectedRepeat + 1; i++) addTime(i),
+            //복용시간 추가
+            for (int i = 1; i < selectedRepeat + 1; i++) addTime(i),
 
             SizedBox(height: 20),
             addAlram(), //알람 추가 버튼
-             //SizedBox(height: 30),
-  
-        ],
+            //SizedBox(height: 30),
+          ],
         ),
       ),
     );
@@ -196,11 +213,6 @@ class _medicine_addState extends State<medicine_add> {
   Widget topMessage() {
     return Row(
       children: [
-        // Icon(
-        //   Icons.medication,
-        //   color: Colors.red,
-        //   size: 35.0,
-        // ),
         Padding(
           padding: EdgeInsets.only(left: 15.0, right: 10.0),
           child: Image.asset(
@@ -241,44 +253,37 @@ class _medicine_addState extends State<medicine_add> {
           ),
         ),
         SizedBox(height: 10),
-        if (_pickedFile == null)
-          Container(
-            constraints: BoxConstraints(
-              minHeight: imageSize,
-              minWidth: imageSize,
-            ),
-            child: GestureDetector(
-              onTap: () {
-                _showBottomSheet();
-              },
-              child: Center(
-                child: Image.asset(
-                  'repo/icons/photo.png',
-                  width: 75.0,
-                  height: 75.0,
+        GestureDetector(
+          onTap: _showBottomSheet,
+          child: _pickedFile == null
+              ? Container(
+                  constraints: BoxConstraints(
+                    minHeight: imageSize,
+                    minWidth: imageSize,
+                  ),
+                  child: Center(
+                    child: Image.asset(
+                      'repo/icons/photo.png',
+                      width: 75.0,
+                      height: 75.0,
+                    ),
+                  ),
+                )
+              : Center(
+                  child: Container(
+                    width: imageSize,
+                    height: imageSize,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                          width: 3, color: Color.fromARGB(255, 217, 217, 217)),
+                      image: DecorationImage(
+                          image: FileImage(File(_pickedFile!.path)),
+                          fit: BoxFit.cover),
+                    ),
+                  ),
                 ),
-                // Icon(
-                //   Icons.photo_camera,
-                //   size: imageSize,
-                // ),
-              ),
-            ),
-          )
-        else
-          Center(
-            child: Container(
-              width: imageSize,
-              height: imageSize,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                    width: 3, color: Color.fromARGB(255, 217, 217, 217)),
-                image: DecorationImage(
-                    image: FileImage(File(_pickedFile!.path)),
-                    fit: BoxFit.cover),
-              ),
-            ),
-          ),
+        ),
       ],
     );
   }
@@ -412,7 +417,8 @@ class _medicine_addState extends State<medicine_add> {
               selectedDays.isNotEmpty &&
               _pickedFile != null) {
             // 모든 정보가 입력되었다면 Medicine 객체를 생성하고 데이터베이스에 저장
-            Medicine newMedicine = Medicine(
+            Medicine updatedMedicine = Medicine(
+              id: widget.medicine.id,
               medicineName: _medicineNameController.text,
               medicinePicture: _pickedFile?.path ?? '',
               medicineDay: selectedDays.join(','),
@@ -420,8 +426,8 @@ class _medicine_addState extends State<medicine_add> {
               medicineTime: selectedTime.format(context),
             );
             var dbHelper = DatabaseHelper.instance;
-            dbHelper.insert(newMedicine);
-            Navigator.of(context).pop(newMedicine);
+            dbHelper.update(updatedMedicine);
+            Navigator.of(context).pop(updatedMedicine);
           } else {
             // 정보가 입력되지 않았다면 경고창 띄우기
             showDialog(
@@ -469,7 +475,7 @@ class _medicine_addState extends State<medicine_add> {
             elevation: MaterialStateProperty.all<double>(0),
           ),
           child: Text(
-            "알람 추가하기 +",
+            "알람 수정하기",
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
