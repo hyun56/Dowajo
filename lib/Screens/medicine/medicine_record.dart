@@ -1,6 +1,13 @@
 import 'package:dowajo/Screens/home_screen.dart';
 import 'package:dowajo/Screens/medicine_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:dowajo/components/models/medicine.dart';
+import 'package:dowajo/database/medicine_database.dart';
+import 'package:dowajo/components/calendar/calendar.dart';
+import 'package:dowajo/components/calendar/schedule.dart';
+import 'package:dowajo/components/calendar/today_banner.dart';
+import 'package:sqflite/sqflite.dart';
 
 class medicineRecord extends StatefulWidget {
   const medicineRecord({super.key});
@@ -11,6 +18,20 @@ class medicineRecord extends StatefulWidget {
 
 class _medicineRecordState extends State<medicineRecord> {
   int _currentIndex = 1;
+
+  DateTime selectedDay = DateTime.utc(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+  DateTime focusedDay = DateTime.now();
+
+  onDaySelected(DateTime focusedDay, DateTime selectedDay) {
+    setState(() {
+      this.focusedDay = selectedDay;
+      this.selectedDay = selectedDay;
+    });
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -35,15 +56,23 @@ class _medicineRecordState extends State<medicineRecord> {
           },
         ),
       ),
-      body: Container(
-        color: Colors.white,
-        child: Center(
-          child: Text(
-            'test',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.blue, fontSize: 56),
-          ),
-        ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Calendar(
+              selectedDay: selectedDay,
+              focusedDay: focusedDay,
+              onDaySelected: onDaySelected),
+          SizedBox(height: 5.0),
+          TodayBanner(selectedDay: selectedDay),
+          SizedBox(height: 5.0),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8.0),
+              child: ScheduleCardListViewer(selectedDay: selectedDay),
+            ),
+          )
+        ],
       ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
@@ -80,5 +109,25 @@ class _medicineRecordState extends State<medicineRecord> {
         },
       ),
     );
+  }
+}
+
+class ScheduleCardListViewer extends StatelessWidget {
+  final DateTime selectedDay;
+  const ScheduleCardListViewer({super.key, required this.selectedDay});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.separated(
+        itemCount: 10,
+        separatorBuilder: (context, index) {
+          return SizedBox(height: 8.0);
+        },
+        itemBuilder: (context, index) {
+          return ScheduleCard(
+            scheduleTime: TimeOfDay(hour: 14, minute: 30),
+            medicineName: "감기약",
+          );
+        });
   }
 }
