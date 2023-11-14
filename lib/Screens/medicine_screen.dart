@@ -3,7 +3,6 @@
 import 'dart:io';
 
 import 'package:dowajo/Screens/medicine/medicine_record.dart';
-import 'package:dowajo/Screens/medicine/medicine_update.dart';
 import 'package:dowajo/components/models/medicine.dart';
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
@@ -50,19 +49,19 @@ class _MedicineScreen extends State<MedicineScreen> {
             flex: 10,
             child: Column(
               children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 15.0),
-                    child: Text(
-                      "알람",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
-                    ),
-                  ),
-                ),
+                // Align(
+                //   alignment: Alignment.topLeft,
+                //   child: Padding(
+                //     padding: const EdgeInsets.only(left: 15.0),
+                //     child: Text(
+                //       "알람",
+                //       style: TextStyle(
+                //           fontSize: 20,
+                //           fontWeight: FontWeight.bold,
+                //           color: Colors.black),
+                //     ),
+                //   ),
+                // ),
                 Expanded(
                   child: FutureBuilder<List<Medicine>>(
                     future: futureMedicines, // 데이터베이스에서 모든 약 정보를 가져오는 Future
@@ -135,77 +134,149 @@ class _MedicineScreen extends State<MedicineScreen> {
                                   ),
                                 ),
                               ),
-                              Spacer(flex: 2),
+                              Spacer(flex: 1),
                             ],
                           );
                         }
 
                         // 데이터가 있을 때
                         List<Medicine>? medicines = snapshot.data;
+                        // return ListView.builder(
+                        //   itemCount: medicines!.length,
+                        //   itemBuilder: (BuildContext context, int index) {
+                        //     return ListTile(
+                        //       title: Text(medicines[index].medicineName),
+                        //       subtitle: Text(
+                        //           '복용 일자: ${medicines[index].medicineDay}, 복용 시간: ${medicines[index].medicineTime}'),
+                        //       leading: Image.file(
+                        //           File(medicines[index].medicinePicture)),
+                        //       onTap: () {
+                        //         showModalBottomSheet(
+                        //           context: context,
+                        //           shape: const RoundedRectangleBorder(
+                        //             borderRadius: BorderRadius.vertical(
+                        //               top: Radius.circular(25),
+                        //             ),
+                        //           ),
+                        //           builder: (context) {
+                        //             return Column(
+                        //               mainAxisSize: MainAxisSize.min,
+                        //               children: [
+                        //                 const SizedBox(height: 15),
+                        //                 ElevatedButton(
+                        //                   onPressed: () {
+                        //                     Navigator.push(
+                        //                       context,
+                        //                       MaterialPageRoute(
+                        //                         builder: (context) =>
+                        //                             medicineUpdate(
+                        //                                 medicine:
+                        //                                     medicines[index]),
+                        //                       ),
+                        //                     ).then((_) {
+                        //                       // 수정 페이지에서 돌아온 후
+                        //                       setState(() {
+                        //                         // 화면을 갱신
+                        //                         futureMedicines =
+                        //                             dbHelper.getAllMedicines();
+                        //                       });
+                        //                     });
+                        //                     /*Navigator.push(
+                        //                       context,
+                        //                       MaterialPageRoute(
+                        //                           builder: (context) =>
+                        //                               MedicineUpdatePage()),
+                        //                     );*/
+                        //                     // 수정하기 기능 구현
+                        //                     // Navigator.of(context).pop();
+                        //                   },
+                        //                   style: ElevatedButton.styleFrom(
+                        //                     elevation: 0,
+                        //                     backgroundColor: Colors.transparent,
+                        //                     minimumSize: Size(
+                        //                         MediaQuery.of(context)
+                        //                             .size
+                        //                             .width,
+                        //                         60),
+                        //                   ),
+                        //                   child: const Text('수정하기'),
+                        //                 ),
+                        //                 const SizedBox(height: 5),
+                        //                 const Divider(thickness: 4),
+                        //                 const SizedBox(height: 10),
+                        //                 ElevatedButton(
+                        //                   onPressed: () async {
+                        //                     // id가 null인지 확인
+                        //                     if (medicines[index].id != null) {
+                        //                       // id가 null이 아니라면 삭제
+                        //                       await DatabaseHelper.instance
+                        //                           .delete(medicines[index].id!);
+
+                        //                       // 삭제가 완료되면 FutureBuilder를 다시 빌드
+                        //                       setState(() {
+                        //                         futureMedicines =
+                        //                             dbHelper.getAllMedicines();
+                        //                       });
+                        //                     }
+                        //                     Navigator.of(context).pop();
+                        //                   },
+                        //                   style: ElevatedButton.styleFrom(
+                        //                     elevation: 0,
+                        //                     backgroundColor: Colors.transparent,
+                        //                     minimumSize: Size(
+                        //                         MediaQuery.of(context)
+                        //                             .size
+                        //                             .width,
+                        //                         60),
+                        //                   ),
+                        //                   child: const Text('삭제하기'),
+                        //                 ),
+                        //                 const SizedBox(height: 10),
+                        //                 const Divider(thickness: 4),
+                        //                 const SizedBox(height: 5),
+                        //                 ElevatedButton(
+                        //                   onPressed: () =>
+                        //                       Navigator.pop(context),
+                        //                   style: ElevatedButton.styleFrom(
+                        //                     elevation: 0,
+                        //                     backgroundColor: Colors.transparent,
+                        //                     minimumSize: Size(
+                        //                         MediaQuery.of(context)
+                        //                             .size
+                        //                             .width,
+                        //                         60),
+                        //                   ),
+                        //                   child: const Text('닫기'),
+                        //                 ),
+                        //                 const SizedBox(height: 18),
+                        //               ],
+                        //             );
+                        //           },
+                        //         );
+                        //       },
+                        //     );
+                        //   },
+                        // );
                         return ListView.builder(
                           itemCount: medicines!.length,
                           itemBuilder: (BuildContext context, int index) {
-                            return ListTile(
-                              title: Text(medicines[index].medicineName),
-                              subtitle: Text(
-                                  '복용 일자: ${medicines[index].medicineDay}, 복용 시간: ${medicines[index].medicineTime}'),
-                              leading: Image.file(
-                                  File(medicines[index].medicinePicture)),
+                            return GestureDetector(
                               onTap: () {
-                                showModalBottomSheet(
+                                showDialog(
                                   context: context,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(25),
-                                    ),
-                                  ),
-                                  builder: (context) {
-                                    return Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const SizedBox(height: 15),
-                                        ElevatedButton(
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: Text('선택해주세요'),
+                                      actions: <Widget>[
+                                        TextButton(
+                                          child: Text('수정하기'),
                                           onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    medicineUpdate(
-                                                        medicine:
-                                                            medicines[index]),
-                                              ),
-                                            ).then((_) {
-                                              // 수정 페이지에서 돌아온 후
-                                              setState(() {
-                                                // 화면을 갱신
-                                                futureMedicines =
-                                                    dbHelper.getAllMedicines();
-                                              });
-                                            });
-                                            /*Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      MedicineUpdatePage()),
-                                            );*/
                                             // 수정하기 기능 구현
-                                            // Navigator.of(context).pop();
+                                            Navigator.of(context).pop();
                                           },
-                                          style: ElevatedButton.styleFrom(
-                                            elevation: 0,
-                                            backgroundColor: Colors.transparent,
-                                            minimumSize: Size(
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                60),
-                                          ),
-                                          child: const Text('수정하기'),
                                         ),
-                                        const SizedBox(height: 5),
-                                        const Divider(thickness: 4),
-                                        const SizedBox(height: 10),
-                                        ElevatedButton(
+                                        TextButton(
+                                          child: Text('삭제하기'),
                                           onPressed: () async {
                                             // id가 null인지 확인
                                             if (medicines[index].id != null) {
@@ -221,40 +292,57 @@ class _MedicineScreen extends State<MedicineScreen> {
                                             }
                                             Navigator.of(context).pop();
                                           },
-                                          style: ElevatedButton.styleFrom(
-                                            elevation: 0,
-                                            backgroundColor: Colors.transparent,
-                                            minimumSize: Size(
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                60),
-                                          ),
-                                          child: const Text('삭제하기'),
                                         ),
-                                        const SizedBox(height: 10),
-                                        const Divider(thickness: 4),
-                                        const SizedBox(height: 5),
-                                        ElevatedButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          style: ElevatedButton.styleFrom(
-                                            elevation: 0,
-                                            backgroundColor: Colors.transparent,
-                                            minimumSize: Size(
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                60),
-                                          ),
-                                          child: const Text('닫기'),
+                                        TextButton(
+                                          child: Text('닫기'),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
                                         ),
-                                        const SizedBox(height: 18),
                                       ],
                                     );
                                   },
                                 );
                               },
+                              child: Container(
+                                margin: EdgeInsets.all(8),
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Text(medicines[index].medicineName,
+                                            style: TextStyle(
+                                                fontSize: 25,
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.green)),
+                                        Spacer(
+                                          flex: 4,
+                                        ),
+                                        Text(
+                                          '복용 요일: ${medicines[index].medicineDay}\n${medicines[index].medicineTime}',
+                                          style: TextStyle(fontSize: 16),
+                                        ),
+                                        Spacer(),
+                                      ],
+                                    ),
+                                    ClipOval(
+                                      child: Image.file(
+                                        File(medicines[index].medicinePicture),
+                                        width: 70, // 원하는 너비
+                                        height: 70, // 원하는 높이
+                                        fit: BoxFit.cover,
+                                        // 이미지를 비율에 맞게 조절하면서 전체를 채우도록 설정
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             );
                           },
                         );
@@ -329,6 +417,7 @@ class _MedicineScreen extends State<MedicineScreen> {
           ),
         ],
         currentIndex: _currentIndex,
+        selectedItemColor: Color(0xFFA6CBA5),
         onTap: (int index) {
           _onItemTapped(index);
           if (_currentIndex == 0 && index == 0) {

@@ -22,6 +22,7 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.white,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
+        unselectedWidgetColor: const Color.fromARGB(255, 203, 202, 202),
         //primarySwatch: Colors.,
       ),
       home: const HomeScreen(),

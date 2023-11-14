@@ -13,7 +13,7 @@ class Calendar extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
-  final defaultTextStyle = TextStyle(
+  final defaultTextStyle = const TextStyle(
     color: Colors.black,
     fontWeight: FontWeight.w600,
   );
@@ -30,11 +30,11 @@ class Calendar extends StatelessWidget {
         focusedDay: focusedDay,
         firstDay: DateTime(1900),
         lastDay: DateTime(3000),
-        headerStyle: HeaderStyle(
+        headerStyle: const HeaderStyle(
           formatButtonVisible: false,
           titleCentered: true,
           titleTextStyle:
-              TextStyle(fontSize: 20.0, fontWeight: FontWeight.w700),
+              TextStyle(fontSize: 19.0, fontWeight: FontWeight.w700),
         ),
         calendarStyle: CalendarStyle(
           isTodayHighlighted: true,
@@ -43,11 +43,23 @@ class Calendar extends StatelessWidget {
           todayTextStyle: defaultTextStyle,
           todayDecoration: defaultDecoration,
           weekendDecoration: defaultDecoration,
+          weekendTextStyle: const TextStyle(
+            color: Color(0xFF60805F), // 주말 색상 변경
+          ),
           defaultDecoration: defaultDecoration,
           outsideDecoration: defaultDecoration,
           selectedDecoration: BoxDecoration(
-            color: Colors.lightGreen,
-            borderRadius: BorderRadius.circular(10.0),
+            color: const Color(0xFFA6CBA5),
+            borderRadius: BorderRadius.circular(15.0),
+          ),
+        ),
+        daysOfWeekStyle: const DaysOfWeekStyle(
+          weekendStyle: TextStyle(
+            color: Color(0xFF60805F), // 주말 색상 변경
+            fontSize: 13,
+          ),
+          weekdayStyle: TextStyle(
+            fontSize: 13,
           ),
         ),
         onDaySelected: onDaySelected,
