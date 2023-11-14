@@ -6,6 +6,7 @@ class Medicine {
   final String medicineDay; // 요일
   final int medicineRepeat; // 반복 횟수
   final String medicineTime;
+  bool isTaken; // 복용 여부
 
   Medicine({
     // required this.notificationIDs,
@@ -15,6 +16,7 @@ class Medicine {
     required this.medicineDay,
     required this.medicineRepeat,
     required this.medicineTime,
+    this.isTaken = false, // 기본값은 false
   });
 
   // List<dynamic> get getIDs => notificationIDs;
@@ -34,6 +36,7 @@ class Medicine {
       'medicineDay': medicineDay,
       'medicineRepeat': medicineRepeat,
       'medicineTime': medicineTime,
+      'isTaken': isTaken ? 1 : 0,
     };
   }
 
@@ -45,6 +48,7 @@ class Medicine {
       medicineDay: map['medicineDay'],
       medicineRepeat: map['medicineRepeat'],
       medicineTime: map['medicineTime'],
+      isTaken: map['isTaken'] == 1,
     );
   }
 }
