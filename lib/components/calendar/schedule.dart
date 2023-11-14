@@ -5,11 +5,13 @@ class ScheduleCard extends StatefulWidget {
   final TimeOfDay scheduleTime;
   final String medicineName;
   final int id; // 추가된 id 필드
+  final VoidCallback onTakenUpdated; // 복용 완료 상태가 업데이트될 때 호출될 콜백 함수 추가
 
   const ScheduleCard({
     required this.scheduleTime,
     required this.medicineName,
-    required this.id, // 생성자에 id 추가
+    required this.id,
+    required this.onTakenUpdated,
     Key? key,
   }) : super(key: key);
 
@@ -59,6 +61,7 @@ class _ScheduleCardState extends State<ScheduleCard> {
                   medicineName: widget.medicineName,
                   onChecked: _toggleCheckbox,
                   id: widget.id,
+                  onTakenUpdated: widget.onTakenUpdated,
                 ),
               ],
             ),
@@ -99,11 +102,13 @@ class _IsTakeMedicine extends StatefulWidget {
   final String medicineName;
   final ValueChanged<bool?> onChecked;
   final int id; // id 필드 추가
+  final VoidCallback onTakenUpdated;
 
   const _IsTakeMedicine({
     required this.medicineName,
     required this.onChecked,
     required this.id, // 생성자에 id 추가
+    required this.onTakenUpdated,
     Key? key,
   }) : super(key: key);
 
@@ -142,6 +147,11 @@ class _IsTakeMedicineState extends State<_IsTakeMedicine> {
 
     // 복용 완료 상태 업데이트
     dbHelper.updateIsTaken(widget.id, _isChecked);
+
+    // // 복용 완료 버튼을 눌렀을 때 MedicineModel의 updateMedicineData 메서드 호출
+    // Provider.of<MedicineModel>(context, listen: false).updateMedicineData();
+    // 복용 완료 버튼을 눌렀을 때 콜백 함수 호출
+    widget.onTakenUpdated();
   }
 
   void _updateIsTaken() async {
@@ -166,7 +176,9 @@ class _IsTakeMedicineState extends State<_IsTakeMedicine> {
               borderRadius: BorderRadius.circular(15.0),
               border: Border.all(
                 width: 2.0,
-                color: _isChecked ? const Color(0xFFA6CBA5) : const Color(0xFFEFB8B2),
+                color: _isChecked
+                    ? const Color(0xFFA6CBA5)
+                    : const Color(0xFFEFB8B2),
               ),
             ),
             child: Row(
