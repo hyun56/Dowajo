@@ -4,7 +4,7 @@ import 'package:dowajo/components/models/medicine.dart';
 
 class DatabaseHelper {
   static const _databaseName = "MedicineDatabase.db";
-  static const _databaseVersion = 1;
+  static const _databaseVersion = 3;
 
   static const table = 'medicine_table';
 
@@ -39,9 +39,9 @@ class DatabaseHelper {
 
   // Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
   //   if (newVersion > oldVersion) {
-  //     // 기존에 medicineTime 컬럼이 없었다면 추가합니다.
+  //     // 기존에 isTaken 컬럼이 없었다면 추가합니다.
   //     await db.execute(
-  //         "ALTER TABLE $table ADD COLUMN $columnTime TEXT NOT NULL DEFAULT ''");
+  //         "ALTER TABLE $table ADD COLUMN isTaken INTEGER NOT NULL DEFAULT 0");
   //   }
   // }
 
@@ -53,7 +53,8 @@ class DatabaseHelper {
             $columnPicture TEXT NOT NULL,
             $columnDay TEXT NOT NULL,
             $columnRepeat INTEGER NOT NULL,
-            $columnTime TEXT NOT NULL
+            $columnTime TEXT NOT NULL,
+            isTaken INTEGER NOT NULL DEFAULT 0
           )
           ''');
   }
@@ -96,5 +97,39 @@ class DatabaseHelper {
       where: '$columnId = ?',
       whereArgs: [id],
     );
+  }
+
+  Future<bool> getIsTaken(int id) async {
+    // 복용 완료 상태 가져오기
+    final db = await database;
+    final maps = await db!.query(
+      table,
+      where: '$columnId = ?',
+      whereArgs: [id],
+    );
+
+    if (maps.isNotEmpty) {
+      return maps.first['isTaken'] == 1;
+    } else {
+      return false;
+    }
+  }
+
+  Future<void> updateIsTaken(int id, bool isTaken) async {
+    Database? db = await instance.database;
+    await db!.update(
+      table,
+      {'isTaken': isTaken ? 1 : 0},
+      where: '$columnId = ?',
+      whereArgs: [id],
+    );
+  }
+
+  Future<int?> getRemainingMedicineCount() async {
+    final db = await database;
+    final result = await db!
+        .rawQuery('SELECT COUNT(*) FROM medicine_table WHERE isTaken = 0');
+    int? count = Sqflite.firstIntValue(result);
+    return count;
   }
 }
