@@ -7,6 +7,7 @@ import 'package:dowajo/components/calendar/calendar.dart';
 import 'package:dowajo/components/calendar/schedule.dart';
 import 'package:dowajo/components/calendar/today_banner.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
 class medicineRecord extends StatefulWidget {
   const medicineRecord({super.key});
@@ -160,6 +161,12 @@ class ScheduleCardListViewer extends StatelessWidget {
                   scheduleTime: scheduleTime,
                   medicineName: medicineList[index].medicineName,
                   id: medicineList[index].id!,
+                  // onTakenUpdated 콜백 함수 추가
+                  onTakenUpdated: () {
+                    // 복용 완료 상태가 변경될 때마다 updateMedicineData 호출
+                    Provider.of<MedicineModel>(context, listen: false)
+                        .updateMedicineData(selectedDay.weekday);
+                  },
                 );
               });
         }

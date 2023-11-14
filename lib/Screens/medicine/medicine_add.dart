@@ -2,10 +2,12 @@
 
 import 'dart:io';
 
+import 'package:dowajo/components/calendar/today_banner.dart';
 import 'package:dowajo/components/weekday_buttons.dart';
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import '../../components/models/medicine.dart';
 import 'package:dowajo/database/medicine_database.dart';
 
@@ -404,7 +406,7 @@ class _medicine_addState extends State<medicine_add> {
       width: 350,
       height: 55,
       child: GestureDetector(
-        onTap: () {
+        onTap: () async {
           if (_medicineNameController.text.isNotEmpty &&
               selectedDays.isNotEmpty &&
               _pickedFile != null) {
@@ -417,7 +419,16 @@ class _medicine_addState extends State<medicine_add> {
               medicineTime: selectedTime.format(context),
             );
             var dbHelper = DatabaseHelper.instance;
-            dbHelper.insert(newMedicine);
+            await dbHelper.insert(newMedicine);
+
+            // 복용약 추가 후에 상태 업데이트
+            Provider.of<MedicineModel>(context, listen: false);
+            //     .updateMedicineData();
+            // for (String day in selectedDays) {
+            //   Provider.of<MedicineModel>(context, listen: false)
+            //       .updateMedicineData(day);
+            // }
+
             Navigator.of(context).pop(newMedicine);
           } else {
             // 정보가 입력되지 않았다면 경고창 띄우기
