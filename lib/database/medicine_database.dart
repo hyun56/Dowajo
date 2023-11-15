@@ -125,11 +125,25 @@ class DatabaseHelper {
     );
   }
 
-  Future<int?> getRemainingMedicineCount() async {
+  // Future<int?> getRemainingMedicineCount() async {
+  //   final db = await database;
+  //   final result = await db!
+  //       .rawQuery('SELECT COUNT(*) FROM medicine_table WHERE isTaken = 0');
+  //   int? count = Sqflite.firstIntValue(result);
+  //   return count;
+  // }
+  Future<int?> getRemainingMedicineCount(String dayOfWeek) async {
     final db = await database;
-    final result = await db!
-        .rawQuery('SELECT COUNT(*) FROM medicine_table WHERE isTaken = 0');
+    final result = await db!.rawQuery(
+        'SELECT COUNT(*) FROM $table WHERE isTaken = 0 AND medicineDay LIKE "%$dayOfWeek%"');
     int? count = Sqflite.firstIntValue(result);
     return count;
+  }
+
+  Future<int?> getMedicineCountOnDay(String dayOfWeek) async {
+    var db = await database;
+    var result = await db!.rawQuery(
+        'SELECT COUNT(*) FROM Medicine WHERE medicineDay LIKE "%$dayOfWeek%"');
+    return Sqflite.firstIntValue(result);
   }
 }

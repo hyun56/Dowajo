@@ -1,12 +1,20 @@
 import 'package:dowajo/Screens/home_screen.dart';
+import 'package:dowajo/components/calendar/today_banner.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   initializeDateFormatting();
 
-  runApp(const MyApp());
+  //runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => MedicineModel(),
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
