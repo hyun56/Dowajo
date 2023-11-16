@@ -10,8 +10,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class medicineRecord extends StatefulWidget {
-  const medicineRecord({super.key});
-
+  const medicineRecord({Key? key}) : super(key: key);
   @override
   State<medicineRecord> createState() => _medicineRecordState();
 }
@@ -161,6 +160,8 @@ class ScheduleCardListViewer extends StatelessWidget {
                   scheduleTime: scheduleTime,
                   medicineName: medicineList[index].medicineName,
                   id: medicineList[index].id!,
+                  date: selectedDay, // date 인자 추가
+
                   // onTakenUpdated 콜백 함수 추가
                   onTakenUpdated: () {
                     // 복용 완료 상태가 변경될 때마다 updateMedicineData 호출

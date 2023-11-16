@@ -420,6 +420,8 @@ class _medicine_addState extends State<medicine_add> {
               medicineDay: selectedDays.join(','),
               medicineRepeat: selectedRepeat,
               medicineTime: selectedTime.format(context),
+               takenDates: {},
+            
             );
             var dbHelper = DatabaseHelper.instance;
             await dbHelper.insert(newMedicine);
@@ -465,8 +467,12 @@ class _medicine_addState extends State<medicine_add> {
                 );
               },
             );
+            
           }
+          
         },
+      
+        
         child: ElevatedButton(
           onPressed: null, // onPressed를 null로 설정하여 버튼을 비활성화
           style: ButtonStyle(
