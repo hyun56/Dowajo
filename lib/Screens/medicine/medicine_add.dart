@@ -265,17 +265,37 @@ class _medicine_addState extends State<medicine_add> {
           )
         else
           Center(
-            child: Container(
-              width: imageSize,
-              height: imageSize,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                    width: 3, color: Color.fromARGB(255, 217, 217, 217)),
-                image: DecorationImage(
-                    image: FileImage(File(_pickedFile!.path)),
-                    fit: BoxFit.cover),
-              ),
+            child: GestureDetector(
+              onTap: _showBottomSheet,
+              child: _pickedFile == null
+                  ? Container(
+                      constraints: BoxConstraints(
+                        minHeight: imageSize,
+                        minWidth: imageSize,
+                      ),
+                      child: Center(
+                        child: Image.asset(
+                          'repo/icons/photo.png',
+                          width: 75.0,
+                          height: 75.0,
+                        ),
+                      ),
+                    )
+                  : Center(
+                      child: Container(
+                        width: imageSize,
+                        height: imageSize,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              width: 3,
+                              color: Color.fromARGB(255, 217, 217, 217)),
+                          image: DecorationImage(
+                              image: FileImage(File(_pickedFile!.path)),
+                              fit: BoxFit.cover),
+                        ),
+                      ),
+                    ),
             ),
           ),
       ],
