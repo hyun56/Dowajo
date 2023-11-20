@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:dowajo/components/models/medicine.dart';
@@ -16,7 +14,6 @@ class DatabaseHelper {
   static const columnDay = 'medicineDay';
   static const columnRepeat = 'medicineRepeat';
   static const columnTime = 'medicineTime';
-  static const columnTakenDates = 'takenDates'; // takenDates 컬럼 추가
 
   // Singleton class
   DatabaseHelper._privateConstructor();
@@ -57,7 +54,7 @@ class DatabaseHelper {
             $columnDay TEXT NOT NULL,
             $columnRepeat INTEGER NOT NULL,
             $columnTime TEXT NOT NULL,
-            $columnTakenDates TEXT NOT NULL DEFAULT '{}'
+            isTaken INTEGER NOT NULL DEFAULT 0
           )
           ''');
   }
@@ -79,9 +76,6 @@ class DatabaseHelper {
         medicineDay: maps[i]['medicineDay'],
         medicineRepeat: maps[i]['medicineRepeat'],
         medicineTime: maps[i]['medicineTime'],
-        takenDates: (jsonDecode(maps[i][columnTakenDates].toString()) as Map)
-            .map((key, value) => MapEntry(
-                key, value == 1)), // takenDates 필드를 올바르게 읽어오고, JSON 문자열을 맵으로 변환
       );
     });
   }
@@ -105,7 +99,7 @@ class DatabaseHelper {
     );
   }
 
-  Future<bool> getIsTaken(int id, String dateStr) async {
+  Future<bool> getIsTaken(int id) async {
     // 복용 완료 상태 가져오기
     final db = await database;
     final maps = await db!.query(
@@ -115,38 +109,20 @@ class DatabaseHelper {
     );
 
     if (maps.isNotEmpty) {
-      Map<String, bool> takenDates =
-          (jsonDecode(maps.first[columnTakenDates].toString()) as Map)
-              .map((key, value) => MapEntry(key, value == 1));
-      return takenDates[dateStr] ?? false;
+      return maps.first['isTaken'] == 1;
     } else {
       return false;
     }
   }
 
-  Future<void> updateIsTaken(int id, String dateStr, bool isTaken) async {
+  Future<void> updateIsTaken(int id, bool isTaken) async {
     Database? db = await instance.database;
-    final maps = await db!.query(
+    await db!.update(
       table,
+      {'isTaken': isTaken ? 1 : 0},
       where: '$columnId = ?',
       whereArgs: [id],
     );
-
-    if (maps.isNotEmpty) {
-      Map<String, bool> takenDates =
-          (jsonDecode(maps.first[columnTakenDates].toString()) as Map)
-              .map((key, value) => MapEntry(key, value == 1));
-      takenDates[dateStr] = isTaken;
-      await db.update(
-        table,
-        {
-          columnTakenDates: jsonEncode(
-              takenDates.map((key, value) => MapEntry(key, value ? 1 : 0)))
-        },
-        where: '$columnId = ?',
-        whereArgs: [id],
-      );
-    }
   }
 
   // Future<int?> getRemainingMedicineCount() async {
@@ -169,35 +145,5 @@ class DatabaseHelper {
     var result = await db!.rawQuery(
         'SELECT COUNT(*) FROM Medicine WHERE medicineDay LIKE "%$dayOfWeek%"');
     return Sqflite.firstIntValue(result);
-  }
-
-  Future<Map<String, bool>> getTakenDates(int id) async {
-    // takenDates 가져오기
-    final db = await database;
-    final maps = await db!.query(
-      table,
-      where: '$columnId = ?',
-      whereArgs: [id],
-    );
-
-    if (maps.isNotEmpty) {
-      return (jsonDecode(maps.first[columnTakenDates].toString()) as Map)
-          .map((key, value) => MapEntry(key, value == 1));
-    } else {
-      return {};
-    }
-  }
-
-  Future<void> updateTakenDates(int id, Map<String, bool> takenDates) async {
-    Database? db = await instance.database;
-    await db!.update(
-      table,
-      {
-        columnTakenDates: jsonEncode(
-            takenDates.map((key, value) => MapEntry(key, value ? 1 : 0)))
-      },
-      where: '$columnId = ?',
-      whereArgs: [id],
-    );
   }
 }

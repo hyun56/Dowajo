@@ -14,7 +14,6 @@ import 'package:dowajo/database/medicine_database.dart';
 class medicine_add extends StatefulWidget {
   const medicine_add({Key? key}) : super(key: key);
 
-
   @override
   State<medicine_add> createState() => _medicine_addState();
 }
@@ -49,7 +48,6 @@ class _medicine_addState extends State<medicine_add> {
       });
     }
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -98,14 +96,13 @@ class _medicine_addState extends State<medicine_add> {
             numOfTitle(), // 복용횟수- 타이틀
             //numOfTakeMedicine(), // 복용횟수 - 횟수 설정
             SizedBox(height: 15),
-              //복용시간 추가
-              for (int i = 1; i < selectedRepeat + 1; i++) addTime(i),
+            //복용시간 추가
+            for (int i = 1; i < selectedRepeat + 1; i++) addTime(i),
 
             SizedBox(height: 20),
             addAlram(), //알람 추가 버튼
-             //SizedBox(height: 30),
-  
-        ],
+            //SizedBox(height: 30),
+          ],
         ),
       ),
     );
@@ -268,17 +265,37 @@ class _medicine_addState extends State<medicine_add> {
           )
         else
           Center(
-            child: Container(
-              width: imageSize,
-              height: imageSize,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                    width: 3, color: Color.fromARGB(255, 217, 217, 217)),
-                image: DecorationImage(
-                    image: FileImage(File(_pickedFile!.path)),
-                    fit: BoxFit.cover),
-              ),
+            child: GestureDetector(
+              onTap: _showBottomSheet,
+              child: _pickedFile == null
+                  ? Container(
+                      constraints: BoxConstraints(
+                        minHeight: imageSize,
+                        minWidth: imageSize,
+                      ),
+                      child: Center(
+                        child: Image.asset(
+                          'repo/icons/photo.png',
+                          width: 75.0,
+                          height: 75.0,
+                        ),
+                      ),
+                    )
+                  : Center(
+                      child: Container(
+                        width: imageSize,
+                        height: imageSize,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                              width: 3,
+                              color: Color.fromARGB(255, 217, 217, 217)),
+                          image: DecorationImage(
+                              image: FileImage(File(_pickedFile!.path)),
+                              fit: BoxFit.cover),
+                        ),
+                      ),
+                    ),
             ),
           ),
       ],
@@ -420,8 +437,6 @@ class _medicine_addState extends State<medicine_add> {
               medicineDay: selectedDays.join(','),
               medicineRepeat: selectedRepeat,
               medicineTime: selectedTime.format(context),
-               takenDates: {},
-            
             );
             var dbHelper = DatabaseHelper.instance;
             await dbHelper.insert(newMedicine);
@@ -467,12 +482,8 @@ class _medicine_addState extends State<medicine_add> {
                 );
               },
             );
-            
           }
-          
         },
-      
-        
         child: ElevatedButton(
           onPressed: null, // onPressed를 null로 설정하여 버튼을 비활성화
           style: ButtonStyle(
