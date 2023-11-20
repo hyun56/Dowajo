@@ -437,6 +437,7 @@ class _medicine_addState extends State<medicine_add> {
               medicineDay: selectedDays.join(','),
               medicineRepeat: selectedRepeat,
               medicineTime: selectedTime.format(context),
+              takenDates: {},
             );
             var dbHelper = DatabaseHelper.instance;
             await dbHelper.insert(newMedicine);
