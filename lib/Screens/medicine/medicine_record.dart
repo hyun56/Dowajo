@@ -64,7 +64,9 @@ class _medicineRecordState extends State<medicineRecord> {
               focusedDay: focusedDay,
               onDaySelected: onDaySelected),
           const SizedBox(height: 15.0),
-          TodayBanner(selectedDay: selectedDay),
+          TodayBanner(
+            selectedDay: selectedDay,
+          ),
           const SizedBox(height: 18.0),
           Expanded(
             child: Padding(
@@ -115,39 +117,39 @@ class _medicineRecordState extends State<medicineRecord> {
   }
 }
 
-class ScheduleCardListViewer extends StatelessWidget {
+class ScheduleCardListViewer extends StatefulWidget {
   final DateTime selectedDay;
   const ScheduleCardListViewer({super.key, required this.selectedDay});
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return ListView.separated(
-  //       itemCount: 10,
-  //       separatorBuilder: (context, index) {
-  //         return SizedBox(height: 8.0);
-  //       },
-  //       itemBuilder: (context, index) {
-  //         return ScheduleCard(
-  //           scheduleTime: TimeOfDay(hour: 14, minute: 30),
-  //           medicineName: "감기약",
-  //         );
-  //       });
-  // }
+  @override
+  _ScheduleCardListViewerState createState() => _ScheduleCardListViewerState();
+}
+
+class _ScheduleCardListViewerState extends State<ScheduleCardListViewer> {
+  Future<List<Medicine>>? _medicineListFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _medicineListFuture = DatabaseHelper.instance.getAllMedicines();
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: DatabaseHelper.instance.getAllMedicines(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.error != null) {
-          return const Center(child: Text('An error occurred!'));
-        } else {
-          String dayOfWeek = DateFormat('E', 'ko_KR').format(selectedDay);
-          final medicineList = (snapshot.data as List<Medicine>)
-              .where((medicine) => medicine.medicineDay.contains(dayOfWeek))
-              .toList();
-          return ListView.separated(
+        future: _medicineListFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.error != null) {
+            return const Center(child: Text('An error occurred!'));
+          } else {
+            String dayOfWeek =
+                DateFormat('E', 'ko_KR').format(widget.selectedDay);
+            final medicineList = (snapshot.data as List<Medicine>)
+                .where((medicine) => medicine.medicineDay.contains(dayOfWeek))
+                .toList();
+            return ListView.separated(
               itemCount: medicineList.length,
               separatorBuilder: (context, index) {
                 return const SizedBox(height: 8.0);
@@ -157,21 +159,25 @@ class ScheduleCardListViewer extends StatelessWidget {
                     DateFormat.jm().parse(medicineList[index].medicineTime);
                 final scheduleTime =
                     TimeOfDay(hour: time.hour, minute: time.minute);
+
                 return ScheduleCard(
                   scheduleTime: scheduleTime,
                   medicineName: medicineList[index].medicineName,
                   id: medicineList[index].id!,
-                  date: selectedDay,
-                  // onTakenUpdated 콜백 함수 추가
-                  onTakenUpdated: () {
-                    // 복용 완료 상태가 변경될 때마다 updateMedicineData 호출
-                    Provider.of<MedicineModel>(context, listen: false)
-                        .updateMedicineData(selectedDay.weekday);
+                  date: widget.selectedDay,
+                  onTakenUpdated: () async {
+                    // 복용 완료 상태가 변경될 때마다 _medicineListFuture 업데이트
+                    setState(() {
+                      _medicineListFuture =
+                          DatabaseHelper.instance.getAllMedicines();
+                    });
+                    await Provider.of<MedicineModel>(context, listen: false)
+                        .updateMedicineData(widget.selectedDay.weekday);
                   },
                 );
-              });
-        }
-      },
-    );
+              },
+            );
+          }
+        });
   }
 }
