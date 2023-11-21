@@ -15,19 +15,22 @@ class DatabaseHelper {
   static const columnRepeat = 'medicineRepeat';
   static const columnTime = 'medicineTime';
 
-  // Singleton class
+  // Singleton class, 생성자
   DatabaseHelper._privateConstructor();
   static final DatabaseHelper instance = DatabaseHelper._privateConstructor();
 
-  // Database reference
+  // Database reference, 인스턴스 가져오는 메소드
   static Database? _database;
+
+// 데이터 로딩
   Future<Database?> get database async {
     if (_database != null) return _database;
     _database = await _initDatabase();
     return _database;
   }
 
-  _initDatabase() async {
+// 데이터베이스 초기화 메소드
+  Future<Database> _initDatabase() async {
     String path = join(await getDatabasesPath(), _databaseName);
     return await openDatabase(
       path,
@@ -58,11 +61,13 @@ class DatabaseHelper {
           ''');
   }
 
+// 데이터 추가
   Future<int> insert(Medicine medicine) async {
     Database? db = await instance.database;
     return await db!.insert(table, medicine.toMap());
   }
 
+// 데이터 조회
   Future<List<Medicine>> getAllMedicines() async {
     Database? db = await instance.database;
     final List<Map<String, dynamic>> maps = await db!.query(table);
@@ -79,16 +84,18 @@ class DatabaseHelper {
     });
   }
 
+// 데이터 수정
   Future<int> update(Medicine medicine) async {
     Database? db = await instance.database;
     return await db!.update(
       table,
       medicine.toMap(),
-      where: '$columnId = ?',
-      whereArgs: [medicine.id],
+      where: '$columnId = ?', // 수정 데이터 조건 설정
+      whereArgs: [medicine.id], // 수정 데이터 조건 값
     );
   }
 
+//  데이터 삭제
   Future<int> delete(int id) async {
     Database? db = await instance.database;
     return await db!.delete(

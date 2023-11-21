@@ -103,19 +103,18 @@ class _WeekdayButtonsState extends State<WeekdayButtons> {
                         onPressed: () {
                           setState(() {
                             selectedButtons[e.key] = !selectedButtons[e.key];
-                            isAllDaysSelected = selectedButtons.every(
-                                (isSelected) =>
-                                    isSelected); // 모든 버튼이 선택된 상태이면 '매일' 스위치를 켜고, 그렇지 않으면 끄기
+                            isAllDaysSelected = selectedButtons
+                                .every((isSelected) => isSelected);
 
-                            // 선택된 요일을 selectedDays 리스트에 저장하거나 제거
-                            if (selectedButtons[e.key]) {
-                              selectedDays.add(e.value);
-                            } else {
-                              selectedDays.remove(e.value);
+                            selectedDays = [];
+                            for (int i = 0; i < selectedButtons.length; i++) {
+                              if (selectedButtons[i]) {
+                                selectedDays.add(
+                                    ['일', '월', '화', '수', '목', '금', '토'][i]);
+                              }
                             }
                           });
 
-                          // selectedDays가 변경되었음을 알림
                           widget.onSelectedDaysChanged(selectedDays);
                         },
                         style: ButtonStyle(

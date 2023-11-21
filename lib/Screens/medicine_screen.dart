@@ -5,11 +5,17 @@ import 'dart:io';
 import 'package:dowajo/Screens/medicine/medicine_record.dart';
 import 'package:dowajo/Screens/medicine/medicine_update.dart';
 import 'package:dowajo/components/models/medicine.dart';
+
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'medicine/medicine_add.dart';
 
 import 'package:dowajo/database/medicine_database.dart';
+
+import 'dart:async';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:dowajo/Screens/medicine/medicine_notificationalarm.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class MedicineScreen extends StatefulWidget {
   const MedicineScreen({super.key});
@@ -23,11 +29,78 @@ class _MedicineScreen extends State<MedicineScreen> {
   late Future<List<Medicine>> futureMedicines;
   int _currentIndex = 0;
 
+  int _counter = 0; // _counter 변수를 0으로 초기화
+  int _targetNumber = 10; // _targetNumber 변수를 10으로 초기화
+  Timer? _timer; // 타이머를 선언
+
   @override
   void initState() {
     super.initState();
     futureMedicines = dbHelper.getAllMedicines();
+    _requestNotificationPermissions(); // 알림 권한 요청
   }
+
+  void _requestNotificationPermissions() async {
+    //알림 권한 요청
+    final status = await NotificationService().requestNotificationPermissions();
+    if (status.isDenied && context.mounted) {
+      showDialog(
+        // 알림 권한이 거부되었을 경우 다이얼로그 출력
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('알림 권한이 거부되었습니다.'),
+          content: Text('알림을 받으려면 앱 설정에서 권한을 허용해야 합니다.'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('설정'), //다이얼로그 버튼의 죄측 텍스트
+              onPressed: () {
+                Navigator.of(context).pop();
+                openAppSettings(); //설정 클릭시 권한설정 화면으로 이동
+              },
+            ),
+            TextButton(
+              child: Text('취소'), //다이얼로그 버튼의 우측 텍스트
+              onPressed: () => Navigator.of(context).pop(), //다이얼로그 닫기)
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  void _resetCounter() {
+    setState(() {
+      _counter = 0; // _counter 변수를 0으로 초기화
+    });
+  }
+
+  void _toggleTimer() {
+    // 타이머 시작/정지 기능
+    if (_timer?.isActive == true) {
+      _stopTimer();
+    } else {
+      _startTimer();
+    }
+  }
+
+  void _startTimer() {
+    //타이머 시작
+    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      setState(() {
+        _counter++;
+        if (_counter == _targetNumber) {
+          NotificationService().showNotification(_targetNumber);
+          _stopTimer();
+        }
+      });
+    });
+  }
+
+  void _stopTimer() {
+    //타이머 정지
+    _timer?.cancel();
+  }
+}
 
   void _onItemTapped(int index) {
     setState(() {
