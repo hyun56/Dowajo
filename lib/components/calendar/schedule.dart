@@ -87,7 +87,7 @@ class _ScheduleCardState extends State<ScheduleCard> {
                   width: 8.0,
                   decoration: BoxDecoration(
                     color: _isChecked
-                        ? const Color(0xFFA6CBA5)
+                        ? const Color(0xFFA6CBA5) //const Color(0xFFA6CBA5)
                         : const Color(0xFFEFB8B2), // 체크 여부에 따른 컬러 변경
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(4.0),
@@ -141,14 +141,14 @@ class _IsTakeMedicine extends StatefulWidget {
   final String medicineName;
   final ValueChanged<bool?> onChecked;
   final int id;
-  final DateTime date; 
+  final DateTime date;
   final VoidCallback onTakenUpdated;
 
   const _IsTakeMedicine({
     required this.medicineName,
     required this.onChecked,
-    required this.id, 
-    required this.date, 
+    required this.id,
+    required this.date,
     required this.onTakenUpdated,
     Key? key,
   }) : super(key: key);
@@ -171,13 +171,23 @@ class _IsTakeMedicineState extends State<_IsTakeMedicine> {
     _loadIsTaken();
   }
 
+  @override
+  void didUpdateWidget(covariant _IsTakeMedicine oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // _IsTakeMedicine 위젯의 상태가 변경되었을 때 복용 완료 상태 불러오기
+    if (oldWidget.id != widget.id || oldWidget.date != widget.date) {
+      _loadIsTaken();
+    }
+  }
+
   Future<void> _loadIsTaken() async {
     String dateStr = DateFormat('yyyy-MM-dd').format(widget.date);
 
     bool isTaken = await dbHelper.getIsTaken(widget.id, dateStr);
     setState(() {
       _isChecked = isTaken;
-      _isTaked = isTaken ? '복용 완료' : '복용 완료';
+      _isTaked = _isChecked ? '복용 완료' : '복용 완료';
     });
   }
 
