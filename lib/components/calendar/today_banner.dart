@@ -96,6 +96,8 @@ class MedicineModel extends ChangeNotifier {
         .where((medicine) => medicine.medicineDay.contains(dayOfWeekStr))
         .length;
 
+    allMedicines = await DatabaseHelper.instance.getAllMedicines();
+
     notifyListeners();
   }
 }
