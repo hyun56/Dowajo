@@ -424,6 +424,7 @@ class _medicineUpdateState extends State<medicineUpdate> {
               medicineDay: selectedDays.join(','),
               medicineRepeat: selectedRepeat,
               medicineTime: selectedTime.format(context),
+              takenDates: {},
             );
             var dbHelper = DatabaseHelper.instance;
             dbHelper.update(updatedMedicine);

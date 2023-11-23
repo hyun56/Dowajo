@@ -7,6 +7,7 @@ import 'package:dowajo/Screens/medicine/medicine_update.dart';
 import 'package:dowajo/components/models/medicine.dart';
 
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'home_screen.dart';
 import 'medicine/medicine_add.dart';
 
@@ -15,7 +16,22 @@ import 'package:dowajo/database/medicine_database.dart';
 import 'dart:async';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:dowajo/Screens/medicine/medicine_notificationalarm.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:timezone/timezone.dart' as tz;
+import 'package:timezone/data/latest.dart' as tz;
+
+
+List<String> weekDays = ['일', '월', '화', '수', '목', '금', '토'];
+Map<String, int> weekDayToNumber = {
+  '일': 1,
+  '월': 2,
+  '화': 3,
+  '수': 4,
+  '목': 5,
+  '금': 6,
+  '토': 7,
+};
 
 class MedicineScreen extends StatefulWidget {
   const MedicineScreen({super.key});
@@ -28,10 +44,6 @@ class _MedicineScreen extends State<MedicineScreen> {
   var dbHelper = DatabaseHelper.instance;
   late Future<List<Medicine>> futureMedicines;
   int _currentIndex = 0;
-
-  int _counter = 0; // _counter 변수를 0으로 초기화
-  int _targetNumber = 10; // _targetNumber 변수를 10으로 초기화
-  Timer? _timer; // 타이머를 선언
 
   @override
   void initState() {
@@ -68,37 +80,98 @@ class _MedicineScreen extends State<MedicineScreen> {
     }
   }
 
-  void _resetCounter() {
-    setState(() {
-      _counter = 0; // _counter 변수를 0으로 초기화
-    });
-  }
+  // 푸시 알림 생성, 이 함수 원하는 곳에서 실행하면 알림 뜸
+  Future<void> showNotification(int targetNumber) async {
+    // 푸시 알림의 ID
+    const int notificationId = 0;
+    final result; //권한 확인을 위한 변수
 
-  void _toggleTimer() {
-    // 타이머 시작/정지 기능
-    if (_timer?.isActive == true) {
-      _stopTimer();
-    } else {
-      _startTimer();
+    //플랫폼 확인해서 OS 종류에 따라 권한 확인
+    //안드로이드 일때
+    if (Platform.isAndroid) {
+      result = true;
     }
-  }
+    //IOS 일때
+    else {
+      result = await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: true,
+            badge: true,
+            sound: true,
+          );
+    }
 
-  void _startTimer() {
-    //타이머 시작
-    _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      setState(() {
-        _counter++;
-        if (_counter == _targetNumber) {
-          NotificationService().showNotification(_targetNumber);
-          _stopTimer();
+    // 알림 채널 설정값 구성
+    const AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+      'counter_channel', // 알림 채널 ID
+      'Counter Channel', // 알림 채널 이름
+      channelDescription: 'description', // 알람 내용
+
+      priority: Priority.high,
+      // 알림 채널 설명
+      importance: Importance.high, // 알림 중요도
+      color: Color.fromARGB(255, 255, 0, 0),
+      // Notification Icon 배경색
+    );
+
+    const DarwinNotificationDetails iosNotificationDetails =
+        DarwinNotificationDetails(
+      presentAlert: true,
+      presentBadge: true,
+      presentSound: true,
+    );
+
+    // 알림 상세 정보 설정
+    const NotificationDetails notificationDetails = NotificationDetails(
+        android: androidNotificationDetails, iOS: iosNotificationDetails);
+
+    //알람 시간 세팅
+    tz.TZDateTime _setNotiTime() {
+      tz.initializeTimeZones(); //TimeZone Database 초기화
+      tz.setLocalLocation(tz.getLocation('Asia/Seoul')); //TimeZone 설정(외국은 다르게!)
+      final now = tz.TZDateTime.now(tz.local);
+      var scheduledDate =
+          tz.TZDateTime(tz.local, now.year, now.month, 13, 06, 30); //알람 시간
+      //var test = tz.TZDateTime.now(tz.local).add(const Duration (seconds: 5));
+      print('-----------알람 시간 체크----${scheduledDate.toString()}');
+      return scheduledDate;
+    }
+
+    //알림 보이기, 권한이 있으면 실행.
+    if (result == true) {
+      await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
+          ?.deleteNotificationChannelGroup('id');
+
+      await flutterLocalNotificationsPlugin.zonedSchedule(
+        notificationId, // 스케줄 ID(고유)
+        'title', //알람 제목
+        'description', //알람 내용
+        _setNotiTime(), //알람 시간
+        notificationDetails,
+        payload: '부가정보', // 부가정보
+        androidAllowWhileIdle: true,
+        uiLocalNotificationDateInterpretation:
+            UILocalNotificationDateInterpretation.absoluteTime,
+        //옵션 값에따라 시간만 맞춰서 작동할지, 월,일,시간 모두 맞춰서 작동할지 옵션 설정
+        matchDateTimeComponents: DateTimeComponents.dayOfMonthAndTime,
+      );
+
+      makeDate(hour, min, sec) {
+        var now = tz.TZDateTime.now(tz.local);
+        var when = tz.TZDateTime(
+            tz.local, now.year, now.month, now.day, hour, min, sec);
+        if (when.isBefore(now)) {
+          return when.add(Duration(days: 1));
+        } else {
+          return when;
         }
-      });
-    });
-  }
-
-  void _stopTimer() {
-    //타이머 정지
-    _timer?.cancel();
+      }
+    }
   }
 }
 
@@ -115,27 +188,23 @@ class _MedicineScreen extends State<MedicineScreen> {
       body: Column(
         children: <Widget>[
           _AppBar(),
-
-          //_WeeklyScroll(),
-          //_MedicineData(),r
-
           Expanded(
             flex: 10,
             child: Column(
               children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 15.0),
-                    child: Text(
-                      "알람",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black),
-                    ),
-                  ),
-                ),
+                // Align(
+                //   alignment: Alignment.topLeft,
+                //   child: Padding(
+                //     padding: const EdgeInsets.only(left: 15.0),
+                //     child: Text(
+                //       "알람",
+                //       style: TextStyle(
+                //           fontSize: 20,
+                //           fontWeight: FontWeight.bold,
+                //           color: Colors.black),
+                //     ),
+                //   ),
+                // ),
                 Expanded(
                   child: FutureBuilder<List<Medicine>>(
                     future: futureMedicines, // 데이터베이스에서 모든 약 정보를 가져오는 Future
@@ -208,126 +277,227 @@ class _MedicineScreen extends State<MedicineScreen> {
                                   ),
                                 ),
                               ),
-                              Spacer(flex: 2),
+                              Spacer(flex: 1),
                             ],
                           );
                         }
 
                         // 데이터가 있을 때
                         List<Medicine>? medicines = snapshot.data;
+
                         return ListView.builder(
                           itemCount: medicines!.length,
                           itemBuilder: (BuildContext context, int index) {
-                            return ListTile(
-                              title: Text(medicines[index].medicineName),
-                              subtitle: Text(
-                                  '복용 일자: ${medicines[index].medicineDay}, 복용 시간: ${medicines[index].medicineTime}'),
-                              leading: Image.file(
-                                  File(medicines[index].medicinePicture)),
-                              onTap: () {
-                                showModalBottomSheet(
-                                  context: context,
-                                  shape: const RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.vertical(
-                                      top: Radius.circular(25),
-                                    ),
-                                  ),
-                                  builder: (context) {
-                                    return Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        const SizedBox(height: 15),
-                                        ElevatedButton(
-                                          onPressed: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    medicineUpdate(
-                                                        medicine:
-                                                            medicines[index]),
-                                              ),
-                                            ).then((_) {
-                                              // 수정 페이지에서 돌아온 후
-                                              setState(() {
-                                                // 화면을 갱신
-                                                futureMedicines =
-                                                    dbHelper.getAllMedicines();
-                                              });
-                                            });
-                                            /*Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      MedicineUpdatePage()),
-                                            );*/
-                                            // 수정하기 기능 구현
-                                            // Navigator.of(context).pop();
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            elevation: 0,
-                                            backgroundColor: Colors.transparent,
-                                            minimumSize: Size(
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                60),
-                                          ),
-                                          child: const Text('수정하기'),
-                                        ),
-                                        const SizedBox(height: 5),
-                                        const Divider(thickness: 4),
-                                        const SizedBox(height: 10),
-                                        ElevatedButton(
-                                          onPressed: () async {
-                                            // id가 null인지 확인
-                                            if (medicines[index].id != null) {
-                                              // id가 null이 아니라면 삭제
-                                              await DatabaseHelper.instance
-                                                  .delete(medicines[index].id!);
+                            final dt = DateFormat.jm()
+                                .parse(medicines[index].medicineTime);
+                            final newFormat = DateFormat('a h:mm', 'ko_KR');
+                            final koreanTime = newFormat.format(dt);
 
-                                              // 삭제가 완료되면 FutureBuilder를 다시 빌드
-                                              setState(() {
-                                                futureMedicines =
-                                                    dbHelper.getAllMedicines();
-                                              });
-                                            }
-                                            Navigator.of(context).pop();
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            elevation: 0,
-                                            backgroundColor: Colors.transparent,
-                                            minimumSize: Size(
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                60),
-                                          ),
-                                          child: const Text('삭제하기'),
+                            // 복용 요일 가져오기
+                            List<String> medicineDays =
+                                medicines[index].medicineDay.split(',');
+
+                            // 복용 요일을 숫자로 변환
+                            List<int> medicineDaysNumbers = medicineDays
+                                .map((day) => weekDayToNumber[day]!)
+                                .toList();
+
+                            // 숫자를 기준으로 복용 요일 정렬
+                            medicineDaysNumbers.sort();
+
+                            // 숫자를 다시 요일로 변환
+                            List<String> sortedMedicineDays =
+                                medicineDaysNumbers
+                                    .map((number) => weekDays[number - 1])
+                                    .toList();
+
+                            // 복용 요일이 '일, 월, 화, 수, 목, 금, 토'인 경우, '매일'로 대체
+                            String displayDays = sortedMedicineDays.length == 7
+                                ? '매일'
+                                : sortedMedicineDays.join(', ');
+
+                            return Column(
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    showModalBottomSheet(
+                                      context: context,
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(25),
                                         ),
-                                        const SizedBox(height: 10),
-                                        const Divider(thickness: 4),
-                                        const SizedBox(height: 5),
-                                        ElevatedButton(
-                                          onPressed: () =>
-                                              Navigator.pop(context),
-                                          style: ElevatedButton.styleFrom(
-                                            elevation: 0,
-                                            backgroundColor: Colors.transparent,
-                                            minimumSize: Size(
-                                                MediaQuery.of(context)
-                                                    .size
-                                                    .width,
-                                                60),
-                                          ),
-                                          child: const Text('닫기'),
-                                        ),
-                                        const SizedBox(height: 18),
-                                      ],
+                                      ),
+                                      builder: (context) {
+                                        return Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const SizedBox(height: 15),
+                                            ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        medicineUpdate(
+                                                            medicine: medicines[
+                                                                index]),
+                                                  ),
+                                                ).then((_) {
+                                                  // 수정 페이지에서 돌아온 후
+                                                  setState(() {
+                                                    // 화면을 갱신
+                                                    futureMedicines = dbHelper
+                                                        .getAllMedicines();
+                                                  });
+                                                });
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                elevation: 0,
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                minimumSize: Size(
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width,
+                                                    60),
+                                              ),
+                                              child: const Text('수정하기'),
+                                            ),
+                                            const SizedBox(height: 5),
+                                            const Divider(thickness: 4),
+                                            const SizedBox(height: 10),
+                                            ElevatedButton(
+                                              onPressed: () async {
+                                                // id가 null인지 확인
+                                                if (medicines[index].id !=
+                                                    null) {
+                                                  // id가 null이 아니라면 삭제
+                                                  await DatabaseHelper.instance
+                                                      .delete(
+                                                          medicines[index].id!);
+
+                                                  // 삭제가 완료되면 FutureBuilder를 다시 빌드
+                                                  setState(() {
+                                                    futureMedicines = dbHelper
+                                                        .getAllMedicines();
+                                                  });
+                                                }
+                                                Navigator.of(context).pop();
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                elevation: 0,
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                minimumSize: Size(
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width,
+                                                    60),
+                                              ),
+                                              child: const Text('삭제하기'),
+                                            ),
+                                            const SizedBox(height: 10),
+                                            const Divider(thickness: 4),
+                                            const SizedBox(height: 5),
+                                            ElevatedButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              style: ElevatedButton.styleFrom(
+                                                elevation: 0,
+                                                backgroundColor:
+                                                    Colors.transparent,
+                                                minimumSize: Size(
+                                                    MediaQuery.of(context)
+                                                        .size
+                                                        .width,
+                                                    60),
+                                              ),
+                                              child: const Text('닫기'),
+                                            ),
+                                            const SizedBox(height: 18),
+                                          ],
+                                        );
+                                      },
                                     );
                                   },
-                                );
-                              },
+                                  child: Container(
+                                    margin: EdgeInsets.all(3),
+                                    padding: EdgeInsets.all(6),
+                                    /*decoration: BoxDecoration(
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),*/
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(width: 5),
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                                width: 3,
+                                                color: Color(0xFFA6CBA5)),
+                                          ),
+                                          child: ClipOval(
+                                            child: Image.file(
+                                              File(medicines[index]
+                                                  .medicinePicture),
+                                              width: 65,
+                                              height: 65,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(width: 16),
+                                        Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment: CrossAxisAlignment
+                                              .start, // 텍스트를 왼쪽 정렬
+                                          children: [
+                                            Text(
+                                              medicines[index].medicineName,
+                                              style: TextStyle(
+                                                  fontSize: 22,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color.fromARGB(
+                                                      255, 136, 171, 134)),
+                                            ),
+                                            SizedBox(height: 4),
+                                            /*Text(
+                                          '복용 시간: ${medicines[index].medicineTime}',
+                                          style: TextStyle(fontSize: 18),
+                                        ),*/
+                                            Text(
+                                              koreanTime,
+                                              style: TextStyle(
+                                                  fontSize: 17,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color.fromARGB(
+                                                      221, 53, 53, 53)),
+                                            ),
+                                            SizedBox(height: 2),
+                                            //Text('복용 요일: '),
+                                            Text(
+                                              displayDays,
+                                              style: TextStyle(fontSize: 16),
+                                            ),
+                                            SizedBox(height: 2),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                if (index != medicines.length - 1)
+                                  Divider(
+                                    color: Color.fromARGB(255, 236, 236, 236),
+                                    thickness: 2.0,
+                                  ),
+                              ],
                             );
                           },
                         );
@@ -402,6 +572,7 @@ class _MedicineScreen extends State<MedicineScreen> {
           ),
         ],
         currentIndex: _currentIndex,
+        selectedItemColor: Color(0xFFA6CBA5),
         onTap: (int index) {
           _onItemTapped(index);
           if (_currentIndex == 0 && index == 0) {

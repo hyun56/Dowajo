@@ -1,35 +1,101 @@
+import 'package:dowajo/components/models/medicine.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:dowajo/database/medicine_database.dart';
+import 'package:provider/provider.dart';
 
-class TodayBanner extends StatelessWidget {
+class TodayBanner extends StatefulWidget {
   final DateTime selectedDay;
 
-  TodayBanner({
+  const TodayBanner({
     required this.selectedDay,
     Key? key,
   }) : super(key: key);
 
   @override
+  _TodayBannerState createState() => _TodayBannerState();
+}
+
+class _TodayBannerState extends State<TodayBanner> {
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<MedicineModel>(context, listen: false)
+        .updateMedicineData(widget.selectedDay.weekday);
+  }
+
+  @override
+  void didUpdateWidget(TodayBanner oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedDay != oldWidget.selectedDay) {
+      Provider.of<MedicineModel>(context, listen: false)
+          .updateMedicineData(widget.selectedDay.weekday);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final textStyle =
+    const textStyle =
         TextStyle(fontWeight: FontWeight.w600, color: Colors.white);
+
+    var medicineModel = Provider.of<MedicineModel>(context);
+    String dayOfWeek = DateFormat('E', 'ko_KR').format(widget.selectedDay);
+
+    final medicineCount = medicineModel.allMedicines
+        .where((medicine) => medicine.medicineDay.contains(dayOfWeek))
+        .length;
+
+    int remainingMedicineCount = medicineModel.allMedicines
+        .where((medicine) =>
+            medicine.medicineDay.contains(dayOfWeek) &&
+            (!(medicine.takenDates[
+                    DateFormat('yyyy-MM-dd').format(widget.selectedDay)] ??
+                false)))
+        .length;
+
     return Container(
       height: 40,
-      color: Colors.lightGreen,
-      padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+      color: const Color(0xFFA6CBA5),
+      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            '${selectedDay.year}년 ${selectedDay.month}월 '
-            '${selectedDay.day}일',
+            '${widget.selectedDay.year}년 ${widget.selectedDay.month}월 '
+            '${widget.selectedDay.day}일',
             style: textStyle,
           ),
           Text(
-            '남은 복용 일정 | 5건',
+            '남은 복용 일정  |  $remainingMedicineCount / $medicineCount 건',
             style: textStyle,
           ),
         ],
       ),
     );
+  }
+}
+
+class MedicineModel extends ChangeNotifier {
+  List<Medicine> allMedicines = [];
+  int dayOfWeek = DateTime.now().weekday;
+  int remainingMedicineCount = 0;
+
+  String convertDayOfWeek(int dayOfWeek) {
+    List<String> weekdays = ['일', '월', '화', '수', '목', '금', '토'];
+    return weekdays[dayOfWeek - 1];
+  }
+
+  Future<void> updateMedicineData(int selectedDayOfWeek) async {
+    String dayOfWeekStr = convertDayOfWeek(selectedDayOfWeek);
+
+    // 리스트 업데이트를 동기적으로 실행
+    allMedicines = await DatabaseHelper.instance.getAllMedicines();
+
+    // remainingMedicineCount 업데이트 로직 추가
+    remainingMedicineCount = allMedicines
+        .where((medicine) => medicine.medicineDay.contains(dayOfWeekStr))
+        .length;
+
+    notifyListeners();
   }
 }

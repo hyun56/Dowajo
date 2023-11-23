@@ -12,6 +12,7 @@ import Flutter
             UNUserNotificationCenter
                 .current()
                 .delegate = self as? UNUserNotificationCenterDelegate
+                
         } // 알림 ios 설정
 
         GeneratedPluginRegistrant.register(with
