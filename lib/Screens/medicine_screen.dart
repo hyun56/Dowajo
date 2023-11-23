@@ -210,8 +210,9 @@ class _MedicineScreen extends State<MedicineScreen> {
                                                   ),
                                                 ).then((_) {
                                                   // 수정 페이지에서 돌아온 후
+                                                  Navigator.of(context).pop();
+                                                  // 화면을 갱신
                                                   setState(() {
-                                                    // 화면을 갱신
                                                     futureMedicines = dbHelper
                                                         .getAllMedicines();
                                                   });
