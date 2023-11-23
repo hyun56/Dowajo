@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../components/models/medicine.dart';
 import 'package:dowajo/database/medicine_database.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class medicine_add extends StatefulWidget {
   const medicine_add({Key? key}) : super(key: key);
@@ -182,7 +183,7 @@ class _medicine_addState extends State<medicine_add> {
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
-        _pickedFile = _pickedFile;
+        _pickedFile = pickedFile;
       });
       Navigator.pop(context);
     } else {
@@ -219,6 +220,37 @@ class _medicine_addState extends State<medicine_add> {
         ),
       ],
     );
+  }
+
+  void requestPermission() async {
+    PermissionStatus status = await Permission.camera.status;
+
+    if (!status.isGranted) {
+      status = await Permission.camera.request();
+    }
+
+    if (status.isGranted) {
+      _showBottomSheet(); // 카메라나 갤러리를 열어 이미지를 선택하는 함수
+    } else {
+      // 권한이 거부된 경우 로직 (ex: 사용자에게 알림 표시)
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text('권한 거부'),
+            content: Text('카메라와 갤러리 접근 권한이 필요합니다.'),
+            actions: <Widget>[
+              TextButton(
+                child: Text('확인'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   Widget addPhoto() {
@@ -266,7 +298,7 @@ class _medicine_addState extends State<medicine_add> {
         else
           Center(
             child: GestureDetector(
-              onTap: _showBottomSheet,
+              onTap: requestPermission,
               child: _pickedFile == null
                   ? Container(
                       constraints: BoxConstraints(
