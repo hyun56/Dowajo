@@ -149,6 +149,14 @@ class _ScheduleCardListViewerState extends State<ScheduleCardListViewer> {
             final medicineList = (snapshot.data as List<Medicine>)
                 .where((medicine) => medicine.medicineDay.contains(dayOfWeek))
                 .toList();
+
+            // 약의 리스트를 medicineTime 속성을 기준으로 정렬
+            medicineList.sort((a, b) {
+              final timeA = DateFormat.jm().parse(a.medicineTime);
+              final timeB = DateFormat.jm().parse(b.medicineTime);
+              return timeA.compareTo(timeB);
+            });
+
             return ListView.separated(
               itemCount: medicineList.length,
               separatorBuilder: (context, index) {

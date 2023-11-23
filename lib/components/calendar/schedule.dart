@@ -123,14 +123,17 @@ class _Time extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String period = scheduleTime.period == DayPeriod.am ? '오전' : '오후';
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('복용 시각', style: textStyle.copyWith(fontSize: 10.0)),
-          Text('${scheduleTime.hour}:${scheduleTime.minute}', style: textStyle),
+          Text(period, style: textStyle.copyWith(fontSize: 14.0)),
+          Text(
+              '${scheduleTime.hourOfPeriod.toString().padLeft(2, '0')}:${scheduleTime.minute.toString().padLeft(2, '0')}',
+              style: textStyle),
         ],
       ),
     );
