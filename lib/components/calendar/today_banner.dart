@@ -17,40 +17,17 @@ class TodayBanner extends StatefulWidget {
 }
 
 class _TodayBannerState extends State<TodayBanner> {
-  int remainingMedicineCount = 0;
-
   @override
   void initState() {
     super.initState();
-    loadRemainingCount();
+    Provider.of<MedicineModel>(context, listen: false)
+        .updateMedicineData(widget.selectedDay.weekday);
   }
 
-  void loadRemainingCount() async {
-    // int? remainingCount =
-    //     await DatabaseHelper.instance.getRemainingMedicineCount();
-    // setState(() {
-    //   remainingMedicineCount = remainingCount ?? 0;
-    // });
-    String dayOfWeek = DateFormat('E', 'ko_KR').format(widget.selectedDay);
-    int? remainingCount =
-        await DatabaseHelper.instance.getRemainingMedicineCount(dayOfWeek);
-    setState(() {
-      remainingMedicineCount = remainingCount ?? 0;
-    });
-  }
-
-  // @override
-  // void didUpdateWidget(TodayBanner oldWidget) {
-  //   super.didUpdateWidget(oldWidget);
-  //   if (widget.selectedDay != oldWidget.selectedDay) {
-  //     Provider.of<MedicineModel>(context, listen: false).updateMedicineData();
-  //   }
-  // }
   @override
   void didUpdateWidget(TodayBanner oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.selectedDay != oldWidget.selectedDay) {
-      // 선택한 요일을 인자로 전달
       Provider.of<MedicineModel>(context, listen: false)
           .updateMedicineData(widget.selectedDay.weekday);
     }
@@ -61,12 +38,19 @@ class _TodayBannerState extends State<TodayBanner> {
     const textStyle =
         TextStyle(fontWeight: FontWeight.w600, color: Colors.white);
 
-    // Provider를 통해 상태를 가져옴
     var medicineModel = Provider.of<MedicineModel>(context);
     String dayOfWeek = DateFormat('E', 'ko_KR').format(widget.selectedDay);
 
     final medicineCount = medicineModel.allMedicines
         .where((medicine) => medicine.medicineDay.contains(dayOfWeek))
+        .length;
+
+    int remainingMedicineCount = medicineModel.allMedicines
+        .where((medicine) =>
+            medicine.medicineDay.contains(dayOfWeek) &&
+            (!(medicine.takenDates[
+                    DateFormat('yyyy-MM-dd').format(widget.selectedDay)] ??
+                false)))
         .length;
 
     return Container(
@@ -82,7 +66,7 @@ class _TodayBannerState extends State<TodayBanner> {
             style: textStyle,
           ),
           Text(
-            '남은 복용 일정  |  ${medicineModel.remainingMedicineCount} / $medicineCount 건',
+            '남은 복용 일정  |  $remainingMedicineCount / $medicineCount 건',
             style: textStyle,
           ),
         ],
@@ -93,29 +77,27 @@ class _TodayBannerState extends State<TodayBanner> {
 
 class MedicineModel extends ChangeNotifier {
   List<Medicine> allMedicines = [];
-  int remainingMedicineCount = 0;
   int dayOfWeek = DateTime.now().weekday;
+  int remainingMedicineCount = 0;
 
-  // 숫자로 된 요일을 문자열로 바꾸는 함수
   String convertDayOfWeek(int dayOfWeek) {
     List<String> weekdays = ['일', '월', '화', '수', '목', '금', '토'];
     return weekdays[dayOfWeek - 1];
   }
 
-  void updateMedicineData(int selectedDayOfWeek) async {
-    // dayOfWeek = DateTime.now().weekday; // dayOfWeek를 업데이트
-    // String dayOfWeekStr = convertDayOfWeek(dayOfWeek); // 숫자로 된 요일을 문자열로 바꿈
+  Future<void> updateMedicineData(int selectedDayOfWeek) async {
     String dayOfWeekStr = convertDayOfWeek(selectedDayOfWeek);
+
+    // 리스트 업데이트를 동기적으로 실행
+    allMedicines = await DatabaseHelper.instance.getAllMedicines();
+
+    // remainingMedicineCount 업데이트 로직 추가
+    remainingMedicineCount = allMedicines
+        .where((medicine) => medicine.medicineDay.contains(dayOfWeekStr))
+        .length;
 
     allMedicines = await DatabaseHelper.instance.getAllMedicines();
 
-    // // 선택한 요일에 해당하는 약의 목록만 필터링하여 그 개수를 계산
-    // remainingMedicineCount = allMedicines
-    //     .where((medicine) => medicine.medicineDay.contains(dayOfWeekStr))
-    //     .length;
-    remainingMedicineCount = (await DatabaseHelper.instance
-        .getRemainingMedicineCount(dayOfWeekStr))!;
-
-    notifyListeners(); // 상태가 변경되었음을 알림
+    notifyListeners();
   }
 }

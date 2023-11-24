@@ -1,16 +1,19 @@
 import 'package:dowajo/database/medicine_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ScheduleCard extends StatefulWidget {
   final TimeOfDay scheduleTime;
   final String medicineName;
   final int id; // 추가된 id 필드
+  final DateTime date;
   final VoidCallback onTakenUpdated; // 복용 완료 상태가 업데이트될 때 호출될 콜백 함수 추가
 
   const ScheduleCard({
     required this.scheduleTime,
     required this.medicineName,
     required this.id,
+    required this.date,
     required this.onTakenUpdated,
     Key? key,
   }) : super(key: key);
@@ -23,16 +26,51 @@ class _ScheduleCardState extends State<ScheduleCard> {
   bool _isChecked = false;
   final dbHelper = DatabaseHelper.instance;
 
+  @override
+  void initState() {
+    super.initState();
+
+    _loadIsTaken();
+  }
+
+  @override
+  void didUpdateWidget(covariant ScheduleCard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // ScheduleCard 위젯의 상태가 변경되었을 때 복용 완료 상태 불러오기
+    if (oldWidget.id != widget.id || oldWidget.date != widget.date) {
+      _loadIsTaken();
+    }
+  }
+
+  Future<void> _loadIsTaken() async {
+    try {
+      String dateStr = DateFormat('yyyy-MM-dd').format(widget.date);
+      bool isTaken = await dbHelper.getIsTaken(widget.id, dateStr);
+      setState(() {
+        _isChecked = isTaken;
+      });
+    } catch (e) {
+      print('Error loading taken status: $e');
+    }
+  }
+
   void _toggleCheckbox(bool? value) {
     setState(() {
-      _isChecked = value!;
+      _isChecked = value ?? false;
     });
+
+    String dateStr = DateFormat('yyyy-MM-dd').format(widget.date);
+    dbHelper.updateIsTaken(widget.id, dateStr, _isChecked);
+    widget.onTakenUpdated();
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<bool>(
-      future: dbHelper.getIsTaken(widget.id), // 데이터베이스에서 복용 완료 상태 불러오기
+      future: dbHelper.getIsTaken(
+          widget.id, DateFormat('yyyy-MM-dd').format(widget.date)),
+      // 데이터베이스에서 복용 완료 상태 불러오기
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const CircularProgressIndicator(); // 데이터를 불러오는 동안 로딩 인디케이터 표시
@@ -49,7 +87,7 @@ class _ScheduleCardState extends State<ScheduleCard> {
                   width: 8.0,
                   decoration: BoxDecoration(
                     color: _isChecked
-                        ? const Color(0xFFA6CBA5)
+                        ? const Color(0xFFA6CBA5) //const Color(0xFFA6CBA5)
                         : const Color(0xFFEFB8B2), // 체크 여부에 따른 컬러 변경
                     shape: BoxShape.rectangle,
                     borderRadius: BorderRadius.circular(4.0),
@@ -61,6 +99,7 @@ class _ScheduleCardState extends State<ScheduleCard> {
                   medicineName: widget.medicineName,
                   onChecked: _toggleCheckbox,
                   id: widget.id,
+                  date: widget.date,
                   onTakenUpdated: widget.onTakenUpdated,
                 ),
               ],
@@ -84,14 +123,17 @@ class _Time extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String period = scheduleTime.period == DayPeriod.am ? '오전' : '오후';
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text('복용 시각', style: textStyle.copyWith(fontSize: 10.0)),
-          Text('${scheduleTime.hour}:${scheduleTime.minute}', style: textStyle),
+          Text(period, style: textStyle.copyWith(fontSize: 14.0)),
+          Text(
+              '${scheduleTime.hourOfPeriod.toString().padLeft(2, '0')}:${scheduleTime.minute.toString().padLeft(2, '0')}',
+              style: textStyle),
         ],
       ),
     );
@@ -101,13 +143,15 @@ class _Time extends StatelessWidget {
 class _IsTakeMedicine extends StatefulWidget {
   final String medicineName;
   final ValueChanged<bool?> onChecked;
-  final int id; // id 필드 추가
+  final int id;
+  final DateTime date;
   final VoidCallback onTakenUpdated;
 
   const _IsTakeMedicine({
     required this.medicineName,
     required this.onChecked,
-    required this.id, // 생성자에 id 추가
+    required this.id,
+    required this.date,
     required this.onTakenUpdated,
     Key? key,
   }) : super(key: key);
@@ -130,23 +174,36 @@ class _IsTakeMedicineState extends State<_IsTakeMedicine> {
     _loadIsTaken();
   }
 
+  @override
+  void didUpdateWidget(covariant _IsTakeMedicine oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // _IsTakeMedicine 위젯의 상태가 변경되었을 때 복용 완료 상태 불러오기
+    if (oldWidget.id != widget.id || oldWidget.date != widget.date) {
+      _loadIsTaken();
+    }
+  }
+
   Future<void> _loadIsTaken() async {
-    bool isTaken = await dbHelper.getIsTaken(widget.id);
+    String dateStr = DateFormat('yyyy-MM-dd').format(widget.date);
+
+    bool isTaken = await dbHelper.getIsTaken(widget.id, dateStr);
     setState(() {
       _isChecked = isTaken;
-      _isTaked = isTaken ? '복용 완료' : '복용 완료';
+      _isTaked = _isChecked ? '복용 완료' : '복용 완료';
     });
   }
 
   void _toggleCheckbox(bool? value) {
     setState(() {
       _isChecked = value!;
-      _isTaked = _isChecked ? '복용 완료' : '복용 완료';
+      // _isTaked = _isChecked ? '복용 완료' : '복용 완료';
     });
-    widget.onChecked(value);
+    //widget.onChecked(value);
 
+    String dateStr = DateFormat('yyyy-MM-dd').format(widget.date);
     // 복용 완료 상태 업데이트
-    dbHelper.updateIsTaken(widget.id, _isChecked);
+    dbHelper.updateIsTaken(widget.id, dateStr, _isChecked);
 
     // // 복용 완료 버튼을 눌렀을 때 MedicineModel의 updateMedicineData 메서드 호출
     // Provider.of<MedicineModel>(context, listen: false).updateMedicineData();
@@ -155,8 +212,12 @@ class _IsTakeMedicineState extends State<_IsTakeMedicine> {
   }
 
   void _updateIsTaken() async {
+    String dateStr = DateFormat('yyyy-MM-dd').format(widget.date);
+    Map<String, bool> takenDates = await dbHelper.getTakenDates(widget.id);
+    takenDates[dateStr] = _isChecked;
+
     // dbHelper를 사용하여 updateIsTaken 메서드를 호출합니다.
-    await dbHelper.updateIsTaken(widget.id, _isChecked);
+    await dbHelper.updateIsTaken(widget.id, dateStr, _isChecked);
   }
 
   @override
@@ -190,7 +251,18 @@ class _IsTakeMedicineState extends State<_IsTakeMedicine> {
                     scale: 1.1,
                     child: Checkbox(
                       value: _isChecked,
-                      onChanged: _toggleCheckbox,
+                      onChanged: (bool? value) {
+                        setState(() {
+                          _isChecked = value ?? false;
+                        });
+                        // 데이터베이스 업데이트
+                        String dateStr =
+                            DateFormat('yyyy-MM-dd').format(widget.date);
+                        dbHelper.updateIsTaken(widget.id, dateStr, _isChecked);
+                        widget.onTakenUpdated();
+                      },
+                      // _toggleCheckbox,
+
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
