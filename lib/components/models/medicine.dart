@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class Medicine {
   // final List<dynamic> notificationIDs; // 알림 ID
   final int? id; // id 필드 추가
@@ -36,18 +38,20 @@ class Medicine {
       'medicineDay': medicineDay,
       'medicineRepeat': medicineRepeat,
       'medicineTime': medicineTime,
-      'takenDates': takenDates,
+      'takenDates': jsonEncode(takenDates), // takenDates 필드를 JSON 문자열로 변환합니다.
     };
   }
 
   factory Medicine.fromMap(Map<String, dynamic> map) {
     return Medicine(
-        id: map['id'],
-        medicineName: map['medicineName'],
-        medicinePicture: map['medicinePicture'],
-        medicineDay: map['medicineDay'],
-        medicineRepeat: map['medicineRepeat'],
-        medicineTime: map['medicineTime'],
-        takenDates: Map<String, bool>.from(map['takenDates']));
+      id: map['id'],
+      medicineName: map['medicineName'],
+      medicinePicture: map['medicinePicture'],
+      medicineDay: map['medicineDay'],
+      medicineRepeat: map['medicineRepeat'],
+      medicineTime: map['medicineTime'],
+      takenDates: Map<String, bool>.from(jsonDecode(
+          map['takenDates'])), // JSON 문자열을 Map<String, bool>으로 변환합니다.
+    );
   }
 }
