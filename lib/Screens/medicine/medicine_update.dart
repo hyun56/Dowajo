@@ -2,6 +2,8 @@
 
 import 'dart:io';
 
+import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+import 'package:dowajo/Alarm/alarm_schedule.dart';
 import 'package:dowajo/components/weekday_buttons.dart';
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
@@ -341,7 +343,7 @@ class _medicineUpdateState extends State<medicineUpdate> {
         SizedBox(
           width: 330, // TextField 가로 길이
           height: 45,
-          child: Flexible(
+          
             child: TextField(
               controller: _medicineNameController,
               decoration: InputDecoration(
@@ -368,7 +370,7 @@ class _medicineUpdateState extends State<medicineUpdate> {
               ),
             ),
           ),
-        ),
+        
       ],
     );
   }
@@ -461,6 +463,7 @@ class _medicineUpdateState extends State<medicineUpdate> {
             var dbHelper = DatabaseHelper.instance;
             dbHelper.update(updatedMedicine);
             Navigator.of(context).pop(updatedMedicine);
+            updateMedicine(updatedMedicine);
           } else {
             // 정보가 입력되지 않았다면 경고창 띄우기
             showDialog(
@@ -519,4 +522,19 @@ class _medicineUpdateState extends State<medicineUpdate> {
       ),
     );
   }
+  void updateMedicine(Medicine medicine) async {
+  DatabaseHelper db = DatabaseHelper.instance;
+
+  // 약 정보를 업데이트하는 코드
+  await db.update(medicine);
+
+  // 기존 알람을 취소합니다.
+  if (medicine.id != null) {
+    await AndroidAlarmManager.cancel(medicine.id!);
+  }
+
+  // 새로운 알람을 스케줄링합니다.
+  scheduleAlarm();
+}
+
 }

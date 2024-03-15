@@ -128,8 +128,8 @@ class HomeScreen extends StatelessWidget {
                   padding: const EdgeInsets.only(
                     top: 10.0,
                     bottom: 10.0,
-                    left: 10.0,
-                    right: 35.0,
+                    left: 20.0,
+                    right: 20.0,
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10), // 모서리를 둥글게 하는 정도
@@ -155,7 +155,7 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      '백현',
+                      '백현 (남)',
                       style: TextStyle(
                         color: Color.fromARGB(255, 98, 98, 98),
                         fontSize: 20,
@@ -169,28 +169,28 @@ class HomeScreen extends StatelessWidget {
                       //mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          '나이: ',
+                          '생년월일: ',
                           style: TextStyle(
                               fontSize: 15,
                               color: Colors.grey,
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          '32',
+                          '1992-05-06',
                           style: TextStyle(fontSize: 15, color: Colors.grey),
                         ),
-                        SizedBox(width: 20),
-                        Text(
-                          '성별: ',
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          '남',
-                          style: TextStyle(fontSize: 15, color: Colors.grey),
-                        ),
+                        // SizedBox(width: 20),
+                        // Text(
+                        //   '성별: ',
+                        //   style: TextStyle(
+                        //       fontSize: 15,
+                        //       color: Colors.grey,
+                        //       fontWeight: FontWeight.bold),
+                        // ),
+                        // Text(
+                        //   '남',
+                        //   style: TextStyle(fontSize: 15, color: Colors.grey),
+                        // ),
                       ],
                     ),
                     SizedBox(height: 8),
@@ -205,7 +205,7 @@ class HomeScreen extends StatelessWidget {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          '몰루',
+                          '독감',
                           style: TextStyle(fontSize: 15, color: Colors.grey),
                         ),
                       ],

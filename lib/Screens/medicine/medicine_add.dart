@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:dowajo/Alarm/alarm_schedule.dart';
 import 'package:dowajo/components/calendar/today_banner.dart';
 import 'package:dowajo/components/weekday_buttons.dart';
 import 'package:flutter/foundation.dart';
@@ -473,6 +474,7 @@ class _medicine_addState extends State<medicine_add> {
             );
             var dbHelper = DatabaseHelper.instance;
             await dbHelper.insert(newMedicine);
+            
 
             // 복용약 추가 후에 상태 업데이트
             Provider.of<MedicineModel>(context, listen: false);
@@ -481,6 +483,7 @@ class _medicine_addState extends State<medicine_add> {
             //   Provider.of<MedicineModel>(context, listen: false)
             //       .updateMedicineData(day);
             // }
+          scheduleAlarm();
 
             Navigator.of(context).pop(newMedicine);
           } else {
