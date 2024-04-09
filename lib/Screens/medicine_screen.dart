@@ -161,7 +161,7 @@ class _MedicineScreen extends State<MedicineScreen> {
 
                             // 복용 요일 가져오기
                             List<String> medicineDays =
-                                medicines[index].medicineDay.split(',');
+                                medicines![index].medicineDay.split(',');
 
                             // 복용 요일을 숫자로 변환
                             List<int> medicineDaysNumbers = medicineDays
@@ -310,7 +310,7 @@ class _MedicineScreen extends State<MedicineScreen> {
                                           ),
                                           child: ClipOval(
                                             child: Image.file(
-                                              File(medicines[index]
+                                              File(medicines![index]
                                                   .medicinePicture),
                                               width: 65,
                                               height: 65,
@@ -326,7 +326,7 @@ class _MedicineScreen extends State<MedicineScreen> {
                                               .start, // 텍스트를 왼쪽 정렬
                                           children: [
                                             Text(
-                                              medicines[index].medicineName,
+                                              medicines![index].medicineName,
                                               style: TextStyle(
                                                   fontSize: 22,
                                                   fontWeight: FontWeight.bold,
@@ -359,7 +359,7 @@ class _MedicineScreen extends State<MedicineScreen> {
                                     ),
                                   ),
                                 ),
-                                if (index != medicines.length - 1)
+                                if (index != medicines!.length - 1)
                                   Divider(
                                     color: Color.fromARGB(255, 236, 236, 236),
                                     thickness: 2.0,

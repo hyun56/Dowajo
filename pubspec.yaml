@@ -47,6 +47,8 @@ dependencies:
   android_intent: ^2.0.2
   package_info: ^2.0.0
   workmanager: ^0.5.2
+  riverpod: ^2.5.1
+  flutter_riverpod: ^2.5.1
 
 
 
@@ -87,6 +89,7 @@ flutter:
     - repo/icons/pill.png
     - repo/icons/plus.png
     - repo/icons/photo.png
+    - repo/icons/inject.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
