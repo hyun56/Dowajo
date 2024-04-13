@@ -47,6 +47,7 @@ dependencies:
   android_intent: ^2.0.2
   package_info: ^2.0.0
   workmanager: ^0.5.2
+  get: ^4.3.8
 
 
 

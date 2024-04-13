@@ -3,10 +3,12 @@
 import 'package:dowajo/Alarm/alarm_schedule.dart';
 import 'package:dowajo/Alarm/notification_manager.dart';
 import 'package:dowajo/Alarm/work_manager.dart';
-import 'package:dowajo/Screens/home_screen.dart';
+//import 'package:dowajo/Screens/home_screen.dart';
+import 'package:dowajo/Screens/patient_search_screen.dart';
 import 'package:dowajo/components/calendar/today_banner.dart';
 //import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -59,7 +61,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
@@ -68,7 +70,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         unselectedWidgetColor: const Color.fromARGB(255, 203, 202, 202),
       ),
-      home: const HomeScreen(),
+      home: PatientSearchScreen(),
     );
   }
 }
