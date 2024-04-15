@@ -1,7 +1,7 @@
 import 'package:dowajo/Screens/macro_screen.dart';
+import 'package:dowajo/Screens/patient_search_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../components/menu_item.dart';
 import 'heart_screen.dart';
 import 'medicine_screen.dart';
@@ -30,7 +30,11 @@ class HomeScreen extends StatelessWidget {
           ),
           actions: [
             IconButton(
-              onPressed: () {},
+               onPressed: () {
+          // 메인 화면으로 돌아가기
+          Navigator.pushReplacement(context,
+              MaterialPageRoute(builder: (context) => PatientSearchScreen()));
+        },
               icon: const Icon(Icons.logout),
             ),
           ],
