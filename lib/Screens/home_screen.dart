@@ -30,11 +30,13 @@ class HomeScreen extends StatelessWidget {
           ),
           actions: [
             IconButton(
-               onPressed: () {
-          // 메인 화면으로 돌아가기
-          Navigator.pushReplacement(context,
-              MaterialPageRoute(builder: (context) => PatientSearchScreen()));
-        },
+              onPressed: () {
+                // 메인 화면으로 돌아가기
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => PatientSearchScreen()));
+              },
               icon: const Icon(Icons.logout),
             ),
           ],
