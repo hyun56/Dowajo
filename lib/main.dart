@@ -17,11 +17,18 @@ import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 // import 'work_manager_setup.dart'; // work_manager_setup.dart를 import합니다.
 // import 'utils.dart'; // utils.dart를 import합니다.
 
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   initializeDateFormatting();
   await AndroidAlarmManager.initialize();
   setupWorkManager(); // work_manager_setup.dart에서 정의한 함수를 호출합니다.
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   const String channelId = 'your channel id';
   const String channelName = 'your channel name';

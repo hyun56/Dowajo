@@ -1,13 +1,26 @@
+import 'package:dowajo/common/fcm/fcm_manager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:dowajo/Patient/patient_controller.dart';
 import 'home_screen.dart';
 
-class PatientSearchScreen extends StatelessWidget {
+class PatientSearchScreen extends StatefulWidget {
+  const PatientSearchScreen({super.key});
+
+  @override
+  State<PatientSearchScreen> createState() => _PatientSearchScreenState();
+}
+
+class _PatientSearchScreenState extends State<PatientSearchScreen> {
   final PatientController controller = Get.put(PatientController());
 
-  PatientSearchScreen({super.key});
+  @override
+  void initState() {
+    super.initState();
+    FcmManager.requestPermission();
+    FcmManager.initialize();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,104 +95,106 @@ class PatientSearchScreen extends StatelessWidget {
                 return const SizedBox(); // 검색 결과가 없을 때 비어있는 화면을 보여줍니다.
               } else {
                 final patient = controller.searchResult.value!.first;
-                return Column(
-                  children: [
-                    const Padding(
-                      padding:
-                          EdgeInsets.symmetric(vertical: 40, horizontal: 30),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              color: Color.fromARGB(255, 194, 193, 193),
-                              thickness: 1.5,
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            child: Text(
-                              '조회된 환자 정보입니다',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 16,
-                                color: Color.fromARGB(255, 186, 186, 186),
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      const Padding(
+                        padding:
+                            EdgeInsets.symmetric(vertical: 40, horizontal: 30),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Divider(
+                                color: Color.fromARGB(255, 194, 193, 193),
+                                thickness: 1.5,
                               ),
                             ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              color: Color.fromARGB(255, 194, 193, 193),
-                              thickness: 1.5,
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 10),
+                              child: Text(
+                                '조회된 환자 정보입니다',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 16,
+                                  color: Color.fromARGB(255, 186, 186, 186),
+                                ),
+                              ),
                             ),
-                          ),
-                        ],
+                            Expanded(
+                              child: Divider(
+                                color: Color.fromARGB(255, 194, 193, 193),
+                                thickness: 1.5,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 5),
-                      child: Column(
-                        children: [
-                          Text(
-                            patient.name,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20,
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 5),
+                        child: Column(
+                          children: [
+                            Text(
+                              patient.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                              ),
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            '고유번호 : ${patient.id}',
-                            style: const TextStyle(
-                              fontSize: 15,
+                            const SizedBox(height: 10),
+                            Text(
+                              '고유번호 : ${patient.id}',
+                              style: const TextStyle(
+                                fontSize: 15,
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 40, horizontal: 30),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    Get.to(() =>
-                                        const HomeScreen()); // 환자 정보와 함께 HomeScreen으로 이동합니다.
-                                  },
-                                  child: Container(
-                                    width: 190,
-                                    height: 38,
-                                    decoration: BoxDecoration(
-                                      color: const Color(0xFFA6CBA5),
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          '해당 환자로 이동하기',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.white,
-                                            fontSize: 15,
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 40, horizontal: 30),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.end,
+                                children: [
+                                  InkWell(
+                                    onTap: () {
+                                      Get.to(() =>
+                                          const HomeScreen()); // 환자 정보와 함께 HomeScreen으로 이동합니다.
+                                    },
+                                    child: Container(
+                                      width: 190,
+                                      height: 38,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFFA6CBA5),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: const Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Text(
+                                            '해당 환자로 이동하기',
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.white,
+                                              fontSize: 15,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(width: 5),
-                                        Icon(
-                                          CupertinoIcons.arrow_right_circle,
-                                          color: Colors.white,
-                                          size: 22,
-                                        ),
-                                      ],
+                                          SizedBox(width: 5),
+                                          Icon(
+                                            CupertinoIcons.arrow_right_circle,
+                                            color: Colors.white,
+                                            size: 22,
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
-                            ),
-                          )
-                        ],
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 );
                 // ListTile(
                 //   title: Text(patient.name),

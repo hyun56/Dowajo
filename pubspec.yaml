@@ -48,17 +48,13 @@ dependencies:
   package_info: ^2.0.0
   workmanager: ^0.5.1
   get: ^4.3.8
-
-
-
-
+  firebase_core: ^2.24.2
+  firebase_messaging: ^14.7.10
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-
-  
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
