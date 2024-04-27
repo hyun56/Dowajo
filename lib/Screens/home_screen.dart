@@ -1,7 +1,9 @@
+import 'package:dowajo/Patient/patient_controller.dart';
 import 'package:dowajo/Screens/macro_screen.dart';
 import 'package:dowajo/Screens/patient_search_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import '../components/menu_item.dart';
 import 'heart_screen.dart';
 import 'medicine_screen.dart';
@@ -12,11 +14,14 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final PatientController controller = Get.find();
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 235, 238, 240),
         //backgroundColor: Color.fromARGB(255, 219, 225, 228),
         appBar: AppBar(
+          automaticallyImplyLeading: false, //자동으로 생성되는 뒤로가기 제거
           backgroundColor: Colors.transparent,
           title: const Padding(
             padding: EdgeInsets.only(left: 5),
@@ -31,11 +36,13 @@ class HomeScreen extends StatelessWidget {
           actions: [
             IconButton(
               onPressed: () {
+                controller.searchResult.value = null;
+                Get.offAll(() => PatientSearchScreen());
                 // 메인 화면으로 돌아가기
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => PatientSearchScreen()));
+                // Navigator.pushReplacement(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => const PatientSearchScreen()));
               },
               icon: const Icon(Icons.logout),
             ),

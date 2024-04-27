@@ -77,7 +77,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         unselectedWidgetColor: const Color.fromARGB(255, 203, 202, 202),
       ),
-      home: PatientSearchScreen(),
+      home: const PatientSearchScreen(),
     );
   }
 }
