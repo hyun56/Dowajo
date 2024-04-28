@@ -4,7 +4,7 @@ import 'package:dowajo/Alarm/alarm_schedule.dart';
 import 'package:dowajo/Alarm/notification_manager.dart';
 import 'package:dowajo/Alarm/work_manager.dart';
 //import 'package:dowajo/Screens/home_screen.dart';
-import 'package:dowajo/Screens/patient_search_screen.dart';
+import 'package:dowajo/Screens/login/login.dart';
 import 'package:dowajo/components/calendar/today_banner.dart';
 //import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +16,6 @@ import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 // import 'notification_manager.dart'; // notification_manager.dart를 import합니다.
 // import 'work_manager_setup.dart'; // work_manager_setup.dart를 import합니다.
 // import 'utils.dart'; // utils.dart를 import합니다.
-
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 
@@ -79,7 +78,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
         unselectedWidgetColor: const Color.fromARGB(255, 203, 202, 202),
       ),
-      home: const PatientSearchScreen(),
+      home: const LoginScreen(),
     );
   }
 }
