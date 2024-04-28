@@ -22,6 +22,8 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   initializeDateFormatting();
   await AndroidAlarmManager.initialize();
   setupWorkManager(); // work_manager_setup.dart에서 정의한 함수를 호출합니다.
