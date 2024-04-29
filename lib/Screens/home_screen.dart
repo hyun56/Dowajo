@@ -37,7 +37,7 @@ class HomeScreen extends StatelessWidget {
             IconButton(
               onPressed: () {
                 controller.searchResult.value = null;
-                Get.offAll(() => PatientSearchScreen());
+                Get.offAll(() => const PatientSearchScreen());
                 // 메인 화면으로 돌아가기
                 // Navigator.pushReplacement(
                 //     context,

@@ -6,6 +6,7 @@ import 'package:dowajo/Patient/patient_controller.dart';
 import 'home_screen.dart';
 
 class PatientSearchScreen extends StatefulWidget {
+  
   const PatientSearchScreen({super.key});
 
   @override
@@ -51,7 +52,7 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
               keyboardType: TextInputType.number,
               textAlign: TextAlign.center,
               decoration: InputDecoration(
-                // labelText: '환자 고유번호 입력',
+// labelText: '환자 고유번호 입력',
                 contentPadding:
                     const EdgeInsets.fromLTRB(15.0, 10.0, 10.0, 10.0),
                 enabledBorder: OutlineInputBorder(
@@ -69,15 +70,18 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                   ),
                 ),
               ),
-              onSubmitted: (String value) {
+              onSubmitted: (String value) async {
                 int? id = int.tryParse(value);
                 if (id != null) {
                   controller.searchPatient(id);
-                  // 검색 직후 결과를 확인하여 스낵바 표시
-                  if (controller.searchResult.value == null ||
-                      controller.searchResult.value!.isEmpty) {
-                    Get.snackbar('알림', '환자 정보를 찾을 수 없습니다. 다시 확인해 주세요');
-                  }
+                  // searchResult가 업데이트 될 때까지 기다립니다.
+                  once(controller.searchResult, (_) {
+                    // searchResult의 값이 null이거나 비어있는지 확인합니다.
+                    if (controller.searchResult.value == null ||
+                        controller.searchResult.value!.isEmpty) {
+                      Get.snackbar('알림', '환자 정보를 찾을 수 없습니다. 다시 확인해 주세요.');
+                    }
+                  });
                 } else {
                   Get.snackbar('오류', '올바른 고유번호를 입력해 주세요.');
                 }
@@ -155,8 +159,8 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      Get.to(() =>
-                                          const HomeScreen()); // 환자 정보와 함께 HomeScreen으로 이동합니다.
+                                      Get.to(() => const HomeScreen(
+                                          )); // 환자 정보와 함께 HomeScreen으로 이동합니다.
                                     },
                                     child: Container(
                                       width: 190,
