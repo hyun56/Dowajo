@@ -474,7 +474,6 @@ class _medicine_addState extends State<medicine_add> {
             );
             var dbHelper = DatabaseHelper.instance;
             await dbHelper.insert(newMedicine);
-            
 
             // 복용약 추가 후에 상태 업데이트
             Provider.of<MedicineModel>(context, listen: false);
@@ -483,7 +482,7 @@ class _medicine_addState extends State<medicine_add> {
             //   Provider.of<MedicineModel>(context, listen: false)
             //       .updateMedicineData(day);
             // }
-          scheduleAlarm();
+            scheduleAlarm();
 
             Navigator.of(context).pop(newMedicine);
           } else {

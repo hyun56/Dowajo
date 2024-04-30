@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../components/menu_item.dart';
-import 'heart_screen.dart';
-import 'inject/inject_screen.dart';
+//import 'heart_screen.dart';
+import 'package:dowajo/Screens/inject_screen.dart';
 import 'medicine_screen.dart';
 import 'alarms_screen.dart';
 
@@ -251,7 +251,8 @@ class HomeScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(35), // 모서리 둥글게
-              boxShadow: [ // 그림자 추가
+              boxShadow: [
+                // 그림자 추가
                 BoxShadow(
                   color: Colors.grey.withOpacity(0.1),
                   spreadRadius: 5,
@@ -265,18 +266,26 @@ class HomeScreen extends StatelessWidget {
               children: [
                 Padding(
                   padding: EdgeInsets.only(top: 0.0), // 아이콘 위에 패딩 추가
-                  child: IconButton(  //주사 쿠퍼티노 아이콘 쓸만한게 없어서 대체
-                    icon: Image.asset('repo/icons/inject.png', width: 26, height: 26),
+                  child: IconButton(
+                    //주사 쿠퍼티노 아이콘 쓸만한게 없어서 대체
+                    icon: Image.asset('repo/icons/inject.png',
+                        width: 26, height: 26),
                     onPressed: () {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (context) => const InjectScreen()));  //원래 homescreen였는데, 에러남
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) =>
+                              const InjectScreen())); //원래 homescreen였는데, 에러남
                     },
                     color: Colors.black,
                   ),
                 ),
                 Padding(
                   padding: EdgeInsets.only(top: 11.0), // 아이콘과 텍스트 사이에 공간 추가
-                  child: Text("주사", style: TextStyle(color: Colors.grey[800], fontFamily: 'Cupertino', fontWeight: FontWeight.w700, fontSize: 16)),
+                  child: Text("주사",
+                      style: TextStyle(
+                          color: Colors.grey[800],
+                          fontFamily: 'Cupertino',
+                          fontWeight: FontWeight.w700,
+                          fontSize: 16)),
                 ),
               ],
             ),

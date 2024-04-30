@@ -5,10 +5,12 @@ import 'package:dowajo/Alarm/notification_manager.dart';
 import 'package:dowajo/Alarm/work_manager.dart';
 import 'package:dowajo/Screens/home_screen.dart';
 import 'package:dowajo/components/calendar/today_banner.dart';
+import 'package:dowajo/components/models/injectModel.dart';
 //import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 // import 'notification_manager.dart'; // notification_manager.dart를 import합니다.
@@ -47,15 +49,22 @@ void main() async {
   scheduleAlarm(); // 알람 스케줄링 추가
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => MedicineModel(),
-      child: const MyApp(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => MedicineModel(),
+        ),
+        ChangeNotifierProvider(
+          create: (context) => InjectModelProvider(),
+        ),
+      ],
+      child: MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  const MyApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

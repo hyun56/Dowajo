@@ -1,8 +1,11 @@
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:dowajo/components/models/medicine.dart';
+import 'package:dowajo/components/models/injectModel.dart';
 import 'package:dowajo/database/medicine_database.dart';
-import 'notification_manager.dart';
-import 'utils.dart';
+import 'package:dowajo/database/inject_database.dart';
+import 'package:dowajo/Alarm/notification_manager.dart';
+import 'package:dowajo/Alarm/notificationForInject.dart';
+import 'package:dowajo/Alarm/utils.dart';
 
 void scheduleAlarm() async {
   DatabaseHelper db = DatabaseHelper.instance;
@@ -26,11 +29,11 @@ void scheduleAlarm() async {
           parseHour(time),
           parseMinute(time),
         );
-        
+
         if (scheduledDate.isBefore(now)) {
           scheduledDate = scheduledDate.add(const Duration(days: 1));
         }
-        
+
         int alarmId = ('$day$time${medicine.id}$i').hashCode;
 
         if (medicine.id != null) {
@@ -48,6 +51,51 @@ void scheduleAlarm() async {
       }
     } catch (e) {
       print('Error while parsing day and time: $e');
+    }
+  }
+  InjectDatabaseHelper injectDb = InjectDatabaseHelper.instance;
+  List<InjectModel> injects = await injectDb.getAllInjects();
+
+  List<String> injectNames = []; // InjectNames 리스트 선언
+  for (InjectModel inject in injects) {
+    try {
+      String name = inject.injectName;
+      injectNames.add(name); // injectName을 리스트에 추가
+
+      String time = inject.injectEndTime;
+      bool change = inject.injectChange == 1 ? true : false;
+
+      DateTime now = DateTime.now();
+      DateTime scheduledDate = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        parseHour(time),
+        parseMinute(time),
+      );
+
+      if (scheduledDate.isBefore(now)) {
+        scheduledDate = scheduledDate.add(const Duration(days: 1));
+      }
+
+      int alarmId = ('$time${inject.id}').hashCode;
+
+      if (change) {
+        // Schedule the alarm
+        AndroidAlarmManager.periodic(
+          Duration(days: 1),
+          alarmId,
+          sendNotificationForInject,
+          startAt: scheduledDate,
+          exact: true,
+          wakeup: true,
+        );
+      } else {
+        // Cancel the alarm if it exists
+        AndroidAlarmManager.cancel(alarmId);
+      }
+    } catch (e) {
+      print(e);
     }
   }
 }

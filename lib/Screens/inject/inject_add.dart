@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:dowajo/Alarm/alarm_schedule.dart';
-import 'package:dowajo/Screens/inject/injectModel.dart';
-import 'package:dowajo/Screens/inject/provider.dart';
+import 'package:dowajo/components/models/injectModel.dart';
 import 'package:dowajo/components/calendar/today_banner.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -9,20 +8,20 @@ import "package:flutter/material.dart";
 import 'package:flutter/widgets.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:riverpod/riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../database/medicine_database.dart';
+import '../../database/inject_database.dart';
+import 'package:dowajo/screens/inject_screen.dart';
 
-class inject_add extends ConsumerStatefulWidget {
+class inject_add extends StatefulWidget {
   const inject_add({Key? key}) : super(key: key);
 
   @override
   _inject_addState createState() => _inject_addState();
 }
 
-enum type {normal, IV, nose}
-class _inject_addState extends ConsumerState<inject_add> {
+enum type { normal, IV, nose }
+
+class _inject_addState extends State<inject_add> {
   int selectedRepeat = 1;
   XFile? _pickedFile;
   String Type = "일반 주사";
@@ -32,7 +31,7 @@ class _inject_addState extends ConsumerState<inject_add> {
   final TextEditingController _injectAmountController = TextEditingController();
   List<String> selectedDays = []; // 선택된 요일을 저장하는 리스트
   bool Change = false; //추가 교체 여부
-  type _type=type.normal;
+  type _type = type.normal;
 
   void _showTimePicker(TimeOfDay time, bool start) async {
     final TimeOfDay? newTime = await showTimePicker(
@@ -42,16 +41,17 @@ class _inject_addState extends ConsumerState<inject_add> {
 
     if (newTime != null) {
       setState(() {
-        if(start)
-          startTime=newTime;
+        if (start)
+          startTime = newTime;
         else
-          endTime=newTime;
+          endTime = newTime;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final injectProvider = Provider.of<InjectModel>(context, listen: false);
     return Scaffold(
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
@@ -66,13 +66,12 @@ class _inject_addState extends ConsumerState<inject_add> {
                 ),
                 SizedBox(height: 5),
                 Container(
-                    child:
-                    Row(
-                        crossAxisAlignment: CrossAxisAlignment.start ,
+                    child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          injectType(), // 상단 안내문
-                          addPhoto(), // 사진등록
-                        ])),
+                      injectType(), // 상단 안내문
+                      addPhoto(), // 사진등록
+                    ])),
                 SizedBox(height: 10),
                 injectName(), // 약 이름 입력창
                 SizedBox(height: 20),
@@ -89,12 +88,11 @@ class _inject_addState extends ConsumerState<inject_add> {
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Column(
-                          children: [
-                            addTime("투여 시작 시간", startTime,true),
-                            SizedBox(height: 15),
-                            addTime("투여 종료 시간", endTime,false),
-                          ]),
+                      Column(children: [
+                        addTime("투여 시작 시간", startTime, true),
+                        SizedBox(height: 15),
+                        addTime("투여 종료 시간", endTime, false),
+                      ]),
                       injectAmount(),
                     ]),
                 // 경계선 추가
@@ -180,7 +178,7 @@ class _inject_addState extends ConsumerState<inject_add> {
 
   _getCameraImage() async {
     final pickedFile =
-    await ImagePicker().pickImage(source: ImageSource.camera);
+        await ImagePicker().pickImage(source: ImageSource.camera);
     if (pickedFile != null) {
       setState(() {
         _pickedFile = pickedFile;
@@ -195,7 +193,7 @@ class _inject_addState extends ConsumerState<inject_add> {
 
   _getPhotoLibraryImage() async {
     final pickedFile =
-    await ImagePicker().pickImage(source: ImageSource.gallery);
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _pickedFile = pickedFile;
@@ -209,9 +207,9 @@ class _inject_addState extends ConsumerState<inject_add> {
   }
 
   Widget injectType() {
-    return Expanded(child:
-    Column(children: [
-      Row( children: [
+    return Expanded(
+        child: Column(children: [
+      Row(children: [
         Padding(
           padding: EdgeInsets.only(left: 0, right: 10.0),
           child: Image.asset(
@@ -234,7 +232,7 @@ class _inject_addState extends ConsumerState<inject_add> {
           height: 200,
           child: SingleChildScrollView(
               physics: NeverScrollableScrollPhysics(),
-              child:Column(
+              child: Column(
                 children: [
                   RadioListTile(
                     title: Text("일반 주사"),
@@ -244,8 +242,8 @@ class _inject_addState extends ConsumerState<inject_add> {
                       setState(() {
                         _type = value!;
                       });
-                    },),
-
+                    },
+                  ),
                   RadioListTile(
                     title: Text("수액"),
                     value: type.IV,
@@ -266,10 +264,9 @@ class _inject_addState extends ConsumerState<inject_add> {
                       });
                     },
                   ),
-
                 ],
-              ))
-      ) ]));
+              )))
+    ]));
   }
 
   void requestPermission() async {
@@ -304,135 +301,42 @@ class _inject_addState extends ConsumerState<inject_add> {
   }
 
   Widget addPhoto() {
-    // ignore: unused_local_variable
-    final imageSize = MediaQuery.of(context).size.width / 4;
-
-    return Column(
-      children: [
-        Align(
-          alignment: Alignment.center,
-          child: Text(
-            "투여 수액 사진(확인용)",
-            style: TextStyle(
-              fontSize: 17.0, // 글자크기
-              fontWeight: FontWeight.bold, // 볼드체
-              color: Colors.black, // 색, // 자간
-            ),
-          ),
+    return GestureDetector(
+      onTap: () {
+        requestPermission();
+      },
+      child: Container(
+        width: 100,
+        height: 100,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(15),
         ),
-        SizedBox(height: 10),
-        if (_pickedFile == null)
-          Container(
-            constraints: BoxConstraints(
-              minHeight: imageSize,
-              minWidth: imageSize,
-            ),
-            child: GestureDetector(
-              onTap: () {
-                _showBottomSheet();
-              },
-              child: Center(
-                child: Image.asset(
-                  'repo/icons/photo.png',
-                  width: 75.0,
-                  height: 75.0,
-                ),
-                // Icon(
-                //   Icons.photo_camera,
-                //   size: imageSize,
-                // ),
-              ),
-            ),
-          )
-        else
-          Center(
-            child: GestureDetector(
-              onTap: requestPermission,
-              child: _pickedFile == null
-                  ? Container(
-                constraints: BoxConstraints(
-                  minHeight: imageSize,
-                  minWidth: imageSize,
-                ),
-                child: Center(
-                  child: Image.asset(
-                    'repo/icons/photo.png',
-                    width: 75.0,
-                    height: 75.0,
-                  ),
+        child: _pickedFile != null
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Image.file(
+                  File(_pickedFile!.path),
+                  fit: BoxFit.cover,
                 ),
               )
-                  : Center(
-                child: Container(
-                  width: imageSize,
-                  height: imageSize,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                        width: 3,
-                        color: Color.fromARGB(255, 217, 217, 217)),
-                    image: DecorationImage(
-                        image: FileImage(File(_pickedFile!.path)),
-                        fit: BoxFit.cover),
-                  ),
-                ),
+            : Icon(
+                Icons.camera_alt,
+                color: Colors.grey[800],
               ),
-            ),
-          ),
-      ],
+      ),
     );
   }
 
   Widget injectName() {
-    return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-                padding: EdgeInsets.symmetric(horizontal: 10),
-                child: Text(
-                  "약의 이름을 입력하세요",
-                  style: TextStyle(
-                    fontSize: 15.0, // 글자크기
-                    color: Colors.black, // 색상
-                    // letterSpacing: 2.0, // 자간
-                  ),
-                )),
-            SizedBox(
-              height: 10,
-            ),
-            SizedBox(
-              width: 330, // TextField 가로 길이
-              height: 45,
-              child: TextField(
-                controller: _injectNameController,
-                decoration: InputDecoration(
-                  hintText: '예) 혈압약',
-                  hintStyle: TextStyle(
-                    fontSize: 13.0,
-                    color: Color.fromARGB(255, 171, 171, 171),
-                  ),
-                  contentPadding: EdgeInsets.fromLTRB(15.0, 10.0, 10.0, 10.0),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color: Color.fromARGB(255, 221, 221, 221),
-                      width: 2.0,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
-                      color: Color(0xFFA6CBA5),
-                      width: 2.0,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ));
+    return TextField(
+      controller: _injectNameController,
+      decoration: InputDecoration(
+        labelText: '주사 이름',
+        labelStyle: TextStyle(fontSize: 18),
+        border: OutlineInputBorder(),
+      ),
+    );
   }
 
   Widget numOfTitle() {
@@ -459,7 +363,7 @@ class _inject_addState extends ConsumerState<inject_add> {
     );
   }
 
-  Widget addTime(String name, TimeOfDay time,bool start) {
+  Widget addTime(String name, TimeOfDay time, bool start) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -478,28 +382,21 @@ class _inject_addState extends ConsumerState<inject_add> {
   }
 
   Widget injectAmount() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      children: [
-        Text(
-          "시간당 투여량",
-          style: TextStyle(
-            fontSize: 15.0, // 글자크기
-            color: Colors.black, // 색상
-            // letterSpacing: 2.0, // 자간
-          ),
-        ),
-        SizedBox(height: 10),
-        SizedBox(
-          width: 80, // TextField 가로 길이
-          height: 45,
-          child: TextField(
-            controller: _injectAmountController,
-            decoration: InputDecoration(),
-          ),
-        ),
-      ],
+    return TextField(
+      controller: _injectAmountController,
+      decoration: InputDecoration(
+        labelText: '주사량',
+        labelStyle: TextStyle(fontSize: 18),
+        border: OutlineInputBorder(),
+      ),
     );
+  }
+
+  //addAlarm 함수 타임포맷 임시로 수정
+  String formatTimeOfDay(TimeOfDay timeOfDay) {
+    final hours = timeOfDay.hour.toString().padLeft(2, '0');
+    final minutes = timeOfDay.minute.toString().padLeft(2, '0');
+    return '$hours:$minutes';
   }
 
   Widget addAlram() {
@@ -508,81 +405,30 @@ class _inject_addState extends ConsumerState<inject_add> {
       height: 55,
       child: GestureDetector(
         onTap: () async {
-          if (_injectNameController.text.isNotEmpty&&
-              _pickedFile != null) {
-            // 모든 정보가 입력되었다면 inject 저장
-            String Typename;
-            if(_type==type.normal) Typename="기본 주사";
-            else if(_type==type.IV) Typename="수액";
-            else if(_type==type.nose) Typename="비위관(콧줄)";
-            InjectModels newInject= InjectModels(
-                id: null,
-                injectChange: Change,
-                injectEndTime: endTime.format(context),
-                injectStartTime: startTime.format(context),
-                injectDay: '${DateTime.now().year}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}', injectName: _injectNameController.text,
-                injectMount: _injectAmountController.text,
-                injectPicture: _pickedFile?.path??'',
-                injectType: _type.name
-            );
+          final inject = InjectModel(
+            id: null,
+            injectType: Type,
+            injectName: _injectNameController.text,
+            injectPicture: _pickedFile?.path ?? '',
+            //injectDay: selectedDays.join(','),
+            injectStartTime: formatTimeOfDay(startTime),
+            injectEndTime: formatTimeOfDay(endTime),
+            injectAmount: _injectAmountController.text,
+            injectChange: Change,
+          );
 
-            ref.read(InjectListProvider.notifier).addInject(newInject);
-            Navigator.of(context).pop();
-          } else {
-            // 정보가 입력되지 않았다면 경고창 띄우기
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  backgroundColor: Color.fromARGB(200, 255, 255, 255),
-                  content: Padding(
-                    // Padding 위젯 사용
-                    padding: EdgeInsets.only(top: 20.0),
-                    child: Text(
-                      '정보를 모두 입력하세요',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  //contentPadding: EdgeInsets.symmetric(vertical: 100.0),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text(
-                        '확인',
-                        style: TextStyle(
-                          //color: Color(0xFFA6CBA5),
-                            fontWeight: FontWeight.bold),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
-          }
+          // DatabaseHelper 인스턴스 생성
+          var dbHelper = InjectDatabaseHelper.instance;
+
+          // InjectModel 인스턴스를 데이터베이스에 저장
+          await dbHelper.insert(inject);
+          Provider.of<InjectModelProvider>(context, listen: false);
+
+          scheduleAlarm();
+
+          Navigator.pop(context);
         },
-        child: ElevatedButton(
-          onPressed: null, // onPressed를 null로 설정하여 버튼을 비활성화
-          style: ButtonStyle(
-            backgroundColor:
-            MaterialStateProperty.all<Color>(Color(0xFFA6CBA5)),
-            shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-              RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-            ),
-            elevation: MaterialStateProperty.all<double>(0),
-          ),
-          child: Text(
-            "알람 추가하기 +",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 15.5,
-            ),
-          ),
-        ),
+        child: Text('알람 추가'),
       ),
     );
   }

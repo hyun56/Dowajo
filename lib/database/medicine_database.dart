@@ -154,7 +154,7 @@ class DatabaseHelper {
     return Sqflite.firstIntValue(result);
   }
 
-    Future<Map<String, bool>> getTakenDates(int id) async {
+  Future<Map<String, bool>> getTakenDates(int id) async {
     // takenDates 가져오기
     final db = await database;
     final maps = await db!.query(
@@ -183,34 +183,34 @@ class DatabaseHelper {
       whereArgs: [id],
     );
   }
+
   Future<Medicine> getMedicineFromDatabase(int id) async {
-  Database? db = await instance.database;
-  final List<Map<String, dynamic>> maps = await db!.query(
-    table,
-    where: '$columnId = ?',
-    whereArgs: [id],
-  );
+    Database? db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db!.query(
+      table,
+      where: '$columnId = ?',
+      whereArgs: [id],
+    );
 
-  if (maps.isNotEmpty) {
-    return Medicine.fromMap(maps.first);
-  } else {
-    throw Exception('ID $id의 약이 데이터베이스에 없습니다.');
+    if (maps.isNotEmpty) {
+      return Medicine.fromMap(maps.first);
+    } else {
+      throw Exception('ID $id의 약이 데이터베이스에 없습니다.');
+    }
   }
-}
 
-Future<String> getTimeFromDatabase(int id) async {
-  Database? db = await instance.database;
-  final List<Map<String, dynamic>> maps = await db!.query(
-    table,
-    where: '$columnId = ?',
-    whereArgs: [id],
-  );
+  Future<String> getTimeFromDatabase(int id) async {
+    Database? db = await instance.database;
+    final List<Map<String, dynamic>> maps = await db!.query(
+      table,
+      where: '$columnId = ?',
+      whereArgs: [id],
+    );
 
-  if (maps.isNotEmpty) {
-    return maps.first[columnTime];
-  } else {
-    throw Exception('ID $id의 약의 복용 시간 정보가 데이터베이스에 없습니다.');
+    if (maps.isNotEmpty) {
+      return maps.first[columnTime];
+    } else {
+      throw Exception('ID $id의 약의 복용 시간 정보가 데이터베이스에 없습니다.');
+    }
   }
-}
-
 }
