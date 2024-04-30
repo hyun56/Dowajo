@@ -6,7 +6,6 @@ import 'package:dowajo/Patient/patient_controller.dart';
 import 'home_screen.dart';
 
 class PatientSearchScreen extends StatefulWidget {
-  
   const PatientSearchScreen({super.key});
 
   @override
@@ -145,6 +144,17 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                               ),
                             ),
                             const SizedBox(height: 10),
+                            ClipRRect(
+                              borderRadius:
+                                  BorderRadius.circular(10), // 모서리를 둥글게 하는 정도
+                              child: Image.network(
+                                '${patient.picture}',
+                                fit: BoxFit.cover,
+                                height: 150,
+                                width: 110,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
                             Text(
                               '고유번호 : ${patient.id}',
                               style: const TextStyle(
@@ -159,8 +169,8 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      Get.to(() => const HomeScreen(
-                                          )); // 환자 정보와 함께 HomeScreen으로 이동합니다.
+                                      Get.to(() =>
+                                          HomeScreen()); // 환자 정보와 함께 HomeScreen으로 이동합니다.
                                     },
                                     child: Container(
                                       width: 190,

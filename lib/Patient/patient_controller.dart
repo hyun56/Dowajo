@@ -73,6 +73,7 @@ class PatientController extends GetxController {
                 id: doc['id'],
                 name: doc['name'],
                 room: doc['room'],
+                picture:doc['picture']
               ))
           .toList();
     });
@@ -87,12 +88,14 @@ class Patient {
   final String birth;
   final String disease;
   final int room;
-
+  final String picture;
   Patient(
       {required this.id,
       required this.name,
       required this.gender,
       required this.birth,
       required this.disease,
-      required this.room});
+      required this.room,
+      required this.picture
+      });
 }
