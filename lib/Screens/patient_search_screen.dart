@@ -1,3 +1,4 @@
+import 'package:dowajo/Screens/login/login.dart';
 import 'package:dowajo/common/fcm/fcm_manager.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -26,6 +27,8 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false, //자동으로 생성되는 뒤로가기 제거
+
         title: const Text(
           '환자 검색',
           style: TextStyle(
@@ -34,6 +37,15 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
           ),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            onPressed: () {
+              controller.searchResult.value = null;
+              Get.offAll(() => const LoginScreen());
+            },
+            icon: const Icon(Icons.logout),
+          ),
+        ],
       ),
       body: Column(
         children: <Widget>[
