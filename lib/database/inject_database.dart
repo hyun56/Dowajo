@@ -106,4 +106,5 @@ class InjectDatabaseHelper {
   }
   //getIsTaken, updateIsTaken, getMedicineCountOnDay,
   //getTakenDates, updateTakenDates, getTimeFromDatabase
+  //후일 사용
 }
