@@ -14,7 +14,6 @@ void callbackDispatcher() {
     switch (task) {
       case 'simplePeriodicTask':
         sendNotification();
-        //sendNotificationForInject(id, name, time, change);
         break;
       case 'injectPeriodicTask':
         // inputData에서 필요한 데이터를 가져옵니다.
