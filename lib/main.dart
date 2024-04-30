@@ -49,6 +49,7 @@ void main() async {
   scheduleAlarm(); // 알람 스케줄링 추가
 
   runApp(
+    //멀티프로바이더 추가
     MultiProvider(
       providers: [
         ChangeNotifierProvider(
