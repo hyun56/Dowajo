@@ -53,6 +53,8 @@ void scheduleAlarm() async {
       print('Error while parsing day and time: $e');
     }
   }
+
+  //주사 알람 스케쥴 추가
   InjectDatabaseHelper injectDb = InjectDatabaseHelper.instance;
   List<InjectModel> injects = await injectDb.getAllInjects();
 
