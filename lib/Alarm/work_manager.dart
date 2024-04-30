@@ -13,12 +13,8 @@ void callbackDispatcher() {
   Workmanager().executeTask((task, inputData) async {
     switch (task) {
       case 'simplePeriodicTask':
-        // sendNotificationForInject 함수를 호출할 때 필요한 인자를 제공합니다.
-        int id = 1; // 예시 값
-        String name = 'name'; // 예시 값
-        String time = 'time'; // 예시 값
-        int change = 1; // 예시 값
-        sendNotificationForInject(id, name, time, change);
+        sendNotification();
+        //sendNotificationForInject(id, name, time, change);
         break;
       case 'injectPeriodicTask':
         // inputData에서 필요한 데이터를 가져옵니다.
