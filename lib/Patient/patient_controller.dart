@@ -59,7 +59,7 @@ import 'package:get/get.dart';
 class PatientController extends GetxController {
   var searchResult = Rxn<List<Patient>>();
 
-  void searchPatient(int id) async {
+  void searchPatient(String id) async {
     FirebaseFirestore.instance
         .collection(
             'Patient') // 'patients'는 Firestore에서 환자 정보를 저장하고 있는 컬렉션 이름입니다.
@@ -83,7 +83,7 @@ class PatientController extends GetxController {
 
 // 환자 정보 저장 클래스
 class Patient {
-  final int id;
+  final String id;
   final String name;
   final String gender;
   final String birth;

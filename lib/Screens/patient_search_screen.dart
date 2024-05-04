@@ -82,7 +82,7 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                 ),
               ),
               onSubmitted: (String value) async {
-                int? id = int.tryParse(value);
+                String? id = value;
                 if (id != null) {
                   controller.searchPatient(id);
                   // searchResult가 업데이트 될 때까지 기다립니다.
