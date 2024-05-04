@@ -150,7 +150,7 @@ class HomeScreen extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10), // 모서리를 둥글게 하는 정도
                     child: Image.network(
-                      '${patient.picture}',
+                      patient.picture,
                       fit: BoxFit.cover,
                       height: 150,
                       width: 110,

@@ -83,19 +83,16 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
               ),
               onSubmitted: (String value) async {
                 String? id = value;
-                if (id != null) {
-                  controller.searchPatient(id);
-                  // searchResult가 업데이트 될 때까지 기다립니다.
-                  once(controller.searchResult, (_) {
-                    // searchResult의 값이 null이거나 비어있는지 확인합니다.
-                    if (controller.searchResult.value == null ||
-                        controller.searchResult.value!.isEmpty) {
-                      Get.snackbar('알림', '환자 정보를 찾을 수 없습니다. 다시 확인해 주세요.');
-                    }
-                  });
-                } else {
-                  Get.snackbar('오류', '올바른 고유번호를 입력해 주세요.');
-                }
+
+                controller.searchPatient(id);
+                // searchResult가 업데이트 될 때까지 기다립니다.
+                once(controller.searchResult, (_) {
+                  // searchResult의 값이 null이거나 비어있는지 확인합니다.
+                  if (controller.searchResult.value == null ||
+                      controller.searchResult.value!.isEmpty) {
+                    Get.snackbar('알림', '환자 정보를 찾을 수 없습니다. 다시 확인해 주세요.');
+                  }
+                });
               },
             ),
           ),
@@ -160,7 +157,7 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
                               borderRadius:
                                   BorderRadius.circular(10), // 모서리를 둥글게 하는 정도
                               child: Image.network(
-                                '${patient.picture}',
+                                patient.picture,
                                 fit: BoxFit.cover,
                                 height: 150,
                                 width: 110,
