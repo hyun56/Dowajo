@@ -252,11 +252,11 @@ class signUpPage extends State<signUp> {
                                   : Icons.visibility_off))),
                     ),
                   ),
-                  const SizedBox(height: 10),
                   //Login button
                   Container(
-                    height: 55,
-                    width: MediaQuery.of(context).size.width * .9,
+                    margin: const EdgeInsets.all(8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         color: Colors.lightGreen),
