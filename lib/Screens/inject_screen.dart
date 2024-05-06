@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:dowajo/Screens/inject/inject_add.dart';
-//import 'package:dowajo/Screens/inject/provider.dart';
+import 'package:dowajo/Screens/inject/inject_list_provider.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -27,8 +27,9 @@ class _InjectScreenState extends State<InjectScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final injectModelProvider =
-        Provider.of<InjectModelProvider>(context); // 변경된 부분
+    // final injectModelProvider =
+    //     Provider.of<InjectModelProvider>(context); // 변경된 부분
+    final injectModelProvider = context.watch<InjectListProvider>();
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -230,6 +231,12 @@ class _InjectScreenState extends State<InjectScreen> {
                                                   fontSize: 18,
                                                 ),
                                               ),*/
+                                              Text(
+                                                "${injectModelProvider.injects[index].injectDay}      ${injectModelProvider.injects[index].injectStartTime} ~ ${injectModelProvider.injects[index].injectEndTime}",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                ),
+                                              ),
                                               injectModelProvider.injects[index]
                                                       .injectChange
                                                   ? Text(
@@ -337,9 +344,12 @@ class _AppBar extends StatelessWidget {
       title: Text('주사', style: TextStyle(fontWeight: FontWeight.bold)),
       centerTitle: true,
       leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const HomeScreen()))),
+        icon: Icon(Icons.arrow_back, color: Colors.black),
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        ),
+      ),
     );
   }
 }
