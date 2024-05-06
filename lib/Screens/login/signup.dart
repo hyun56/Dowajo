@@ -31,7 +31,7 @@ class signUpPage extends State<signUp> {
     try {
       //authentication에 추가
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: idController.text + "@example.com", // ID
+        email: "${idController.text}@example.com", // ID
         password: passController.text,
       );
       //firestore에 추가
@@ -148,7 +148,7 @@ class signUpPage extends State<signUp> {
 
                   //name
                   Container(
-                    margin: EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
