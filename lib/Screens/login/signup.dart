@@ -40,7 +40,7 @@ class signUpPage extends State<signUp> {
     try {
       //UserCredential userCredential =
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: idController.text + "@example.com", // ID
+        email: "${idController.text}@example.com", // ID
         password: passController.text,
       );
       Get.snackbar("회원가입 성공", "성공적으로 회원가입되었습니다.");
@@ -79,7 +79,7 @@ class signUpPage extends State<signUp> {
                   ),
                   //id
                   Container(
-                    margin: EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
@@ -106,7 +106,7 @@ class signUpPage extends State<signUp> {
                   ),
                   //name
                   Container(
-                    margin: EdgeInsets.all(8),
+                    margin: const EdgeInsets.all(8),
                     padding:
                         const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
