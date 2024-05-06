@@ -1,17 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:dowajo/Screens/login/login.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-//import 'package:cloud_firestore/cloud_firestore.dart';
-// Firestore
-// await FirebaseFirestore.instance
-//     .collection('Nurse')
-//     .doc(userCredential.user!.uid)
-//     .set({
-//   'id': idController.text,
-//   'name': nameController.text,
-// });
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class signUp extends StatefulWidget {
   const signUp({super.key});
@@ -27,22 +19,25 @@ class signUpPage extends State<signUp> {
   final confirmPassController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
-
+  //toggle button
   bool isVisible = false;
-
+  //signup state
   bool isSignUp = false;
 
   signUp() async {
     setState(() {
       isSignUp = true;
     });
-
     try {
-      //UserCredential userCredential =
+      //authentication에 추가
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: "${idController.text}@example.com", // ID
         password: passController.text,
       );
+      //firestore에 추가
+      await FirebaseFirestore.instance
+          .collection("Nurse")
+          .add({'id': idController.text, 'name': nameController.text});
       Get.snackbar("회원가입 성공", "성공적으로 회원가입되었습니다.");
       Navigator.push(
         context,
@@ -57,6 +52,33 @@ class signUpPage extends State<signUp> {
     }
   }
 
+  //ID 중복
+  bool idAvailable = true;
+  String _errorText = '';
+  Future<void> _checkDuplicateId(String id) async {
+    if (id.isNotEmpty) {
+      QuerySnapshot query = await FirebaseFirestore.instance
+          .collection('Nurse')
+          .where('id', isEqualTo: id)
+          .get();
+
+      if (query.docs.isNotEmpty) {
+        setState(() {
+          isSignUp = false;
+          _errorText = '이미 사용 중인 ID입니다.';
+        });
+      } else {
+        setState(() {
+          _errorText = '사용 가능한 ID입니다.';
+        });
+      }
+    } else {
+      setState(() {
+        _errorText = '아이디를 입력해주세요';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,7 +89,7 @@ class signUpPage extends State<signUp> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const ListTile(
                     title: Text(
@@ -78,32 +100,52 @@ class signUpPage extends State<signUp> {
                     ),
                   ),
                   //id
-                  Container(
-                    margin: const EdgeInsets.all(8),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: Colors.black,
-                        width: 1.0,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Expanded(
+                        child: Container(
+                          //height: 60,
+                          margin: const EdgeInsets.all(8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(
+                              color: Colors.black,
+                              width: 1.0,
+                            ),
+                          ),
+                          child: TextFormField(
+                            controller: idController,
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return "ID를 반드시 입력해야 합니다.";
+                              }
+                              return null;
+                            },
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.all(1.0),
+                              border: InputBorder.none,
+                              hintText: "ID",
+                              errorText:
+                                  idController.text.isEmpty ? null : _errorText,
+                              icon: Icon(Icons.person),
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
-                    child: TextFormField(
-                      controller: idController,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "ID를 반드시 입력해야 합니다.";
-                        }
-                        return null;
-                      },
-                      decoration: const InputDecoration(
-                        icon: Icon(Icons.person),
-                        border: InputBorder.none,
-                        hintText: "ID",
+                      SizedBox(width: 5.0),
+                      ElevatedButton(
+                        onPressed: () {
+                          _checkDuplicateId(idController.text);
+                        },
+                        child: Text('ID 중복 확인'),
                       ),
-                    ),
+                      SizedBox(height: 8.0),
+                    ],
                   ),
+
                   //name
                   Container(
                     margin: const EdgeInsets.all(8),
@@ -188,6 +230,8 @@ class signUpPage extends State<signUp> {
                         } else if (passController.text !=
                             confirmPassController.text) {
                           return "비밀번호가 안 맞습니다.";
+                        } else if (value.length < 6) {
+                          return '비밀번호는 6글자 이상이어야 합니다.';
                         }
                         return null;
                       },
@@ -208,11 +252,11 @@ class signUpPage extends State<signUp> {
                                   : Icons.visibility_off))),
                     ),
                   ),
-                  const SizedBox(height: 10),
                   //Login button
                   Container(
-                    height: 55,
-                    width: MediaQuery.of(context).size.width * .9,
+                    margin: const EdgeInsets.all(8),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         color: Colors.lightGreen),
