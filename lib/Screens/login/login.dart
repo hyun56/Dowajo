@@ -33,11 +33,11 @@ class _LoginScreenState extends State<LoginScreen> {
           email: "${idController.text}@example.com", // ID
           password: passController.text);
 
-      Get.snackbar("로그인 성공", "성공적으로 로그인되었습니다.");
+      Get.snackbar("로그인 성공", "성공적으로 로그인되었습니다");
       Navigator.push(context,
           MaterialPageRoute(builder: (context) => const PatientSearchScreen()));
     } catch (error) {
-      Get.snackbar("로그인 실패", error.toString());
+      Get.snackbar("로그인 실패", "올바른 정보를 입력해 주세요");
     } finally {
       setState(() {
         isLogin = false;
