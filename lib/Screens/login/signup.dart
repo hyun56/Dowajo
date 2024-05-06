@@ -65,16 +65,16 @@ class signUpPage extends State<signUp> {
       if (query.docs.isNotEmpty) {
         setState(() {
           isSignUp = false;
-          _errorText = '이미 사용 중인 ID입니다.';
+          _errorText = '이미 사용 중인 아이디입니다';
         });
       } else {
         setState(() {
-          _errorText = '사용 가능한 ID입니다.';
+          _errorText = '사용 가능한 아이디입니다';
         });
       }
     } else {
       setState(() {
-        _errorText = '아이디를 입력해주세요';
+        _errorText = '아이디를 입력해 주세요';
       });
     }
   }
@@ -82,184 +82,273 @@ class signUpPage extends State<signUp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: Center(
         child: SingleChildScrollView(
           child: Form(
             key: formKey,
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const ListTile(
                     title: Text(
                       "회원가입",
-                      style:
-                          TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 40.0,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFFA6CBA5),
+                      ),
                       textAlign: TextAlign.center,
                     ),
                   ),
+                  const SizedBox(height: 35),
+
                   //id
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
                         child: Container(
-                          //height: 60,
-                          margin: const EdgeInsets.all(8),
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 6),
+                              horizontal: 10, vertical: 3),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
+                            borderRadius: BorderRadius.circular(10),
                             border: Border.all(
-                              color: Colors.black,
-                              width: 1.0,
+                              color: const Color.fromARGB(255, 194, 193, 193),
+                              width: 1.5,
                             ),
                           ),
-                          child: TextFormField(
-                            controller: idController,
-                            validator: (value) {
-                              if (value!.isEmpty) {
-                                return "ID를 반드시 입력해야 합니다.";
-                              }
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.all(1.0),
-                              border: InputBorder.none,
-                              hintText: "ID",
-                              errorText:
-                                  idController.text.isEmpty ? null : _errorText,
-                              icon: Icon(Icons.person),
-                            ),
+                          child: Stack(
+                            alignment: Alignment.centerRight,
+                            children: [
+                              TextFormField(
+                                controller: idController,
+                                validator: (value) {
+                                  if (value!.isEmpty) {
+                                    return "아이디를 입력해 주세요";
+                                  }
+                                  return null;
+                                },
+                                decoration: InputDecoration(
+                                  icon: const Padding(
+                                    padding: EdgeInsets.only(left: 5),
+                                    child: Icon(
+                                      Icons.person,
+                                      color: Color.fromARGB(255, 194, 193, 193),
+                                      size: 23,
+                                    ),
+                                  ),
+                                  border: InputBorder.none,
+                                  hintText: "아이디",
+                                  hintStyle: const TextStyle(
+                                    color: Color.fromARGB(255, 169, 169, 169),
+                                    fontSize: 15,
+                                  ),
+                                  errorText: idController.text.isEmpty
+                                      ? null
+                                      : _errorText,
+                                  contentPadding:
+                                      const EdgeInsets.only(right: 80),
+                                ),
+                              ),
+                              Positioned(
+                                right: 0,
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    _checkDuplicateId(idController.text);
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    elevation: 0,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 0),
+                                    textStyle: const TextStyle(fontSize: 12),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(5.0)),
+                                  ),
+                                  child: const Text(
+                                    '중복 확인',
+                                    style: TextStyle(
+                                      color: Color.fromARGB(255, 155, 192, 154),
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      SizedBox(width: 5.0),
-                      ElevatedButton(
-                        onPressed: () {
-                          _checkDuplicateId(idController.text);
-                        },
-                        child: Text('ID 중복 확인'),
-                      ),
-                      SizedBox(height: 8.0),
                     ],
                   ),
 
-                  //name
+                  // const SizedBox(width: 5.0),
+                  // ElevatedButton(
+                  //   onPressed: () {
+                  //     _checkDuplicateId(idController.text);
+                  //   },
+                  //   child: const Text('중복 확인'),
+                  // ),
+                  // const SizedBox(height: 8.0),
+
+                  const SizedBox(height: 20),
                   Container(
-                    margin: const EdgeInsets.all(8),
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: Colors.black,
-                        width: 1.0,
+                        color: const Color.fromARGB(255, 194, 193, 193),
+                        width: 1.5,
                       ),
                     ),
                     child: TextFormField(
                       controller: nameController,
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return "성함을 반드시 입력해야 합니다.";
+                          return "이름을 입력해 주세요";
                         }
                         return null;
                       },
                       decoration: const InputDecoration(
-                        icon: Icon(Icons.person),
+                        icon: Padding(
+                          padding: EdgeInsets.only(left: 5),
+                          child: Icon(
+                            Icons.person,
+                            color: Color.fromARGB(255, 194, 193, 193),
+                            size: 23,
+                          ),
+                        ),
                         border: InputBorder.none,
-                        hintText: "성함",
+                        hintText: "이름",
+                        hintStyle: TextStyle(
+                          color: Color.fromARGB(255, 169, 169, 169),
+                          fontSize: 15,
+                        ),
                       ),
                     ),
                   ),
+
+                  const SizedBox(height: 20),
+
                   //Password field
                   Container(
-                    margin: const EdgeInsets.all(8),
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: Colors.black,
-                        width: 1.0,
+                        color: const Color.fromARGB(255, 194, 193, 193),
+                        width: 1.5,
                       ),
                     ),
                     child: TextFormField(
                       controller: passController,
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return "비밀번호를 반드시 입력해야 합니다.";
+                          return "비밀번호를 입력해 주세요";
                         }
                         return null;
                       },
                       obscureText: !isVisible,
                       decoration: InputDecoration(
-                          icon: const Icon(Icons.lock),
+                          icon: const Padding(
+                            padding: EdgeInsets.only(left: 5),
+                            child: Icon(
+                              Icons.lock,
+                              color: Color.fromARGB(255, 194, 193, 193),
+                              size: 23,
+                            ),
+                          ),
                           border: InputBorder.none,
-                          hintText: "비밀번호",
+                          hintText: "비밀번호 (6글자 이상)",
+                          hintStyle: const TextStyle(
+                            color: Color.fromARGB(255, 169, 169, 169),
+                            fontSize: 15,
+                          ),
                           suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  isVisible = !isVisible;
-                                });
-                              },
-                              icon: Icon(isVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off))),
+                            onPressed: () {
+                              setState(() {
+                                //toggle button
+                                isVisible = !isVisible;
+                              });
+                            },
+                            icon: Icon(isVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off),
+                            color: const Color.fromARGB(255, 169, 169, 169),
+                          )),
                     ),
                   ),
 
+                  const SizedBox(height: 20),
+
                   //Confirm Password field
                   Container(
-                    margin: const EdgeInsets.all(8),
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(10),
                       border: Border.all(
-                        color: Colors.black,
-                        width: 1.0,
+                        color: const Color.fromARGB(255, 194, 193, 193),
+                        width: 1.5,
                       ),
                     ),
                     child: TextFormField(
                       controller: confirmPassController,
                       validator: (value) {
                         if (value!.isEmpty) {
-                          return "비밀번호를 반드시 입력해야 합니다.";
+                          return "비밀번호를 입력해 주세요";
                         } else if (passController.text !=
                             confirmPassController.text) {
-                          return "비밀번호가 안 맞습니다.";
+                          return "비밀번호가 일치하지 않습니다";
                         } else if (value.length < 6) {
-                          return '비밀번호는 6글자 이상이어야 합니다.';
+                          return '비밀번호는 6글자 이상이어야 합니다';
                         }
                         return null;
                       },
                       obscureText: !isVisible,
                       decoration: InputDecoration(
-                          icon: const Icon(Icons.lock),
+                          icon: const Padding(
+                            padding: EdgeInsets.only(left: 5),
+                            child: Icon(
+                              Icons.lock,
+                              color: Color.fromARGB(255, 194, 193, 193),
+                              size: 23,
+                            ),
+                          ),
                           border: InputBorder.none,
-                          hintText: "비밀번호",
+                          hintText: "비밀번호 확인",
+                          hintStyle: const TextStyle(
+                            color: Color.fromARGB(255, 169, 169, 169),
+                            fontSize: 15,
+                          ),
                           suffixIcon: IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  //toggle button
-                                  isVisible = !isVisible;
-                                });
-                              },
-                              icon: Icon(isVisible
-                                  ? Icons.visibility
-                                  : Icons.visibility_off))),
+                            onPressed: () {
+                              setState(() {
+                                //toggle button
+                                isVisible = !isVisible;
+                              });
+                            },
+                            icon: Icon(isVisible
+                                ? Icons.visibility
+                                : Icons.visibility_off),
+                            color: const Color.fromARGB(255, 169, 169, 169),
+                          )),
                     ),
                   ),
+                  const SizedBox(height: 40),
+
                   //Login button
                   Container(
-                    margin: const EdgeInsets.all(8),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    height: 53,
+                    width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(8),
-                        color: Colors.lightGreen),
+                      borderRadius: BorderRadius.circular(8),
+                      color: const Color(0xFFA6CBA5),
+                    ),
                     child: TextButton(
                         onPressed: () {
                           if (formKey.currentState!.validate()) {
@@ -268,24 +357,42 @@ class signUpPage extends State<signUp> {
                         },
                         child: const Text(
                           "회원가입",
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15.5,
+                          ),
                         )),
                   ),
+                  const SizedBox(height: 5),
 
                   //Sign up button
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      const Text("이미 계정이 있으신가요?"),
+                      const Text(
+                        "이미 계정이 있으신가요?",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 162, 162, 162),
+                        ),
+                      ),
                       TextButton(
-                          onPressed: () {
-                            //Navigate to sign up
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const LoginScreen()));
-                          },
-                          child: const Text("Login"))
+                        onPressed: () {
+                          //Navigate to sign up
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const LoginScreen()));
+                        },
+                        child: const Text(
+                          "로그인",
+                          style: TextStyle(
+                            color: Color.fromARGB(255, 155, 192, 154),
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                     ],
                   )
                 ],
