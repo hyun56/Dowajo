@@ -52,7 +52,7 @@ class _medicineRecordState extends State<medicineRecord> {
           onPressed: () {
             // 메인 화면으로 돌아가기
             Navigator.push(context,
-                MaterialPageRoute(builder: (context) => const HomeScreen()));
+                MaterialPageRoute(builder: (context) => HomeScreen()));
           },
         ),
       ),
