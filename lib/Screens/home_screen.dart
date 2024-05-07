@@ -1,23 +1,31 @@
+import 'package:dowajo/Patient/patient_controller.dart';
 import 'package:dowajo/Screens/macro_screen.dart';
+import 'package:dowajo/Screens/patient_search_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:get/get.dart';
 import '../components/menu_item.dart';
-//import 'heart_screen.dart';
-import 'package:dowajo/Screens/inject_screen.dart';
+import 'heart_screen.dart';
 import 'medicine_screen.dart';
+import 'package:dowajo/Screens/inject_screen.dart';
+
 import 'alarms_screen.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key? key}) : super(key: key);
+  final PatientController controller = Get.put(PatientController());
+
+  HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final PatientController controller = Get.find();
+
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 235, 238, 240),
         //backgroundColor: Color.fromARGB(255, 219, 225, 228),
         appBar: AppBar(
+          automaticallyImplyLeading: false, //자동으로 생성되는 뒤로가기 제거
           backgroundColor: Colors.transparent,
           title: const Padding(
             padding: EdgeInsets.only(left: 5),
@@ -31,7 +39,15 @@ class HomeScreen extends StatelessWidget {
           ),
           actions: [
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                controller.searchResult.value = null;
+                Get.offAll(() => const PatientSearchScreen());
+                // 메인 화면으로 돌아가기
+                // Navigator.pushReplacement(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => const PatientSearchScreen()));
+              },
               icon: const Icon(Icons.logout),
             ),
           ],
@@ -88,6 +104,7 @@ class HomeScreen extends StatelessWidget {
   // }
 
   Padding buildHeading() {
+    final patient = controller.searchResult.value!.first;
     return Padding(
       padding: const EdgeInsets.only(top: 50, bottom: 25, left: 5, right: 5),
       child: Container(
@@ -135,7 +152,7 @@ class HomeScreen extends StatelessWidget {
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(10), // 모서리를 둥글게 하는 정도
                     child: Image.network(
-                      'https://img.seoul.co.kr/img/upload/2022/04/28/SSI_20220428230010_V.jpg',
+                      patient.picture,
                       fit: BoxFit.cover,
                       height: 150,
                       width: 110,
@@ -151,25 +168,25 @@ class HomeScreen extends StatelessWidget {
                   //   ),
                   // ),
                 ),
-                const Column(
+                Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      '백현 (남)',
-                      style: TextStyle(
+                      '${patient.name}(${patient.gender})',
+                      style: const TextStyle(
                         color: Color.fromARGB(255, 98, 98, 98),
                         fontSize: 20,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    SizedBox(
+                    const SizedBox(
                       height: 18,
                     ),
                     Row(
                       //mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           '생년월일: ',
                           style: TextStyle(
                               fontSize: 15,
@@ -177,8 +194,9 @@ class HomeScreen extends StatelessWidget {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          '1992-05-06',
-                          style: TextStyle(fontSize: 15, color: Colors.grey),
+                          patient.birth,
+                          style:
+                              const TextStyle(fontSize: 15, color: Colors.grey),
                         ),
                         // SizedBox(width: 20),
                         // Text(
@@ -194,11 +212,11 @@ class HomeScreen extends StatelessWidget {
                         // ),
                       ],
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Row(
                       //mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           '병명: ',
                           style: TextStyle(
                               fontSize: 15,
@@ -206,16 +224,17 @@ class HomeScreen extends StatelessWidget {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          '독감',
-                          style: TextStyle(fontSize: 15, color: Colors.grey),
+                          patient.disease,
+                          style:
+                              const TextStyle(fontSize: 15, color: Colors.grey),
                         ),
                       ],
                     ),
-                    SizedBox(height: 8),
+                    const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(
+                        const Text(
                           '병실: ',
                           style: TextStyle(
                               fontSize: 15,
@@ -223,8 +242,9 @@ class HomeScreen extends StatelessWidget {
                               fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          '506호',
-                          style: TextStyle(fontSize: 15, color: Colors.grey),
+                          '${patient.room}',
+                          style:
+                              const TextStyle(fontSize: 15, color: Colors.grey),
                         ),
                       ],
                     ),
