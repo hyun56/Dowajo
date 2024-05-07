@@ -347,7 +347,7 @@ class _AppBar extends StatelessWidget {
         icon: Icon(Icons.arrow_back, color: Colors.black),
         onPressed: () => Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => HomeScreen()),
         ),
       ),
     );
