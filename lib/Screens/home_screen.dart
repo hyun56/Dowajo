@@ -281,33 +281,32 @@ class HomeScreen extends StatelessWidget {
                 ),
               ],
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(top: 0.0), // 아이콘 위에 패딩 추가
-                  child: IconButton(
-                    //주사 쿠퍼티노 아이콘 쓸만한게 없어서 대체
-                    icon: Image.asset('repo/icons/inject.png',
+            //inkwell로 감싸서 영역 클릭 가능하게 만듦
+            child: InkWell(
+              onTap: () {
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) =>
+                        InjectScreen())); //원래 homescreen였는데, 에러남
+              },
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(top: 0.0), // 아이콘 위에 패딩 추가
+                    child: Image.asset('repo/icons/inject.png',
                         width: 26, height: 26),
-                    onPressed: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) =>
-                              const InjectScreen())); //원래 homescreen였는데, 에러남
-                    },
-                    color: Colors.black,
                   ),
-                ),
-                Padding(
-                  padding: EdgeInsets.only(top: 11.0), // 아이콘과 텍스트 사이에 공간 추가
-                  child: Text("주사",
-                      style: TextStyle(
-                          color: Colors.grey[800],
-                          fontFamily: 'Cupertino',
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16)),
-                ),
-              ],
+                  Padding(
+                    padding: EdgeInsets.only(top: 11.0), // 아이콘과 텍스트 사이에 공간 추가
+                    child: Text("주사",
+                        style: TextStyle(
+                            color: Colors.grey[800],
+                            fontFamily: 'Cupertino',
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16)),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(width: 23),
