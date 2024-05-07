@@ -11,7 +11,8 @@ import 'package:dowajo/Screens/inject/inject_list_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
-
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 // import 'notification_manager.dart'; // notification_manager.dart를 import합니다.
@@ -23,7 +24,11 @@ void main() async {
   initializeDateFormatting();
   await AndroidAlarmManager.initialize();
   setupWorkManager(); // work_manager_setup.dart에서 정의한 함수를 호출합니다.
-
+  
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  
   const String channelId = 'your channel id';
   const String channelName = 'your channel name';
   const String channelDescription = 'your channel description'; // Optional
