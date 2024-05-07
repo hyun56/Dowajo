@@ -48,7 +48,10 @@ dependencies:
   package_info: ^2.0.0
   workmanager: ^0.5.1
   get: ^4.3.8
-
+  firebase_core: ^2.24.2
+  firebase_messaging: ^14.7.10
+  firebase_auth: ^4.16.0
+  cloud_firestore: ^4.14.0
 
 
 
