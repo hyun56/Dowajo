@@ -38,13 +38,13 @@ class signUpPage extends State<signUp> {
       await FirebaseFirestore.instance
           .collection("Nurse")
           .add({'id': idController.text, 'name': nameController.text});
-      Get.snackbar("회원가입 성공", "성공적으로 회원가입되었습니다.");
+      Get.snackbar("회원가입 성공", "회원가입되었습니다.");
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => const LoginScreen()),
       );
     } catch (error) {
-      Get.snackbar("회원가입 실패", error.toString());
+      Get.snackbar("회원가입 실패", "입력된 정보를 확인해 주세요");
     } finally {
       setState(() {
         isSignUp = false;
