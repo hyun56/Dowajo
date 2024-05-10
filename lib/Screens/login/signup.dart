@@ -19,15 +19,14 @@ class signUpPage extends State<signUp> {
   final confirmPassController = TextEditingController();
 
   final formKey = GlobalKey<FormState>();
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+
   //toggle button
   bool isVisible = false;
   //signup state
   bool isSignUp = false;
 
   signUp() async {
-    setState(() {
-      isSignUp = true;
-    });
     try {
       //authentication에 추가
       await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -35,7 +34,7 @@ class signUpPage extends State<signUp> {
         password: passController.text,
       );
       //firestore에 추가
-      await FirebaseFirestore.instance
+      await firestore
           .collection("Nurse")
           .add({'id': idController.text, 'name': nameController.text});
       Get.snackbar("회원가입 성공", "회원가입되었습니다.");
@@ -45,38 +44,47 @@ class signUpPage extends State<signUp> {
       );
     } catch (error) {
       Get.snackbar("회원가입 실패", "입력된 정보를 확인해 주세요");
-    } finally {
-      setState(() {
-        isSignUp = false;
-      });
     }
   }
 
   //ID 중복
   bool idAvailable = true;
   String _errorText = '';
-  Future<void> _checkDuplicateId(String id) async {
-    if (id.isNotEmpty) {
-      QuerySnapshot query = await FirebaseFirestore.instance
-          .collection('Nurse')
-          .where('id', isEqualTo: id)
-          .get();
-
-      if (query.docs.isNotEmpty) {
-        setState(() {
-          isSignUp = false;
-          _errorText = '이미 사용 중인 아이디입니다';
-        });
-      } else {
-        setState(() {
-          _errorText = '사용 가능한 아이디입니다';
-        });
-      }
-    } else {
+  checkId(String id) async {
+    if (id.isEmpty) {
       setState(() {
-        _errorText = '아이디를 입력해 주세요';
+        _errorText = 'ID를 입력해주세요';
+      });
+      return;
+    }
+
+    final QuerySnapshot result = await FirebaseFirestore.instance
+        .collection('Nurse')
+        .where('id', isEqualTo: id)
+        .get();
+
+    if (result.docs.isNotEmpty) {
+      setState(() {
+        idAvailable = false;
+        _errorText = "이미 사용 중인 ID입니다.";
+      });
+    } else if (result.docs.isEmpty) {
+      setState(() {
+        idAvailable = true;
+        _errorText = '사용 가능한 ID입니다.';
       });
     }
+  }
+
+  String? validatePass(String? value) {
+    if (value!.isEmpty) {
+      return "비밀번호를 입력해 주세요";
+    } else if (value.length < 6) {
+      return '비밀번호는 6글자 이상이어야 합니다';
+    } else if (passController.text != confirmPassController.text) {
+      return "비밀번호가 일치하지 않습니다";
+    }
+    return null;
   }
 
   @override
@@ -156,8 +164,8 @@ class signUpPage extends State<signUp> {
                               Positioned(
                                 right: 0,
                                 child: ElevatedButton(
-                                  onPressed: () {
-                                    _checkDuplicateId(idController.text);
+                                  onPressed: () async {
+                                    await checkId(idController.text);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     elevation: 0,
@@ -246,12 +254,7 @@ class signUpPage extends State<signUp> {
                     ),
                     child: TextFormField(
                       controller: passController,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "비밀번호를 입력해 주세요";
-                        }
-                        return null;
-                      },
+                      validator: validatePass,
                       obscureText: !isVisible,
                       decoration: InputDecoration(
                           icon: const Padding(
@@ -298,17 +301,7 @@ class signUpPage extends State<signUp> {
                     ),
                     child: TextFormField(
                       controller: confirmPassController,
-                      validator: (value) {
-                        if (value!.isEmpty) {
-                          return "비밀번호를 입력해 주세요";
-                        } else if (passController.text !=
-                            confirmPassController.text) {
-                          return "비밀번호가 일치하지 않습니다";
-                        } else if (value.length < 6) {
-                          return '비밀번호는 6글자 이상이어야 합니다';
-                        }
-                        return null;
-                      },
+                      validator: validatePass,
                       obscureText: !isVisible,
                       decoration: InputDecoration(
                           icon: const Padding(
@@ -341,7 +334,7 @@ class signUpPage extends State<signUp> {
                   ),
                   const SizedBox(height: 40),
 
-                  //Login button
+                  //SignUp button
                   Container(
                     height: 53,
                     width: MediaQuery.of(context).size.width,
@@ -350,9 +343,12 @@ class signUpPage extends State<signUp> {
                       color: const Color(0xFFA6CBA5),
                     ),
                     child: TextButton(
-                        onPressed: () {
+                        onPressed: () async {
                           if (formKey.currentState!.validate()) {
-                            signUp();
+                            await checkId(idController.text);
+                            if (idAvailable) {
+                              signUp();
+                            }
                           }
                         },
                         child: const Text(
