@@ -2,6 +2,7 @@ import 'package:dowajo/Patient/patient_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class AlarmsScreen extends StatefulWidget {
   const AlarmsScreen({Key? key}) : super(key: key);
@@ -30,6 +31,7 @@ class _AlarmsScreenState extends State<AlarmsScreen> {
       final String newData = event.snapshot.value.toString();
       setState(() {
         userRequires.add(newData); // 리스트에 데이터 추가
+        userRequires.sort();
       });
     });
   }
@@ -38,7 +40,8 @@ class _AlarmsScreenState extends State<AlarmsScreen> {
   Widget build(BuildContext context) {
     final PatientController controller = Get.find();
     final patient = controller.searchResult.value!.first;
-
+    final now = new DateTime.now();
+  String formattedDate = DateFormat('yy.MM.dd HH:mm').format(DateTime.now());
     return Scaffold(
       appBar: AppBar(
         title: const Text('알림 모아보기'),
@@ -53,7 +56,7 @@ class _AlarmsScreenState extends State<AlarmsScreen> {
                         fontSize: 20,
                         fontWeight: FontWeight.w800),),
             title: Text(userRequires[index]),
-            // subtitle: Text(DateTime as String), // 리스트의 각 항목을 표시
+            subtitle: Text(formattedDate.toString()), // 리스트의 각 항목을 표시
           );
         },
       ),
