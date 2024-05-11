@@ -3,7 +3,6 @@
 import 'package:dowajo/Alarm/alarm_schedule.dart';
 import 'package:dowajo/Alarm/notification_manager.dart';
 import 'package:dowajo/Alarm/work_manager.dart';
-import 'package:dowajo/Screens/alarms_screen.dart';
 import 'package:dowajo/Screens/login/login.dart';
 //import 'package:dowajo/Screens/home_screen.dart';
 import 'package:dowajo/components/calendar/today_banner.dart';

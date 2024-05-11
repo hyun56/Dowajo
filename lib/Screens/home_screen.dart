@@ -306,7 +306,7 @@ class HomeScreen extends StatelessWidget {
             icon: CupertinoIcons.bell_circle_fill,
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
-                  builder: (context) => AlarmsScreen()));
+                  builder: (context) => const AlarmsScreen()));
             },
             iconColor: const Color.fromARGB(255, 249, 196, 150),
           ),
