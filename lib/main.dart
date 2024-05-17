@@ -6,7 +6,7 @@ import 'package:dowajo/Alarm/work_manager.dart';
 import 'package:dowajo/Screens/home_screen.dart';
 import 'package:dowajo/components/calendar/today_banner.dart';
 import 'package:dowajo/components/models/injectModel.dart';
-import 'package:dowajo/provider/inject_list_provider.dart';
+import 'package:dowajo/Screens/inject/inject_list_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:dowajo/Screens/login/login.dart';
