@@ -47,7 +47,7 @@ class signUpPage extends State<signUp> {
   }
 
   //ID 중복
-  bool idAvailable = true;
+  bool idAvailable = false;
   String _errorText = '';
   checkId(String id) async {
     if (id.isEmpty) {
@@ -64,7 +64,6 @@ class signUpPage extends State<signUp> {
 
     if (result.docs.isNotEmpty) {
       setState(() {
-        idAvailable = false;
         _errorText = "이미 사용 중인 ID입니다.";
       });
     } else if (result.docs.isEmpty) {
@@ -75,7 +74,7 @@ class signUpPage extends State<signUp> {
     }
   }
 
-  String? validatePass(String? value) {
+  String? validatePassword(String? value) {
     if (value!.isEmpty) {
       return "비밀번호를 입력해 주세요";
     } else if (value.length < 6) {
@@ -253,7 +252,7 @@ class signUpPage extends State<signUp> {
                     ),
                     child: TextFormField(
                       controller: passController,
-                      validator: validatePass,
+                      validator: validatePassword,
                       obscureText: !isVisible,
                       decoration: InputDecoration(
                           icon: const Padding(
@@ -300,7 +299,7 @@ class signUpPage extends State<signUp> {
                     ),
                     child: TextFormField(
                       controller: confirmPassController,
-                      validator: validatePass,
+                      validator: validatePassword,
                       obscureText: !isVisible,
                       decoration: InputDecoration(
                           icon: const Padding(
@@ -344,9 +343,10 @@ class signUpPage extends State<signUp> {
                     child: TextButton(
                         onPressed: () async {
                           if (formKey.currentState!.validate()) {
-                            await checkId(idController.text);
                             if (idAvailable) {
                               signUp();
+                            } else {
+                              Get.snackbar("회원가입 실패", "아이디 중복 확인해주세요");
                             }
                           }
                         },
