@@ -34,7 +34,28 @@ class PatientController extends GetxController {
   String getPatientId() {
     return patientId.value;
   }
+
+  Future<String?> getPatientNameById(String id) async {
+    try {
+      var querySnapshot = await FirebaseFirestore.instance
+          .collection('Patient')
+          .where('id', isEqualTo: id)
+          .get();
+
+      // 검색 결과가 있다면 이름을 반환, 없다면 null 반환
+      if (querySnapshot.docs.isNotEmpty) {
+        var patientName = querySnapshot.docs.first['name'];
+        return patientName;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("Error getting patient name: $e");
+      return null;
+    }
+  }
 }
+
 
 // 환자 정보 저장 클래스
 class Patient {
