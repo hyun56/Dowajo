@@ -247,13 +247,13 @@ class _InjectScreenState extends State<InjectScreen> {
                                                         255, 136, 171, 134)),
                                               ),
                                               /*Text(
-                                                "${injectModelProvider.injects[index].injectDay}      ${injectModelProvider.injects[index].injectStartTime} ~ ${injectModelProvider.injects[index].injectEndTime}",
+                                                "${injectModelProvider.injects[index].injectDay}    ${injectModelProvider.injects[index].injectStartTime} ~ ${injectModelProvider.injects[index].injectEndTime}",
                                                 style: TextStyle(
                                                   fontSize: 18,
                                                 ),
                                               ),*/
                                               Text(
-                                                "${injectModelProvider.injects[index].injectDay}   ${injectModelProvider.injects[index].injectStartTime} ~ ${injectModelProvider.injects[index].injectEndTime}",
+                                                "${injectModelProvider.injects[index].injectDay}  ${injectModelProvider.injects[index].injectStartTime} ~ ${injectModelProvider.injects[index].injectEndTime}",
                                                 style: TextStyle(
                                                   fontSize: 16,
                                                 ),
