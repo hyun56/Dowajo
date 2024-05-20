@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dowajo/Screens/inject/inject_add.dart';
 import 'package:dowajo/Screens/inject/inject_list_provider.dart';
+import 'package:dowajo/Screens/inject/inject_update.dart';
 import 'package:flutter/material.dart';
 //import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -125,7 +126,19 @@ class _InjectScreenState extends State<InjectScreen> {
                                             children: [
                                               const SizedBox(height: 15),
                                               ElevatedButton(
-                                                onPressed: () {},
+                                                onPressed: () async {
+                                                  await Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                          builder: (context) =>
+                                                              injectUpdate(
+                                                                  inject: injectModelProvider
+                                                                          .injects[
+                                                                      index]))).then(
+                                                      (value) =>
+                                                          Navigator.of(context)
+                                                              .pop());
+                                                },
                                                 style: ElevatedButton.styleFrom(
                                                   elevation: 0,
                                                   backgroundColor:
@@ -143,6 +156,14 @@ class _InjectScreenState extends State<InjectScreen> {
                                               const SizedBox(height: 10),
                                               ElevatedButton(
                                                 onPressed: () async {
+                                                  await injectModelProvider
+                                                      .delete(
+                                                          injectModelProvider
+                                                              .injects[index]
+                                                              .id!);
+                                                  await injectModelProvider
+                                                      .refresh();
+                                                  setState(() {});
                                                   Navigator.of(context).pop();
                                                 },
                                                 style: ElevatedButton.styleFrom(
@@ -232,13 +253,14 @@ class _InjectScreenState extends State<InjectScreen> {
                                                 ),
                                               ),*/
                                               Text(
-                                                "${injectModelProvider.injects[index].injectDay}      ${injectModelProvider.injects[index].injectStartTime} ~ ${injectModelProvider.injects[index].injectEndTime}",
+                                                "${injectModelProvider.injects[index].injectDay}   ${injectModelProvider.injects[index].injectStartTime} ~ ${injectModelProvider.injects[index].injectEndTime}",
                                                 style: TextStyle(
-                                                  fontSize: 18,
+                                                  fontSize: 16,
                                                 ),
                                               ),
                                               injectModelProvider.injects[index]
-                                                      .injectChange
+                                                          .injectChange ==
+                                                      1
                                                   ? Text(
                                                       "교체 예정",
                                                       style: TextStyle(
