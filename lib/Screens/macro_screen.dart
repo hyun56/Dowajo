@@ -21,38 +21,40 @@ class _MacroScreen extends State<MacroScreen> {
 
   StreamSubscription<DatabaseEvent>? _subscription;
 
- @override
-void initState() {
-  super.initState();
-  ref = database.ref().child('userRequires'); // 모든 환자의 데이터를 가져오기 위해 경로 수정
+  @override
+  void initState() {
+    super.initState();
+    ref = database.ref().child('userRequires'); // 모든 환자의 데이터를 가져오기 위해 경로 수정
 
-  _subscription = ref.onValue.listen((event) {
-    final data = event.snapshot.value as Map<dynamic, dynamic>?; // 데이터를 맵으로 캐스팅
-    final List<Map<String, dynamic>> allUserRequires = []; // 모든 사용자 요청을 저장할 리스트
+    _subscription = ref.onValue.listen((event) {
+      final data =
+          event.snapshot.value as Map<dynamic, dynamic>?; // 데이터를 맵으로 캐스팅
+      final List<Map<String, dynamic>> allUserRequires =
+          []; // 모든 사용자 요청을 저장할 리스트
 
-    if (data != null) {
-      data.forEach((patientId, patientData) {
-        // 각 환자 ID와 그에 해당하는 데이터에 대해 반복
-        final patientDataMap = patientData as Map<dynamic, dynamic>;
-        patientDataMap.forEach((key, value) {
-          allUserRequires.add({
-            'patientId': patientId, // 환자 ID 추가
-            'data': value['data'], // 데이터 필드
-            'timestamp': value['timestamp'], // 타임스탬프 필드
+      if (data != null) {
+        data.forEach((patientId, patientData) {
+          // 각 환자 ID와 그에 해당하는 데이터에 대해 반복
+          final patientDataMap = patientData as Map<dynamic, dynamic>;
+          patientDataMap.forEach((key, value) {
+            allUserRequires.add({
+              'patientId': patientId, // 환자 ID 추가
+              'data': value['data'], // 데이터 필드
+              'timestamp': value['timestamp'], // 타임스탬프 필드
+            });
           });
         });
-      });
 
-      // timestamp 기준으로 allUserRequires 정렬
-      allUserRequires.sort((a, b) => b['timestamp'].compareTo(a['timestamp']));
+        // timestamp 기준으로 allUserRequires 정렬
+        allUserRequires
+            .sort((a, b) => b['timestamp'].compareTo(a['timestamp']));
 
-      setState(() {
-        userRequires = allUserRequires; // 전체 리스트를 업데이트
-      });
-    }
-  });
-}
-
+        setState(() {
+          userRequires = allUserRequires; // 전체 리스트를 업데이트
+        });
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -67,7 +69,11 @@ void initState() {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('전체 알림 모아보기'),
+        title: const Text(
+          '전체 알림',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        centerTitle: true,
       ),
       body: userRequires.isNotEmpty
           ? ListView.builder(
