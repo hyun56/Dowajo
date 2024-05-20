@@ -3,8 +3,8 @@
 import 'package:dowajo/Alarm/alarm_schedule.dart';
 import 'package:dowajo/Alarm/notification_manager.dart';
 import 'package:dowajo/Alarm/work_manager.dart';
-//import 'package:dowajo/Screens/home_screen.dart';
 import 'package:dowajo/Screens/login/login.dart';
+//import 'package:dowajo/Screens/home_screen.dart';
 import 'package:dowajo/components/calendar/today_banner.dart';
 //import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -79,6 +79,7 @@ class MyApp extends StatelessWidget {
         unselectedWidgetColor: const Color.fromARGB(255, 203, 202, 202),
       ),
       home: const LoginScreen(),
+      
     );
   }
 }

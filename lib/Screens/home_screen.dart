@@ -292,7 +292,7 @@ class HomeScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           MenuItem(
-            text: "매크로 설정",
+            text: "전체 알림",
             icon: CupertinoIcons.gear_alt_fill,
             onPressed: () {
               Navigator.of(context).push(
