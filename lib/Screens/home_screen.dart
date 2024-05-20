@@ -193,7 +193,8 @@ class HomeScreen extends StatelessWidget {
                         ),
                         Text(
                           patient.birth,
-                          style: const TextStyle(fontSize: 15, color: Colors.grey),
+                          style:
+                              const TextStyle(fontSize: 15, color: Colors.grey),
                         ),
                         // SizedBox(width: 20),
                         // Text(
@@ -222,7 +223,8 @@ class HomeScreen extends StatelessWidget {
                         ),
                         Text(
                           patient.disease,
-                          style: const TextStyle(fontSize: 15, color: Colors.grey),
+                          style:
+                              const TextStyle(fontSize: 15, color: Colors.grey),
                         ),
                       ],
                     ),
@@ -239,7 +241,8 @@ class HomeScreen extends StatelessWidget {
                         ),
                         Text(
                           '${patient.room}',
-                          style: const TextStyle(fontSize: 15, color: Colors.grey),
+                          style:
+                              const TextStyle(fontSize: 15, color: Colors.grey),
                         ),
                       ],
                     ),
@@ -261,7 +264,7 @@ class HomeScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           MenuItem(
-            text: "심박수",
+            text: "주사",
             icon: CupertinoIcons.heart_circle_fill,
             onPressed: () {
               Navigator.of(context).push(
@@ -293,7 +296,7 @@ class HomeScreen extends StatelessWidget {
         children: [
           MenuItem(
             text: "전체 알림",
-            icon: CupertinoIcons.gear_alt_fill,
+            icon: CupertinoIcons.bell_circle_fill,
             onPressed: () {
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const MacroScreen()));
@@ -302,7 +305,7 @@ class HomeScreen extends StatelessWidget {
           ),
           const SizedBox(width: 23),
           MenuItem(
-            text: "알림 모아보기",
+            text: "개별 알림",
             icon: CupertinoIcons.bell_circle_fill,
             onPressed: () {
               Navigator.of(context).push(MaterialPageRoute(
