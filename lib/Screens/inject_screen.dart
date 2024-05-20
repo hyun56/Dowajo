@@ -3,7 +3,6 @@ import 'package:dowajo/Screens/inject/inject_add.dart';
 import 'package:dowajo/Screens/inject/inject_list_provider.dart';
 import 'package:dowajo/Screens/inject/inject_update.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'home_screen.dart';
 import 'package:dowajo/components/models/injectModel.dart';
