@@ -101,15 +101,12 @@ class _inject_addState extends State<inject_add> {
                         value: Change == 1,
                         onChanged: (value) {
                           setState(() {
-                            if (value != null) {
-                              Change = value ? 1 : 0;
-                            }
+                            Change = 0;
                           });
                         }),
                     Text("추가 교체 여부"),
                   ],
                 ),
-
                 SizedBox(height: 20),
                 addAlram(), //알람 추가 버튼
                 //SizedBox(height: 30),
@@ -586,35 +583,3 @@ class _inject_addState extends State<inject_add> {
     );
   }
 }
-
-//provider.dart 파일
-//import 'package:flutter_riverpod/flutter_riverpod.dart';
-//import 'package:dowajo/components/models/injectModel.dart';
-
-// final injectListProvider = ChangeNotifierProvider<InjectListNotifier>(
-//   create: (_) => InjectListNotifier(),
-// );
-
-// class InjectListNotifier extends ChangeNotifier {
-//   List<InjectModel> _injects = [];
-
-//   List<InjectModel> get injects => _injects;
-
-//   void addInject(InjectModel inject) async {
-//     try {
-//       _injects = [..._injects, inject];
-//       await InjectDatabaseHelper.instance.insert(inject);
-//       notifyListeners();
-//     } catch (e) {
-//       print('Error in addInject: $e');
-//     }
-//   }
-// }
-// class InjectListNotifier extends StateNotifier<List<InjectModel>> {
-//   InjectListNotifier() : super([]);
-
-//   void addInject(InjectModel inject) async {
-//     state = [...state, inject];
-//     await InjectDatabaseHelper.instance.insert(inject);
-//   }
-// }
