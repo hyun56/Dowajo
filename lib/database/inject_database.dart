@@ -48,9 +48,9 @@ class InjectDatabaseHelper {
             $columnType TEXT NOT NULL,
             $columnName TEXT NOT NULL,
             $columnPicture TEXT NOT NULL,
-            
+            $columnDay TEXT NOT NULL,
             $columnStartTime TEXT NOT NULL,
-            $columnEndTime TEXT NOT NULL DEFAULT '{}'
+            $columnEndTime TEXT NOT NULL DEFAULT '{}',
             $columnAmount TEXT NOT NULL,
             $columnChange INTEGER NOT NULL
           )
@@ -71,18 +71,18 @@ class InjectDatabaseHelper {
 
     return List.generate(maps.length, (i) {
       return InjectModel(
-        id: maps[i]['id'],
-        injectType: maps[i]['injectType'],
-        injectName: maps[i]['injectName'],
-        injectPicture: maps[i]['injectPicture'],
-        injectDay: maps[i]['injectDay'],
-        injectStartTime: maps[i]['injectStartTime'],
-        injectAmount: maps[i]['injectAmount'],
-        injectChange: maps[i]['injectChange'],
-        injectEndTime: jsonEncode(
-            (jsonDecode(maps[i][columnEndTime].toString()) as Map)
-                .map((key, value) => MapEntry(key, value == 1))),
-      );
+          id: maps[i]['id'],
+          injectType: maps[i]['injectType'],
+          injectName: maps[i]['injectName'],
+          injectPicture: maps[i]['injectPicture'],
+          injectDay: maps[i]['injectDay'],
+          injectStartTime: maps[i]['injectStartTime'],
+          injectAmount: maps[i]['injectAmount'],
+          injectChange: maps[i]['injectChange'],
+          // injectEndTime: jsonEncode(
+          //     (jsonDecode(maps[i][columnEndTime].toString()) as Map)
+          //         .map((key, value) => MapEntry(key, value == 1))),
+          injectEndTime: maps[i]['injectEndTime']);
     });
   }
 
