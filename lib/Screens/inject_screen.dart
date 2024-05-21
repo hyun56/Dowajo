@@ -3,7 +3,6 @@ import 'package:dowajo/Screens/inject/inject_add.dart';
 import 'package:dowajo/Screens/inject/inject_list_provider.dart';
 import 'package:dowajo/Screens/inject/inject_update.dart';
 import 'package:flutter/material.dart';
-//import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'home_screen.dart';
 import 'package:dowajo/components/models/injectModel.dart';
@@ -127,7 +126,6 @@ class _InjectScreenState extends State<InjectScreen> {
                                               const SizedBox(height: 15),
                                               ElevatedButton(
                                                 onPressed: () async {
-                                                  ///YOONLEEVERSE 5/20
                                                   await Navigator.push(
                                                       context,
                                                       MaterialPageRoute(
@@ -155,8 +153,6 @@ class _InjectScreenState extends State<InjectScreen> {
                                               const SizedBox(height: 5),
                                               const Divider(thickness: 4),
                                               const SizedBox(height: 10),
-
-                                              /// YOONLEEVERSE 변경 05/20
                                               ElevatedButton(
                                                 onPressed: () async {
                                                   await injectModelProvider
