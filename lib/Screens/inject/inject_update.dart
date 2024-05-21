@@ -23,7 +23,6 @@ class injectUpdate extends StatefulWidget {
 enum type { normal, IV, nose }
 
 class _inject_UpdateState extends State<injectUpdate> {
-  ///YOONLEEVERSE 5/20
   int selectedRepeat = 1;
   XFile? _pickedFile;
   String Type = "일반 주사";
@@ -127,15 +126,12 @@ class _inject_UpdateState extends State<injectUpdate> {
                         value: Change == 1,
                         onChanged: (value) {
                           setState(() {
-                            if (value != null) {
-                              Change = value ? 1 : 0;
-                            }
+                            Change = 0;
                           });
                         }),
                     Text("추가 교체 여부"),
                   ],
                 ),
-
                 SizedBox(height: 20),
                 addAlram(), //알람 추가 버튼
                 //SizedBox(height: 30),
