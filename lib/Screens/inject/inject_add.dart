@@ -25,7 +25,7 @@ class _inject_addState extends State<inject_add> {
   final TextEditingController _injectNameController = TextEditingController();
   final TextEditingController _injectAmountController = TextEditingController();
   List<String> selectedDays = []; // 선택된 요일을 저장하는 리스트
-  bool Change = false; //추가 교체 여부
+  int Change = 0; //추가 교체 여부
   type _type = type.normal;
 
   void _showTimePicker(TimeOfDay time, bool start) async {
@@ -98,15 +98,18 @@ class _inject_addState extends State<inject_add> {
                 Row(
                   children: [
                     Checkbox(
-                        value: Change,
+                        value: Change == 1,
                         onChanged: (value) {
                           setState(() {
-                            Change = value!;
+                            if (value != null) {
+                              Change = value ? 1 : 0;
+                            }
                           });
                         }),
                     Text("추가 교체 여부"),
                   ],
                 ),
+
                 SizedBox(height: 20),
                 addAlram(), //알람 추가 버튼
                 //SizedBox(height: 30),
