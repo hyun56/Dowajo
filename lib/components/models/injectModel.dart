@@ -49,7 +49,7 @@ class InjectModel {
       injectStartTime: map['injectStartTime'],
       injectEndTime: map['injectEndTime'],
       injectAmount: map['injectAmount'],
-      injectChange: map['injectChange'] == 1,
+      injectChange: map['injectChange'],
     );
   }
 }
