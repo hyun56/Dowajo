@@ -51,14 +51,17 @@ class _AlarmsScreenState extends State<AlarmsScreen> {
   Future<void> loadData(dynamic data) async {
     String timestamp = DateFormat('yy.MM.dd - HH:mm:ss').format(DateTime.now());
 
-    // 새로운 데이터를 리스트에 추가
-    userRequires.add(data.toString());
+    // 중복 확인
+    if (!userRequires.contains(data.toString())) {
+      // 새로운 데이터를 리스트에 추가
+      userRequires.add(data.toString());
 
-    // Firebase에 새로운 데이터 추가
-    DatabaseReference newRef = database.ref('userRequires/$patientId');
-    await newRef.push().set({'data': data, 'timestamp': timestamp});
+      // Firebase에 새로운 데이터 추가
+      DatabaseReference newRef = database.ref('userRequires/$patientId');
+      await newRef.push().set({'data': data, 'timestamp': timestamp});
 
-    setState(() {});
+      setState(() {});
+    }
   }
 
   @override

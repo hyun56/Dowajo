@@ -2,7 +2,6 @@
 
 import 'package:dowajo/Alarm/alarm_schedule.dart';
 import 'package:dowajo/Alarm/notification_manager.dart';
-import 'package:dowajo/Alarm/user_requirements_controller.dart';
 import 'package:dowajo/Alarm/work_manager.dart';
 import 'package:dowajo/Screens/login/login.dart';
 //import 'package:dowajo/Screens/home_screen.dart';
@@ -27,8 +26,6 @@ void main() async {
   initializeDateFormatting();
   await AndroidAlarmManager.initialize();
   setupWorkManager(); // work_manager_setup.dart에서 정의한 함수를 호출합니다.
-  Get.put(UserRequirementsController()); // 앱 시작 시 UserRequirementsController 등록
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
