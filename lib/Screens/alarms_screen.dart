@@ -25,6 +25,16 @@ class _AlarmsScreenState extends State<AlarmsScreen> {
   @override
   void initState() {
     super.initState();
+    setupDataListener();
+  }
+
+  @override
+  void dispose() {
+    _subscription?.cancel();
+    super.dispose();
+  }
+
+  void setupDataListener() {
     controller = Get.find();
     patientId = controller.searchResult.value!.first.id;
     ref = database.ref().child(patientId).child('userRequire');
@@ -33,25 +43,22 @@ class _AlarmsScreenState extends State<AlarmsScreen> {
     _subscription = ref.onValue.listen((event) async {
       final data = event.snapshot.value;
       if (data != null) {
-        String timestamp =
-            DateFormat('yy.MM.dd - HH:mm:ss').format(DateTime.now());
-
-        // 새로운 데이터를 리스트에 추가
-        userRequires.add(data.toString());
-
-        // Firebase에 새로운 데이터 추가
-        DatabaseReference newRef = database.ref('userRequires/$patientId');
-        await newRef.push().set({'data': data, 'timestamp': timestamp});
-
-        setState(() {});
+        await loadData(data);
       }
     });
   }
 
-  @override
-  void dispose() {
-    _subscription?.cancel();
-    super.dispose();
+  Future<void> loadData(dynamic data) async {
+    String timestamp = DateFormat('yy.MM.dd - HH:mm:ss').format(DateTime.now());
+
+    // 새로운 데이터를 리스트에 추가
+    userRequires.add(data.toString());
+
+    // Firebase에 새로운 데이터 추가
+    DatabaseReference newRef = database.ref('userRequires/$patientId');
+    await newRef.push().set({'data': data, 'timestamp': timestamp});
+
+    setState(() {});
   }
 
   @override

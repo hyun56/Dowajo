@@ -30,7 +30,7 @@ CREATE TABLE userRequires(
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 patientId TEXT,
 data TEXT,
-timestamp TEXT
+timestamp TEXT UNIQUE
 )
 ''');
   }
@@ -75,7 +75,7 @@ timestamp TEXT
         'patientId': patientId,
         'data': newData,
         'timestamp': timestamp,
-      });
+      }, conflictAlgorithm: ConflictAlgorithm.replace);
     } catch (e) {
       print('Error inserting user require: $e');
     }
@@ -154,6 +154,4 @@ timestamp TEXT
   //     print('Error deleting user require: $e');
   //   }
   // }
-
-
 }
