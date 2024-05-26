@@ -7,6 +7,6 @@ class FcmManager {
 
   static void initialize() async {
     final token = await FirebaseMessaging.instance.getToken();
-    print(token);
+    print("Token is $token");
   }
 }
