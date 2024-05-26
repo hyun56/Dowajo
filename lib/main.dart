@@ -1,7 +1,7 @@
 //import 'dart:isolate';
 
 import 'package:dowajo/Alarm/alarm_schedule.dart';
-import 'package:dowajo/Alarm/notification_manager.dart';
+import 'package:dowajo/Alarm/local_alarm_manager.dart';
 import 'package:dowajo/Alarm/work_manager.dart';
 import 'package:dowajo/Screens/login/login.dart';
 //import 'package:dowajo/Screens/home_screen.dart';
@@ -21,14 +21,19 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-
-  initializeDateFormatting();
-  await AndroidAlarmManager.initialize();
-  setupWorkManager(); // work_manager_setup.dart에서 정의한 함수를 호출합니다.
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+  initializeDateFormatting();
+  await AndroidAlarmManager.initialize();
+  setupWorkManager(); // work_manager_setup.dart에서 정의한 함수를 호출합니다.
+
+  NotificationManager.initialize();
+  print('NotificationManager initialized');
+  NotificationManager.setupDatabaseListener();
+  print('Database listener setup complete');
 
   const String channelId = 'your channel id';
   const String channelName = 'your channel name';
@@ -78,7 +83,6 @@ class MyApp extends StatelessWidget {
         unselectedWidgetColor: const Color.fromARGB(255, 203, 202, 202),
       ),
       home: const LoginScreen(),
-      
     );
   }
 }
