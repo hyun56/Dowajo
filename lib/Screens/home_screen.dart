@@ -69,38 +69,6 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // Padding buildLogo() {
-  //   return Padding(
-  //     padding: const EdgeInsets.only(top: 80, bottom: 20),
-  //     child: Center(
-  //       child: Icon(
-  //         Icons.water_drop_rounded,
-  //         size: 100,
-  //         color: Colors.blue.shade900,
-  //       ),
-  //     ),
-  //   );
-  // }
-
-  // Padding buildHeading() {
-  //   return const Padding(
-  //     padding: EdgeInsets.only(top: 60, bottom: 80),
-  //     child: Row(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         Text(
-  //           "도와조",
-  //           style: TextStyle(
-  //             fontSize: 30,
-  //             fontWeight: FontWeight.bold,
-  //             color: Color(0xff112a42),
-  //           ),
-  //         ),
-  //       ],
-  //     ),
-  //   );
-  // }
-
   Padding buildHeading() {
     final patient = controller.searchResult.value!.first;
     return Padding(
@@ -156,15 +124,6 @@ class HomeScreen extends StatelessWidget {
                       width: 110,
                     ),
                   ),
-
-                  // Container(
-                  //   width: 100,
-                  //   height: 100,
-                  //   decoration: BoxDecoration(
-                  //     color: Colors.grey[400],
-                  //     shape: BoxShape.circle,
-                  //   ),
-                  // ),
                 ),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -196,18 +155,6 @@ class HomeScreen extends StatelessWidget {
                           style:
                               const TextStyle(fontSize: 15, color: Colors.grey),
                         ),
-                        // SizedBox(width: 20),
-                        // Text(
-                        //   '성별: ',
-                        //   style: TextStyle(
-                        //       fontSize: 15,
-                        //       color: Colors.grey,
-                        //       fontWeight: FontWeight.bold),
-                        // ),
-                        // Text(
-                        //   '남',
-                        //   style: TextStyle(fontSize: 15, color: Colors.grey),
-                        // ),
                       ],
                     ),
                     const SizedBox(height: 8),

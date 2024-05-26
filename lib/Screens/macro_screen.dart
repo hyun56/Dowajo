@@ -25,7 +25,8 @@ class _MacroScreen extends State<MacroScreen> {
     ref = database.ref().child('userRequires'); // 모든 환자의 데이터를 가져오기 위해 경로 수정
 
     _subscription = ref.onValue.listen((event) {
-      final data = event.snapshot.value as Map<dynamic, dynamic>?; // 데이터를 맵으로 캐스팅
+      final data =
+          event.snapshot.value as Map<dynamic, dynamic>?; // 데이터를 맵으로 캐스팅
       final List<Map<String, dynamic>> allUserRequires = [];
 
       if (data != null) {
@@ -41,7 +42,8 @@ class _MacroScreen extends State<MacroScreen> {
         });
 
         // timestamp 기준으로 allUserRequires 정렬
-        allUserRequires.sort((a, b) => b['timestamp'].compareTo(a['timestamp']));
+        allUserRequires
+            .sort((a, b) => b['timestamp'].compareTo(a['timestamp']));
 
         setState(() {
           userRequires.addAll(allUserRequires); // 전체 리스트를 업데이트
@@ -76,7 +78,8 @@ class _MacroScreen extends State<MacroScreen> {
                 final patientId = userRequires[index]['patientId'];
 
                 return FutureBuilder<String?>(
-                  future: Get.find<PatientController>().getPatientNameById(patientId),
+                  future: Get.find<PatientController>()
+                      .getPatientNameById(patientId),
                   builder: (context, snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       // 데이터가 준비되면 환자의 이름을 표시

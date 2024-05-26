@@ -56,7 +56,6 @@ class PatientController extends GetxController {
   }
 }
 
-
 // 환자 정보 저장 클래스
 class Patient {
   final String id;
