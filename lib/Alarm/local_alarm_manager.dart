@@ -32,7 +32,7 @@ class NotificationManager {
           print('데이터 인식'); // 디버깅 로그
           final updatedData = event.snapshot.value;
           // final patientName = await getPatientNameFromFirestore(patientId);
-          showNotification('${updatedData.toString()}', patientId);
+          showNotification(updatedData.toString(), patientId);
         }, onError: (error) {
           print('데이터베이스 리스닝 중 오류 발생: $error');
         });
@@ -72,7 +72,7 @@ class NotificationManager {
           .get();
       if (querySnapshot.docs.isNotEmpty) {
         var documentSnapshot = querySnapshot.docs.first;
-        print('Firestore에서 문서 데이터: ${documentSnapshot.data()}'); // 디버깅 로그 추가
+        // print('Firestore에서 문서 데이터: ${documentSnapshot.data()}'); // 디버깅 로그 추가
         return documentSnapshot['name'] ?? 'Unknown';
       } else {
         print('문서가 존재하지 않습니다: $patientId'); // 디버깅 로그 추가
@@ -92,7 +92,7 @@ class NotificationManager {
           .get();
       if (querySnapshot.docs.isNotEmpty) {
         var documentSnapshot = querySnapshot.docs.first;
-        print('Firestore에서 문서 데이터: ${documentSnapshot.data()}'); // 디버깅 로그 추가
+        // print('Firestore에서 문서 데이터: ${documentSnapshot.data()}'); // 디버깅 로그 추가
         return documentSnapshot['room'].toString(); // 문자열로 변환하여 반환
       } else {
         print('문서가 존재하지 않습니다: $patientId'); // 디버깅 로그 추가
