@@ -9,6 +9,7 @@ import 'package:dowajo/Screens/inject_screen.dart';
 import 'package:dowajo/components/calendar/calendar.dart';
 import 'package:dowajo/components/calendar/schedule.dart';
 import 'package:dowajo/components/calendar/today_banner.dart';
+import 'package:dowajo/Screens/inject_screen.dart';
 
 class InjectRecord extends StatefulWidget {
   const InjectRecord({Key? key}) : super(key: key);
