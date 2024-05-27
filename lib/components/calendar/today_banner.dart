@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:dowajo/database/medicine_database.dart';
 import 'package:provider/provider.dart';
+import 'package:dowajo/components/models/injectModel.dart';
+import 'package:dowajo/database/inject_database.dart';
 
 class TodayBanner extends StatefulWidget {
   final DateTime selectedDay;
@@ -98,6 +100,41 @@ class MedicineModel extends ChangeNotifier {
 
     allMedicines = await DatabaseHelper.instance.getAllMedicines();
 
+    notifyListeners();
+  }
+}
+
+//주사모델프로바이더 수정중
+// class InjectModelProvider extends ChangeNotifier {
+//   List<InjectModel> allInjects = [];
+//   int remainingInjectCount = 0;
+
+//   Future<void> updateInjectData() async {
+//     // 리스트 업데이트를 동기적으로 실행
+//     allInjects = await DatabaseHelper.instance.getAllInjects();
+
+//     // remainingInjectCount 업데이트 로직 추가
+//     remainingInjectCount = allInjects.length;
+
+//     notifyListeners();
+//   }
+// }
+
+//4.30 임시로 추가, 수정 필요
+class InjectModelProvider extends ChangeNotifier {
+  List<InjectModel> _injects = [];
+
+  List<InjectModel> get injects => _injects;
+
+//주가 추가 ->공백 반환
+  void addInject(InjectModel inject) {
+    _injects.add(inject);
+    notifyListeners();
+  }
+
+// 주사 제거
+  void removeInject(InjectModel inject) {
+    _injects.remove(inject);
     notifyListeners();
   }
 }

@@ -3,21 +3,21 @@
 import 'package:dowajo/Alarm/alarm_schedule.dart';
 import 'package:dowajo/Alarm/local_alarm_manager.dart';
 import 'package:dowajo/Alarm/work_manager.dart';
-import 'package:dowajo/Screens/login/login.dart';
-//import 'package:dowajo/Screens/home_screen.dart';
 import 'package:dowajo/components/calendar/today_banner.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import 'package:dowajo/Screens/login/login.dart';
 //import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:provider/provider.dart';
+import 'package:get/get.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
+
 // import 'notification_manager.dart'; // notification_manager.dart를 import합니다.
 // import 'work_manager_setup.dart'; // work_manager_setup.dart를 import합니다.
 // import 'utils.dart'; // utils.dart를 import합니다.
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
