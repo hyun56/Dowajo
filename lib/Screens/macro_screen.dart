@@ -4,6 +4,7 @@ import 'package:dowajo/Patient/patient_controller.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 
 class MacroScreen extends StatefulWidget {
   const MacroScreen({super.key});
@@ -46,7 +47,7 @@ class _MacroScreen extends State<MacroScreen> {
             .sort((a, b) => b['timestamp'].compareTo(a['timestamp']));
 
         setState(() {
-          userRequires.addAll(allUserRequires); // 전체 리스트를 업데이트
+          userRequires = allUserRequires; // 전체 리스트를 업데이트
         });
       }
     });
@@ -77,6 +78,8 @@ class _MacroScreen extends State<MacroScreen> {
               itemBuilder: (context, index) {
                 final patientId = userRequires[index]['patientId'];
 
+                String today = DateFormat('yy.MM.dd').format(DateTime.now());
+
                 return FutureBuilder<String?>(
                   future: Get.find<PatientController>()
                       .getPatientNameById(patientId),
@@ -87,14 +90,66 @@ class _MacroScreen extends State<MacroScreen> {
                       final data = userRequires[index]['data'];
                       final timestamp = userRequires[index]['timestamp'];
 
-                      return ListTile(
-                        leading: Text(patientName, // 환자 이름 표시
-                            style: const TextStyle(
-                                color: Color.fromARGB(255, 0, 0, 0),
-                                fontSize: 20,
-                                fontWeight: FontWeight.w800)),
-                        title: Text(data),
-                        subtitle: Text(timestamp),
+                      int lastChar = data.codeUnitAt(data.length - 1);
+                      bool hasFinalConsonant = (lastChar - 44032) % 28 != 0;
+
+                      String date = timestamp.split(' - ')[0];
+                      String time = timestamp.split(' - ')[1];
+
+                      String displayDate =
+                          (date == today) ? '오늘 | $time' : '$date  |  $time';
+
+                      return Container(
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 6, horizontal: 15),
+                        padding: const EdgeInsets.all(5),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: ListTile(
+                          leading: Text(patientName,
+                              style: const TextStyle(
+                                  color: Color.fromARGB(255, 0, 0, 0),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800)),
+                          title: RichText(
+                            text: TextSpan(
+                              children: [
+                                const TextSpan(
+                                  text: '환자가 ',
+                                  style: TextStyle(
+                                      color: Colors.black, fontSize: 15),
+                                ),
+                                TextSpan(
+                                  text: data,
+                                  style: const TextStyle(
+                                    color: Colors.red,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: hasFinalConsonant
+                                      ? '을 요청했습니다.'
+                                      : '를 요청했습니다.',
+                                  style: const TextStyle(
+                                      color: Colors.black, fontSize: 15),
+                                ),
+                              ],
+                            ),
+                          ),
+                          subtitle: Padding(
+                            padding: const EdgeInsets.only(top: 5),
+                            child: Text(
+                              displayDate,
+                              style: TextStyle(
+                                color: Colors.grey[500],
+                                fontSize: 13,
+                              ),
+                            ),
+                          ),
+                        ),
                       );
                     } else {
                       // 데이터를 기다리는 동안 로딩 인디케이터를 표시

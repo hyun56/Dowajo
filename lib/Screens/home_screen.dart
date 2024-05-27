@@ -8,6 +8,7 @@ import '../components/menu_item.dart';
 import 'heart_screen.dart';
 import 'medicine_screen.dart';
 import 'alarms_screen.dart';
+import 'inject_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   final PatientController controller = Get.put(PatientController());
@@ -214,8 +215,8 @@ class HomeScreen extends StatelessWidget {
             text: "주사",
             icon: CupertinoIcons.heart_circle_fill,
             onPressed: () {
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const HeartScreen()));
+              Navigator.of(context).push(MaterialPageRoute(
+                  builder: (context) => const InjectScreen()));
             },
             iconColor: const Color.fromARGB(255, 241, 161, 161),
           ),

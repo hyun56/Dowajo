@@ -1,8 +1,10 @@
 import 'dart:async';
+// import 'package:dowajo/Alarm/UserRequiresController.dart';
 import 'package:dowajo/Patient/patient_controller.dart';
 import 'package:dowajo/database/alarm_database.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
@@ -14,6 +16,9 @@ class AlarmsScreen extends StatefulWidget {
 }
 
 class _AlarmsScreenState extends State<AlarmsScreen> {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
   final FirebaseDatabase database = FirebaseDatabase.instance;
   late DatabaseReference ref;
   List<String> userRequires = [];
@@ -26,6 +31,8 @@ class _AlarmsScreenState extends State<AlarmsScreen> {
   void initState() {
     super.initState();
     setupDataListener();
+    // _initializeNotification();
+    // _setupDatabaseListener();
   }
 
   @override
@@ -51,21 +58,78 @@ class _AlarmsScreenState extends State<AlarmsScreen> {
   Future<void> loadData(dynamic data) async {
     String timestamp = DateFormat('yy.MM.dd - HH:mm:ss').format(DateTime.now());
 
-    // 데이터베이스에서 중복 확인
+    // 새로운 데이터를 리스트에 추가
+    userRequires.add(data.toString());
+
+    // Firebase에 새로운 데이터 추가
     DatabaseReference newRef = database.ref('userRequires/$patientId');
-    var existingData =
-        await newRef.orderByChild('data').equalTo(data.toString()).once();
+    await newRef.push().set({'data': data, 'timestamp': timestamp});
 
-    if (existingData.snapshot.value == null) {
-      // 새로운 데이터를 리스트에 추가
-      userRequires.add(data.toString());
-
-      // Firebase에 새로운 데이터 추가
-      await newRef.push().set({'data': data, 'timestamp': timestamp});
-
-      setState(() {});
-    }
+    //await deleteData(data);
+    setState(() {});
   }
+
+  Future<void> deleteData(dynamic data) async {
+    DatabaseReference ref =
+        database.ref().child(patientId).child('userRequire');
+    await ref.remove();
+  }
+
+  // void _initializeNotification() {
+  //   var initializationSettingsAndroid =
+  //       const AndroidInitializationSettings('@mipmap/ic_launcher');
+  //   var initializationSettings = InitializationSettings(
+  //     android: initializationSettingsAndroid,
+  //   );
+  //   flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  // }
+
+  // void _setupDatabaseListener() {
+  //   try {
+  //     PatientController controller = Get.find();
+  //     if (controller.searchResult.value != null &&
+  //         controller.searchResult.value!.isNotEmpty) {
+  //       String patientId = controller.searchResult.value!.first.id;
+  //       print('Patient ID: $patientId'); // 디버깅 로그
+
+  //       // Deprecated된 reference() 대신 ref() 사용
+  //       final DatabaseReference databaseReference =
+  //           FirebaseDatabase.instance.ref();
+  //       databaseReference.child(patientId).child('userRequire').onValue.listen(
+  //           (event) {
+  //         print('데이터 인식'); // 디버깅 로그
+  //         final updatedData = event.snapshot.value;
+  //         _showNotification(updatedData.toString());
+  //       }, onError: (error) {
+  //         print('데이터베이스 리스닝 중 오류 발생: $error');
+  //       });
+  //     } else {
+  //       print('환자 데이터를 찾을 수 없음'); // 디버깅 로그
+  //     }
+  //   } catch (e) {
+  //     print('데이터베이스 리스너 설정 중 오류: $e'); // 에러 로그
+  //   }
+  // }
+
+  // Future<void> _showNotification(String message) async {
+  //   var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
+  //       'your channel id', 'your channel name',
+  //       channelDescription: 'your channel description',
+  //       importance: Importance.max,
+  //       priority: Priority.high,
+  //       ticker: 'ticker');
+  //   var platformChannelSpecifics =
+  //       NotificationDetails(android: androidPlatformChannelSpecifics);
+  //   await flutterLocalNotificationsPlugin.show(
+  //     0,
+  //     controller.searchResult.value!.first.name,
+  //     '$message',
+  //     platformChannelSpecifics,
+  //     payload: 'item x',
+  //   );
+  // }
+
+  // final UserRequiresController controllers = Get.put(UserRequiresController());
 
   @override
   Widget build(BuildContext context) {
