@@ -48,7 +48,6 @@ class _AlarmsScreenState extends State<AlarmsScreen> {
     _subscription?.cancel();
 
     _subscription = ref.onValue.listen((event) async {
-      
       final data = event.snapshot.value;
       if (data != null) {
         await loadData(data);
