@@ -44,7 +44,7 @@ class InjectDatabaseHelper {
   Future _onCreate(Database db, int version) async {
     await db.execute('''
           CREATE TABLE $table (
-            $columnId INTEGER PRIMARY KEY,
+            $columnId INTEGER PRIMARY KEY AUTOINCREMENT,
             $columnType TEXT NOT NULL,
             $columnName TEXT NOT NULL,
             $columnPicture TEXT NOT NULL,
@@ -78,7 +78,7 @@ class InjectDatabaseHelper {
           injectDay: maps[i]['injectDay'],
           injectStartTime: maps[i]['injectStartTime'],
           injectAmount: maps[i]['injectAmount'],
-          injectChange: maps[i]['injectChange'],
+          injectChange: maps[i]['injectChange'] == 1,
           // injectEndTime: jsonEncode(
           //     (jsonDecode(maps[i][columnEndTime].toString()) as Map)
           //         .map((key, value) => MapEntry(key, value == 1))),
@@ -98,7 +98,7 @@ class InjectDatabaseHelper {
 
   Future<int> delete(int id) async {
     Database? db = await instance.database;
-    return await db!.delete(
+    return await db.delete(
       table,
       where: '$columnId = ?',
       whereArgs: [id],

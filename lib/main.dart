@@ -3,14 +3,10 @@
 import 'package:dowajo/Alarm/alarm_schedule.dart';
 import 'package:dowajo/Alarm/notification_manager.dart';
 import 'package:dowajo/Alarm/work_manager.dart';
-import 'package:dowajo/Screens/home_screen.dart';
 import 'package:dowajo/components/calendar/today_banner.dart';
-import 'package:dowajo/components/models/injectModel.dart';
-import 'package:dowajo/Screens/inject/inject_list_provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:dowajo/Screens/login/login.dart';
-
 //import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -61,20 +57,9 @@ void main() async {
   scheduleAlarm(); // 알람 스케줄링 추가
 
   runApp(
-    //멀티프로바이더 추가
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-          create: (context) => MedicineModel(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => InjectModelProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (context) => InjectListProvider()..getInjectList(),
-        ),
-      ],
-      child: MyApp(),
+    ChangeNotifierProvider(
+      create: (context) => MedicineModel(),
+      child: const MyApp(),
     ),
   );
 }

@@ -1,19 +1,14 @@
 import 'dart:io';
 import 'package:dowajo/Patient/patient_controller.dart';
 import 'package:dowajo/components/models/injectModel.dart';
-import 'package:dowajo/Screens/inject/inject_list_provider.dart';
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:get/get.dart';
-import 'package:dowajo/Screens/home_screen.dart';
-import 'package:dowajo/Patient/patient_controller.dart';
-import 'package:intl/intl.dart';
 
 class inject_add extends StatefulWidget {
   const inject_add({Key? key}) : super(key: key);
@@ -179,7 +174,7 @@ class _inject_addState extends State<inject_add> {
                 ),
 
                 SizedBox(height: 20),
-                addAlram(), //알람 추가 버튼
+                addAlarm(), //알람 추가 버튼
                 //SizedBox(height: 30),
               ],
             ),
@@ -564,7 +559,7 @@ class _inject_addState extends State<inject_add> {
     );
   }
 
-  Widget addAlram() {
+  Widget addAlarm() {
     return SizedBox(
       width: 350,
       height: 55,
@@ -599,42 +594,11 @@ class _inject_addState extends State<inject_add> {
               injectPicture: _pickedFile?.path ?? '',
               injectType: _type.name,
             );
-            //ref.read(InjectListProvider.notifier).addInject(newInject);
-            Provider.of<InjectListProvider>(context, listen: false)
-                .addInject(newInject);
+
             Navigator.of(context).pop();
           } else {
             // 정보가 입력되지 않았다면 경고창 띄우기
-            showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  backgroundColor: Color.fromARGB(200, 255, 255, 255),
-                  content: Padding(
-                    // Padding 위젯 사용
-                    padding: EdgeInsets.only(top: 20.0),
-                    child: Text(
-                      '정보를 모두 입력하세요',
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  //contentPadding: EdgeInsets.symmetric(vertical: 100.0),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text(
-                        '확인',
-                        style: TextStyle(
-                            //color: Color(0xFFA6CBA5),
-                            fontWeight: FontWeight.bold),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
+            Get.snackbar('알림', '수액 이름과 시간을 입력해주세요.');
           }
         },
         child: ElevatedButton(

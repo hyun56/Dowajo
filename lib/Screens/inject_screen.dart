@@ -1,20 +1,44 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:io';
-import 'package:dowajo/Screens/inject/inject_add.dart';
-import 'package:dowajo/Screens/inject/inject_list_provider.dart';
-import 'package:dowajo/Screens/inject/inject_update.dart';
+
+import 'package:dowajo/components/models/injectModel.dart';
+import 'package:dowajo/database/inject_database.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'home_screen.dart';
-import 'package:provider/provider.dart';
+import 'inject/inject_add.dart';
+import 'inject/inject_update.dart';
+import 'inject/inject_record.dart';
+
+List<String> weekDays = ['일', '월', '화', '수', '목', '금', '토'];
+Map<String, int> weekDayToNumber = {
+  '일': 1,
+  '월': 2,
+  '화': 3,
+  '수': 4,
+  '목': 5,
+  '금': 6,
+  '토': 7,
+};
 
 class InjectScreen extends StatefulWidget {
-  const InjectScreen({Key? key}) : super(key: key);
+  const InjectScreen({super.key});
 
   @override
-  _InjectScreenState createState() => _InjectScreenState();
+  State<InjectScreen> createState() => _InjectScreenState();
 }
 
 class _InjectScreenState extends State<InjectScreen> {
+  var dbHelper = InjectDatabaseHelper.instance;
+  late Future<List<InjectModel>> futureInjects;
   int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    futureInjects = dbHelper.getAllInjects();
+  }
 
   void _onItemTapped(int index) {
     setState(() {
@@ -24,26 +48,31 @@ class _InjectScreenState extends State<InjectScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // final injectModelProvider =
-    //     Provider.of<InjectModelProvider>(context); // 변경된 부분
-    final injectModelProvider = context.watch<InjectListProvider>();
-
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: <Widget>[
           _AppBar(),
+          SizedBox(height: 8),
           Expanded(
-            flex: 10,
             child: Column(
               children: [
                 Expanded(
-                    child: injectModelProvider.injects.length < 1
-                        ? Column(
+                  child: FutureBuilder<List<InjectModel>>(
+                    future: futureInjects,
+                    builder: (BuildContext context,
+                        AsyncSnapshot<List<InjectModel>> snapshot) {
+                      if (snapshot.connectionState == ConnectionState.done) {
+                        if (snapshot.hasError) {
+                          return Text('Error: ${snapshot.error}');
+                        }
+
+                        if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                          return Column(
                             children: [
                               Spacer(flex: 1),
                               Text(
-                                "등록된 기록이 없어요",
+                                "등록된 알람이 없어요",
                                 style: TextStyle(
                                   fontSize: 15,
                                   color:
@@ -52,7 +81,7 @@ class _InjectScreenState extends State<InjectScreen> {
                               ),
                               SizedBox(height: 1),
                               Text(
-                                "새로운 주사를 추가할까요?",
+                                "새로운 알람을 추가할까요?",
                                 style: TextStyle(
                                   fontSize: 15,
                                   color:
@@ -69,7 +98,9 @@ class _InjectScreenState extends State<InjectScreen> {
                                       MaterialPageRoute(
                                           builder: (_) => inject_add()),
                                     );
-                                    setState(() {});
+                                    setState(() {
+                                      futureInjects = dbHelper.getAllInjects();
+                                    });
                                   },
                                   style: ButtonStyle(
                                     backgroundColor:
@@ -86,7 +117,7 @@ class _InjectScreenState extends State<InjectScreen> {
                                         MaterialStateProperty.all<double>(0),
                                   ),
                                   child: Text(
-                                    " 추가하기 +",
+                                    "알람 추가하기 +",
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontWeight: FontWeight.w400,
@@ -96,223 +127,69 @@ class _InjectScreenState extends State<InjectScreen> {
                               ),
                               Spacer(flex: 1),
                             ],
-                          )
-                        : ListView.builder(
-                            itemCount: injectModelProvider!.injects.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              //   final dt = DateFormat.jm()
-                              //      .parse(data[index].injectEndTime);
-                              //  final newFormat = DateFormat('a h:mm', 'ko_KR');
-                              //  final koreanTime = newFormat.format(dt);
+                          );
+                        }
 
-                              return Column(
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      showModalBottomSheet(
-                                        context: context,
-                                        shape: const RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.vertical(
-                                            top: Radius.circular(25),
-                                          ),
-                                        ),
-                                        builder: (context) {
-                                          return Column(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              const SizedBox(height: 15),
-                                              ElevatedButton(
-                                                onPressed: () async {
-                                                  await Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              injectUpdate(
-                                                                  inject: injectModelProvider
-                                                                          .injects[
-                                                                      index]))).then(
-                                                      (value) =>
-                                                          Navigator.of(context)
-                                                              .pop());
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                  elevation: 0,
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  minimumSize: Size(
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width,
-                                                      60),
-                                                ),
-                                                child: const Text('수정하기'),
-                                              ),
-                                              const SizedBox(height: 5),
-                                              const Divider(thickness: 4),
-                                              const SizedBox(height: 10),
-                                              ElevatedButton(
-                                                onPressed: () async {
-                                                  await injectModelProvider
-                                                      .delete(
-                                                          injectModelProvider
-                                                              .injects[index]
-                                                              .id!);
-                                                  await injectModelProvider
-                                                      .refresh();
-                                                  setState(() {});
-                                                  Navigator.of(context).pop();
-                                                },
-                                                style: ElevatedButton.styleFrom(
-                                                  elevation: 0,
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  minimumSize: Size(
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width,
-                                                      60),
-                                                ),
-                                                child: const Text('삭제하기'),
-                                              ),
-                                              const SizedBox(height: 10),
-                                              const Divider(thickness: 4),
-                                              const SizedBox(height: 5),
-                                              ElevatedButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                style: ElevatedButton.styleFrom(
-                                                  elevation: 0,
-                                                  backgroundColor:
-                                                      Colors.transparent,
-                                                  minimumSize: Size(
-                                                      MediaQuery.of(context)
-                                                          .size
-                                                          .width,
-                                                      60),
-                                                ),
-                                                child: const Text('닫기'),
-                                              ),
-                                              const SizedBox(height: 18),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: Container(
-                                      margin: EdgeInsets.all(3),
-                                      padding: EdgeInsets.all(6),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(width: 5),
-                                          Container(
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                  width: 3,
-                                                  color: Color(0xFFA6CBA5)),
-                                            ),
-                                            child: ClipOval(
-                                              child: Image.file(
-                                                File(injectModelProvider
-                                                    .injects[index]
-                                                    .injectPicture),
-                                                width: 65,
-                                                height: 65,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(width: 16),
-                                          Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .start, // 텍스트를 왼쪽 정렬
-                                            children: [
-                                              Text(
-                                                "${injectModelProvider.injects[index].injectName}, 유형: ${injectModelProvider.injects[index].injectType}",
-                                                style: TextStyle(
-                                                    fontSize: 22,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color.fromARGB(
-                                                        255, 136, 171, 134)),
-                                              ),
-                                              /*Text(
-                                                "${injectModelProvider.injects[index].injectDay}      ${injectModelProvider.injects[index].injectStartTime} ~ ${injectModelProvider.injects[index].injectEndTime}",
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                ),
-                                              ),*/
-                                              Text(
-                                                "${injectModelProvider.injects[index].injectDay}  ${injectModelProvider.injects[index].injectStartTime} ~ ${injectModelProvider.injects[index].injectEndTime}",
-                                                style: TextStyle(
-                                                  fontSize: 16,
-                                                ),
-                                              ),
-                                              injectModelProvider.injects[index]
-                                                          .injectChange ==
-                                                      1
-                                                  ? Text(
-                                                      "교체 예정",
-                                                      style: TextStyle(
-                                                          fontSize: 18),
-                                                    )
-                                                  : Container(),
-                                              SizedBox(height: 4),
-                                              // Text(
-                                              //   koreanTime,
-                                              //   style: TextStyle(
-                                              //       fontSize: 17,
-                                              //       fontWeight: FontWeight.bold,
-                                              //       color: Color.fromARGB(221, 53, 53, 53)),
-                                              // ),
-                                              SizedBox(height: 2),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                  if (index !=
-                                      injectModelProvider.injects.length - 1)
-                                    Divider(
-                                      color: Color.fromARGB(255, 236, 236, 236),
-                                      thickness: 2.0,
-                                    ),
-                                ],
-                              );
-                            },
-                          )),
+                        List<InjectModel>? injects = snapshot.data;
+
+                        injects!.sort((a, b) {
+                          final aTime =
+                              DateFormat.jm().parse(a.injectStartTime);
+                          final bTime =
+                              DateFormat.jm().parse(b.injectStartTime);
+                          return aTime.compareTo(bTime);
+                        });
+
+                        return SingleChildScrollView(
+                          child: Column(
+                            children: injects
+                                .map((inject) => _buildInjectItem(inject))
+                                .toList(),
+                          ),
+                        );
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    },
+                  ),
+                ),
               ],
             ),
           ),
         ],
       ),
-      floatingActionButton: injectModelProvider.injects.length > 0
-          ? FloatingActionButton(
-              onPressed: () async {
-                await Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (_) => inject_add()),
-                );
-                await injectModelProvider.refresh();
-                setState(() {});
-              },
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(30),
-              ),
-              backgroundColor: Colors.transparent,
-              elevation: 0.0,
-              child: Image.asset(
-                'repo/icons/plus.png', // Image asset 사용
-              ),
-            )
-          : Container(), //데이터가 없는 경우 빈 컨테이너를 반환
+      floatingActionButton: FutureBuilder<List<InjectModel>>(
+        future: futureInjects,
+        builder:
+            (BuildContext context, AsyncSnapshot<List<InjectModel>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+              return FloatingActionButton(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => inject_add()),
+                  );
+                  setState(() {
+                    futureInjects = dbHelper.getAllInjects();
+                  });
+                },
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30),
+                ),
+                backgroundColor: Colors.transparent,
+                elevation: 0.0,
+                child: Image.asset(
+                  'repo/icons/plus.png',
+                ),
+              );
+            } else {
+              return Container();
+            }
+          }
+          return Container();
+        },
+      ),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -329,7 +206,7 @@ class _InjectScreenState extends State<InjectScreen> {
         onTap: (int index) {
           _onItemTapped(index);
           if (_currentIndex == 0 && index == 0) {
-            return; // 이미 알람 화면이므로 아무것도 하지 않음
+            return;
           } else {
             switch (index) {
               case 0:
@@ -341,13 +218,191 @@ class _InjectScreenState extends State<InjectScreen> {
               case 1:
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => InjectScreen()),
-                ); //기록 화면으로 변경하기);
+                  MaterialPageRoute(builder: (context) => InjectRecord()),
+                );
                 break;
             }
           }
         },
       ),
+    );
+  }
+
+  Widget _buildInjectItem(InjectModel inject) {
+    final dt = DateFormat.jm().parse(inject.injectEndTime);
+    final newFormat = DateFormat('a h:mm', 'ko_KR');
+    final koreanTime = newFormat.format(dt);
+
+    List<String> injectDays = inject.injectDay.split(',');
+
+    List<int> injectDaysNumbers = injectDays
+        .where((day) => weekDayToNumber.containsKey(day))
+        .map((day) => weekDayToNumber[day]!)
+        .toList();
+
+    injectDaysNumbers.sort();
+
+    List<String> sortedInjectDays =
+        injectDaysNumbers.map((number) => weekDays[number - 1]).toList();
+
+    String displayDays =
+        sortedInjectDays.length == 7 ? '매일' : sortedInjectDays.join(', ');
+
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: () {
+            showModalBottomSheet(
+              context: context,
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(25.0),
+                ),
+              ),
+              builder: (context) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const SizedBox(height: 15),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => injectUpdate(inject: inject),
+                          ),
+                        ).then((_) {
+                          // 수정 페이지에서 돌아온 후
+                          Navigator.of(context).pop();
+                          // 화면을 갱신
+                          setState(() {
+                            futureInjects = dbHelper.getAllInjects();
+                          });
+                        });
+                      },
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: Colors.transparent,
+                        minimumSize:
+                            Size(MediaQuery.of(context).size.width, 60),
+                      ),
+                      child: const Text('수정하기'),
+                    ),
+                    const SizedBox(height: 5),
+                    const Divider(thickness: 2),
+                    const SizedBox(height: 10),
+                    ElevatedButton(
+                      onPressed: () async {
+                        // id가 null인지 확인
+                        if (inject.id != null) {
+                          // id가 null이 아니라면 삭제
+                          await InjectDatabaseHelper.instance
+                              .delete(inject.id!);
+
+                          // 삭제가 완료되면 FutureBuilder를 다시 빌드
+                          setState(() {
+                            futureInjects = dbHelper.getAllInjects();
+                          });
+                        }
+                        Navigator.of(context).pop();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: Colors.transparent,
+                        minimumSize:
+                            Size(MediaQuery.of(context).size.width, 60),
+                      ),
+                      child: const Text('삭제하기'),
+                    ),
+                    const SizedBox(height: 10),
+                    const Divider(thickness: 2),
+                    const SizedBox(height: 5),
+                    ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        elevation: 0,
+                        backgroundColor: Colors.transparent,
+                        minimumSize:
+                            Size(MediaQuery.of(context).size.width, 60),
+                      ),
+                      child: const Text('닫기'),
+                    ),
+                    const SizedBox(height: 18),
+                  ],
+                );
+              },
+            );
+          },
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color(0xFFEFF4ED),
+                borderRadius: BorderRadius.circular(15.0),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 5,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(width: 5),
+                  Container(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(width: 2.5, color: Color(0xFFA6CBA5)),
+                    ),
+                    child: ClipOval(
+                      child: Image.file(
+                        File(inject.injectPicture),
+                        width: 65,
+                        height: 65,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 16),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start, // 텍스트를 왼쪽 정렬
+                    children: [
+                      Text(
+                        "${inject.injectType} : ${inject.injectName}",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Color.fromARGB(255, 136, 171, 134),
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        koreanTime,
+                        style: TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromARGB(221, 53, 53, 53)),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        "${inject.injectChange ? '교체가 필요합니다' : '교체가 필요없습니다'}",
+                      ),
+                      Text("시간당 투여량: ${inject.injectAmount}"),
+                      //SizedBox(height: 2),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -360,14 +415,15 @@ class _AppBar extends StatelessWidget {
     return AppBar(
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
-      title: Text('주사', style: TextStyle(fontWeight: FontWeight.bold)),
+      title: Text('투여약', style: TextStyle(fontWeight: FontWeight.bold)),
       centerTitle: true,
       leading: IconButton(
         icon: Icon(Icons.arrow_back, color: Colors.black),
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
-        ),
+        onPressed: () {
+          // 메인 화면으로 돌아가기
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        },
       ),
     );
   }

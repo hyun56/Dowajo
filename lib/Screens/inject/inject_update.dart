@@ -1,17 +1,17 @@
 import 'dart:io';
 import 'package:android_alarm_manager_plus/android_alarm_manager_plus.dart';
 import 'package:dowajo/components/models/injectModel.dart';
-import 'package:dowajo/Screens/inject/inject_list_provider.dart';
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:dowajo/Alarm/alarm_schedule.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:dowajo/database/inject_database.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:dowajo/Patient/patient_controller.dart';
+import 'package:get/get.dart';
 
 class injectUpdate extends StatefulWidget {
   final InjectModel inject;
@@ -25,6 +25,9 @@ class injectUpdate extends StatefulWidget {
 enum type { normal, IV, nose }
 
 class _inject_UpdateState extends State<injectUpdate> {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
   int selectedRepeat = 1;
   XFile? _pickedFile;
   String Type = "일반 주사";
@@ -36,6 +39,9 @@ class _inject_UpdateState extends State<injectUpdate> {
   bool change = false; //추가 교체 여부
   type _type = type.normal;
 
+  late PatientController controller;
+  late String patientName;
+
   @override
   void initState() {
     super.initState();
@@ -46,6 +52,57 @@ class _inject_UpdateState extends State<injectUpdate> {
     endTime = _convertStringToTimeOfDay(widget.inject.injectEndTime);
 
     _pickedFile = XFile(widget.inject.injectPicture); // 약의 사진 설정
+
+    _initializeNotifications();
+    tz.initializeTimeZones();
+
+    controller = Get.find();
+    patientName = controller.searchResult.value!.first.name;
+  }
+
+  Future<void> _initializeNotifications() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    final InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  Future<void> _scheduleNotification(TimeOfDay time, patientName, String type,
+      String injectName, bool change) async {
+    final now = DateTime.now();
+    var notificationTime =
+        DateTime(now.year, now.month, now.day, time.hour, time.minute);
+    if (notificationTime.isBefore(now)) {
+      notificationTime = notificationTime.add(Duration(days: 1));
+    }
+    final tz.TZDateTime tzNotificationTime =
+        tz.TZDateTime.from(notificationTime, tz.local);
+
+    final replaceText = change ? '새 수액으로 교체가 필요합니다.' : '교체가 필요하지 않습니다.';
+
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'your_channel_id',
+      'your_channel_name',
+      channelDescription: 'your_channel_description',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: false,
+    );
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.zonedSchedule(
+      0,
+      '$patientName 환자 $type 종료 알림: $injectName',
+      '$replaceText',
+      tzNotificationTime,
+      platformChannelSpecifics,
+      androidAllowWhileIdle: true,
+      uiLocalNotificationDateInterpretation:
+          UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+    );
   }
 
   TimeOfDay _convertStringToTimeOfDay(String time) {
@@ -583,7 +640,7 @@ class _inject_UpdateState extends State<injectUpdate> {
         },
         child: ElevatedButton(
           onPressed: () async {
-            InjectModel newInject = InjectModel(
+            InjectModel updatedInject = InjectModel(
               id: widget.inject.id,
               injectChange: change,
               injectEndTime: endTime.format(context),
@@ -595,11 +652,10 @@ class _inject_UpdateState extends State<injectUpdate> {
               injectPicture: _pickedFile?.path ?? '',
               injectType: _type.name,
             );
-            await Provider.of<InjectListProvider>(context, listen: false)
-                .update(newInject);
-            await Provider.of<InjectListProvider>(context, listen: false)
-                .refresh();
-            Navigator.of(context).pop();
+            var dbHelper = InjectDatabaseHelper.instance;
+            dbHelper.update(updatedInject);
+            Navigator.of(context).pop(updatedInject);
+            updateInject(updatedInject);
           }, // onPressed를 null로 설정하여 버튼을 비활성화
           style: ButtonStyle(
             backgroundColor:
@@ -636,6 +692,7 @@ class _inject_UpdateState extends State<injectUpdate> {
     }
 
     // 새로운 알람을 스케줄링합니다.
-    scheduleAlarm();
+    _scheduleNotification(
+        endTime, patientName, Type, _injectNameController.text, change);
   }
 }

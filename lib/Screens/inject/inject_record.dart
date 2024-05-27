@@ -1,15 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:dowajo/components/models/injectModel.dart';
-import 'package:dowajo/database/inject_database.dart';
-import 'package:dowajo/Screens/inject/inject_list_provider.dart';
-import 'package:provider/provider.dart';
 import 'package:dowajo/Screens/home_screen.dart';
 import 'package:dowajo/Screens/inject_screen.dart';
 import 'package:dowajo/components/calendar/calendar.dart';
-import 'package:dowajo/components/calendar/schedule.dart';
 import 'package:dowajo/components/calendar/today_banner.dart';
-import 'package:dowajo/Screens/inject_screen.dart';
 
 class InjectRecord extends StatefulWidget {
   const InjectRecord({Key? key}) : super(key: key);
