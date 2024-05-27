@@ -72,7 +72,7 @@ class _InjectScreenState extends State<InjectScreen> {
                             children: [
                               Spacer(flex: 1),
                               Text(
-                                "등록된 알람이 없어요",
+                                "등록된 기록이 없어요",
                                 style: TextStyle(
                                   fontSize: 15,
                                   color:
@@ -81,7 +81,7 @@ class _InjectScreenState extends State<InjectScreen> {
                               ),
                               SizedBox(height: 1),
                               Text(
-                                "새로운 알람을 추가할까요?",
+                                "새로운 주사를 추가할까요?",
                                 style: TextStyle(
                                   fontSize: 15,
                                   color:
@@ -233,21 +233,6 @@ class _InjectScreenState extends State<InjectScreen> {
     final newFormat = DateFormat('a h:mm', 'ko_KR');
     final koreanTime = newFormat.format(dt);
 
-    List<String> injectDays = inject.injectDay.split(',');
-
-    List<int> injectDaysNumbers = injectDays
-        .where((day) => weekDayToNumber.containsKey(day))
-        .map((day) => weekDayToNumber[day]!)
-        .toList();
-
-    injectDaysNumbers.sort();
-
-    List<String> sortedInjectDays =
-        injectDaysNumbers.map((number) => weekDays[number - 1]).toList();
-
-    String displayDays =
-        sortedInjectDays.length == 7 ? '매일' : sortedInjectDays.join(', ');
-
     return Column(
       children: [
         GestureDetector(
@@ -272,9 +257,7 @@ class _InjectScreenState extends State<InjectScreen> {
                             builder: (context) => injectUpdate(inject: inject),
                           ),
                         ).then((_) {
-                          // 수정 페이지에서 돌아온 후
                           Navigator.of(context).pop();
-                          // 화면을 갱신
                           setState(() {
                             futureInjects = dbHelper.getAllInjects();
                           });
@@ -293,13 +276,10 @@ class _InjectScreenState extends State<InjectScreen> {
                     const SizedBox(height: 10),
                     ElevatedButton(
                       onPressed: () async {
-                        // id가 null인지 확인
                         if (inject.id != null) {
-                          // id가 null이 아니라면 삭제
                           await InjectDatabaseHelper.instance
                               .delete(inject.id!);
 
-                          // 삭제가 완료되면 FutureBuilder를 다시 빌드
                           setState(() {
                             futureInjects = dbHelper.getAllInjects();
                           });
