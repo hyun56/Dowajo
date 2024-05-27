@@ -26,10 +26,10 @@ class NotificationManager {
       // 모든 환자의 userRequire 노드를 리스닝
       databaseReference.onChildAdded.listen((event) {
         String patientId = event.snapshot.key!;
-        print('Listening to Patient ID: $patientId'); // 디버깅 로그
+        // print('Listening to Patient ID: $patientId'); // 디버깅 로그
         databaseReference.child(patientId).child('userRequire').onValue.listen(
             (event) async {
-          print('데이터 인식'); // 디버깅 로그
+          // print('데이터 인식'); // 디버깅 로그
           final updatedData = event.snapshot.value;
           // final patientName = await getPatientNameFromFirestore(patientId);
           showNotification(updatedData.toString(), patientId);
@@ -75,7 +75,7 @@ class NotificationManager {
         // print('Firestore에서 문서 데이터: ${documentSnapshot.data()}'); // 디버깅 로그 추가
         return documentSnapshot['name'] ?? 'Unknown';
       } else {
-        print('문서가 존재하지 않습니다: $patientId'); // 디버깅 로그 추가
+        // print('문서가 존재하지 않습니다: $patientId'); // 디버깅 로그 추가
         return 'Unknown';
       }
     } catch (e) {
@@ -95,7 +95,7 @@ class NotificationManager {
         // print('Firestore에서 문서 데이터: ${documentSnapshot.data()}'); // 디버깅 로그 추가
         return documentSnapshot['room'].toString(); // 문자열로 변환하여 반환
       } else {
-        print('문서가 존재하지 않습니다: $patientId'); // 디버깅 로그 추가
+        // print('문서가 존재하지 않습니다: $patientId'); // 디버깅 로그 추가
         return 'Unknown';
       }
     } catch (e) {
