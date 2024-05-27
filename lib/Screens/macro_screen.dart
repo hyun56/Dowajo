@@ -44,7 +44,7 @@ class _MacroScreen extends State<MacroScreen> {
         allUserRequires.sort((a, b) => b['timestamp'].compareTo(a['timestamp']));
 
         setState(() {
-          userRequires.addAll(allUserRequires); // 전체 리스트를 업데이트
+          userRequires = allUserRequires; // 전체 리스트를 업데이트
         });
       }
     });
