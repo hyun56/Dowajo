@@ -72,6 +72,7 @@ class _MacroScreen extends State<MacroScreen> {
         ),
         centerTitle: true,
       ),
+      backgroundColor: const Color.fromARGB(255, 235, 238, 240),
       body: userRequires.isNotEmpty
           ? ListView.builder(
               itemCount: userRequires.length,
