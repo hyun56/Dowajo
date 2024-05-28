@@ -126,7 +126,9 @@ class _inject_UpdateState extends State<injectUpdate> {
                         value: Change == 1,
                         onChanged: (value) {
                           setState(() {
-                            Change = 0;
+                            if (value != null) {
+                              Change = value ? 1 : 0;
+                            }
                           });
                         }),
                     Text("추가 교체 여부"),
