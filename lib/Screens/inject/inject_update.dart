@@ -63,7 +63,7 @@ class _inject_UpdateState extends State<injectUpdate> {
   Future<void> _initializeNotifications() async {
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
-    final InitializationSettings initializationSettings =
+    const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
   }
@@ -74,7 +74,7 @@ class _inject_UpdateState extends State<injectUpdate> {
     var notificationTime =
         DateTime(now.year, now.month, now.day, time.hour, time.minute);
     if (notificationTime.isBefore(now)) {
-      notificationTime = notificationTime.add(Duration(days: 1));
+      notificationTime = notificationTime.add(const Duration(days: 1));
     }
     final tz.TZDateTime tzNotificationTime =
         tz.TZDateTime.from(notificationTime, tz.local);
@@ -95,7 +95,7 @@ class _inject_UpdateState extends State<injectUpdate> {
     await flutterLocalNotificationsPlugin.zonedSchedule(
       0,
       '$patientName 환자 $type 종료 알림: $injectName',
-      '$replaceText',
+      replaceText,
       tzNotificationTime,
       platformChannelSpecifics,
       androidAllowWhileIdle: true,
@@ -119,10 +119,11 @@ class _inject_UpdateState extends State<injectUpdate> {
 
     if (newTime != null) {
       setState(() {
-        if (start)
+        if (start) {
           startTime = newTime;
-        else
+        } else {
           endTime = newTime;
+        }
       });
     }
   }
@@ -134,14 +135,14 @@ class _inject_UpdateState extends State<injectUpdate> {
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
           child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               children: <Widget>[
                 AppBar(
                   backgroundColor: Colors.white,
-                  iconTheme: IconThemeData(color: Colors.black),
+                  iconTheme: const IconThemeData(color: Colors.black),
                 ),
-                SizedBox(height: 5),
+                const SizedBox(height: 5),
                 Container(
                     child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -149,18 +150,18 @@ class _inject_UpdateState extends State<injectUpdate> {
                       injectType(), // 상단 안내문
                       addPhoto(), // 사진등록
                     ])),
-                SizedBox(height: 10),
+                const SizedBox(height: 10),
                 injectName(), // 약 이름 입력창
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 // 경계선 추가
-                Divider(
+                const Divider(
                   color: Color.fromARGB(255, 236, 236, 236),
                   thickness: 4.0,
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 numOfTitle(), // 복용횟수- 타이틀
                 //numOfTakeinject(), // 복용횟수 - 횟수 설정
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 //복용시간 추가
                 Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -171,11 +172,11 @@ class _inject_UpdateState extends State<injectUpdate> {
                       injectAmount(),
                     ]),
                 // 경계선 추가
-                Divider(
+                const Divider(
                   color: Color.fromARGB(255, 236, 236, 236),
                   thickness: 4.0,
                 ),
-                SizedBox(height: 15),
+                const SizedBox(height: 15),
                 Row(
                   children: [
                     Checkbox(
@@ -185,10 +186,10 @@ class _inject_UpdateState extends State<injectUpdate> {
                             change = value ?? false;
                           });
                         }),
-                    Text("추가 교체 여부"),
+                    const Text("추가 교체 여부"),
                   ],
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 addAlram(), //알람 추가 버튼
                 //SizedBox(height: 30),
               ],
@@ -286,14 +287,14 @@ class _inject_UpdateState extends State<injectUpdate> {
         child: Column(children: [
       Row(children: [
         Padding(
-          padding: EdgeInsets.only(left: 0, right: 10.0),
+          padding: const EdgeInsets.only(left: 0, right: 10.0),
           child: Image.asset(
             'repo/icons/pill.png',
             width: 25.0,
             height: 25.0,
           ),
         ),
-        Text(
+        const Text(
           "투여 약 종류",
           style: TextStyle(
             fontSize: 17.0, // 글자크기
@@ -303,14 +304,14 @@ class _inject_UpdateState extends State<injectUpdate> {
           ),
         ),
       ]),
-      Container(
+      SizedBox(
           height: 200,
           child: SingleChildScrollView(
-              physics: NeverScrollableScrollPhysics(),
+              physics: const NeverScrollableScrollPhysics(),
               child: Column(
                 children: [
                   RadioListTile(
-                    title: Text("일반 주사"),
+                    title: const Text("일반 주사"),
                     value: type.normal,
                     groupValue: _type,
                     onChanged: (value) {
@@ -320,7 +321,7 @@ class _inject_UpdateState extends State<injectUpdate> {
                     },
                   ),
                   RadioListTile(
-                    title: Text("수액"),
+                    title: const Text("수액"),
                     value: type.IV,
                     groupValue: _type,
                     onChanged: (value) {
@@ -330,7 +331,7 @@ class _inject_UpdateState extends State<injectUpdate> {
                     },
                   ),
                   RadioListTile(
-                    title: Text("비위관(콧줄)"),
+                    title: const Text("비위관(콧줄)"),
                     value: type.nose,
                     groupValue: _type,
                     onChanged: (value) {
@@ -359,11 +360,11 @@ class _inject_UpdateState extends State<injectUpdate> {
         context: context,
         builder: (context) {
           return AlertDialog(
-            title: Text('권한 거부'),
-            content: Text('카메라와 갤러리 접근 권한이 필요합니다.'),
+            title: const Text('권한 거부'),
+            content: const Text('카메라와 갤러리 접근 권한이 필요합니다.'),
             actions: <Widget>[
               TextButton(
-                child: Text('확인'),
+                child: const Text('확인'),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -381,7 +382,7 @@ class _inject_UpdateState extends State<injectUpdate> {
 
     return Column(
       children: [
-        Align(
+        const Align(
           alignment: Alignment.center,
           child: Text(
             "투여 수액 사진(확인용)",
@@ -392,7 +393,7 @@ class _inject_UpdateState extends State<injectUpdate> {
             ),
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         if (_pickedFile == null)
           Container(
             constraints: BoxConstraints(
@@ -442,7 +443,7 @@ class _inject_UpdateState extends State<injectUpdate> {
                           shape: BoxShape.circle,
                           border: Border.all(
                               width: 3,
-                              color: Color.fromARGB(255, 217, 217, 217)),
+                              color: const Color.fromARGB(255, 217, 217, 217)),
                           image: DecorationImage(
                               image: FileImage(File(_pickedFile!.path)),
                               fit: BoxFit.cover),
@@ -457,11 +458,11 @@ class _inject_UpdateState extends State<injectUpdate> {
 
   Widget injectName() {
     return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
+            const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
                   "약의 이름을 입력하세요",
@@ -471,7 +472,7 @@ class _inject_UpdateState extends State<injectUpdate> {
                     // letterSpacing: 2.0, // 자간
                   ),
                 )),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             SizedBox(
@@ -481,21 +482,21 @@ class _inject_UpdateState extends State<injectUpdate> {
                 controller: _injectNameController,
                 decoration: InputDecoration(
                   hintText: '예) 혈압약',
-                  hintStyle: TextStyle(
+                  hintStyle: const TextStyle(
                     fontSize: 13.0,
                     color: Color.fromARGB(255, 171, 171, 171),
                   ),
-                  contentPadding: EdgeInsets.fromLTRB(15.0, 10.0, 10.0, 10.0),
+                  contentPadding: const EdgeInsets.fromLTRB(15.0, 10.0, 10.0, 10.0),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color.fromARGB(255, 221, 221, 221),
                       width: 2.0,
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
-                    borderSide: BorderSide(
+                    borderSide: const BorderSide(
                       color: Color(0xFFA6CBA5),
                       width: 2.0,
                     ),
@@ -512,14 +513,14 @@ class _inject_UpdateState extends State<injectUpdate> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Padding(
-          padding: EdgeInsets.only(left: 15.0, right: 10.0),
+          padding: const EdgeInsets.only(left: 15.0, right: 10.0),
           child: Image.asset(
             'repo/icons/alarm.png',
             width: 26.0,
             height: 26.0,
           ),
         ),
-        Text(
+        const Text(
           "투여 시간 설정",
           style: TextStyle(
             fontSize: 17.0,
@@ -537,7 +538,7 @@ class _inject_UpdateState extends State<injectUpdate> {
       children: [
         Text(
           name,
-          style: TextStyle(fontSize: 15),
+          style: const TextStyle(fontSize: 15),
         ),
         TextButton(
           onPressed: () {
@@ -553,7 +554,7 @@ class _inject_UpdateState extends State<injectUpdate> {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
-        Text(
+        const Text(
           "시간당 투여량",
           style: TextStyle(
             fontSize: 15.0, // 글자크기
@@ -561,13 +562,13 @@ class _inject_UpdateState extends State<injectUpdate> {
             // letterSpacing: 2.0, // 자간
           ),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
         SizedBox(
           width: 80, // TextField 가로 길이
           height: 45,
           child: TextField(
             controller: _injectAmountController,
-            decoration: InputDecoration(),
+            decoration: const InputDecoration(),
           ),
         ),
       ],
@@ -583,9 +584,9 @@ class _inject_UpdateState extends State<injectUpdate> {
           if (_injectNameController.text.isNotEmpty && _pickedFile != null) {
             // 모든 정보가 입력되었다면 InjectModel 객체를 생성하고 데이터베이스에 저장
             String Typename;
-            if (_type == type.normal)
+            if (_type == type.normal) {
               Typename = "기본 주사";
-            else if (_type == type.IV)
+            } else if (_type == type.IV)
               Typename = "수액";
             else if (_type == type.nose) Typename = "비위관(콧줄)";
             InjectModel updatedInject = InjectModel(
@@ -610,8 +611,8 @@ class _inject_UpdateState extends State<injectUpdate> {
               context: context,
               builder: (context) {
                 return AlertDialog(
-                  backgroundColor: Color.fromARGB(200, 255, 255, 255),
-                  content: Padding(
+                  backgroundColor: const Color.fromARGB(200, 255, 255, 255),
+                  content: const Padding(
                     // Padding 위젯 사용
                     padding: EdgeInsets.only(top: 20.0),
                     child: Text(
@@ -622,7 +623,7 @@ class _inject_UpdateState extends State<injectUpdate> {
                   //contentPadding: EdgeInsets.symmetric(vertical: 100.0),
                   actions: <Widget>[
                     TextButton(
-                      child: Text(
+                      child: const Text(
                         '확인',
                         style: TextStyle(
                             //color: Color(0xFFA6CBA5),
@@ -659,7 +660,7 @@ class _inject_UpdateState extends State<injectUpdate> {
           }, // onPressed를 null로 설정하여 버튼을 비활성화
           style: ButtonStyle(
             backgroundColor:
-                MaterialStateProperty.all<Color>(Color(0xFFA6CBA5)),
+                MaterialStateProperty.all<Color>(const Color(0xFFA6CBA5)),
             shape: MaterialStateProperty.all<RoundedRectangleBorder>(
               RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
@@ -667,7 +668,7 @@ class _inject_UpdateState extends State<injectUpdate> {
             ),
             elevation: MaterialStateProperty.all<double>(0),
           ),
-          child: Text(
+          child: const Text(
             "알람 수정하기",
             style: TextStyle(
               color: Colors.white,

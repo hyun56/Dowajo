@@ -65,7 +65,7 @@ class _AlarmsScreenState extends State<AlarmsScreen> {
     DatabaseReference newRef = database.ref('userRequires/$patientId');
     await newRef.push().set({'data': data, 'timestamp': timestamp});
 
-    //await deleteData(data);
+    await deleteData(data);
     setState(() {});
   }
 
@@ -170,7 +170,7 @@ class _AlarmsScreenState extends State<AlarmsScreen> {
                 String time = timestamp.split(' - ')[1];
 
                 String displayDate =
-                    (date == today) ? '오늘  $time' : '$date  |  $time';
+                    (date == today) ? '오늘 | $time' : '$date  |  $time';
 
                 return Container(
                   margin:
