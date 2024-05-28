@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dowajo/Patient/patient_controller.dart';
 import 'package:dowajo/components/models/injectModel.dart';
+import 'package:dowajo/database/inject_database.dart';
 import 'package:flutter/foundation.dart';
 import "package:flutter/material.dart";
 import 'package:image_picker/image_picker.dart';
@@ -595,7 +596,7 @@ class _inject_addState extends State<inject_add> {
               injectPicture: _pickedFile?.path ?? '',
               injectType: _type.name,
             );
-
+            InjectDatabaseHelper.instance.insert(newInject);
             Navigator.of(context).pop();
           } else {
             // 정보가 입력되지 않았다면 경고창 띄우기
