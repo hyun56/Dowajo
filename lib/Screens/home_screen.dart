@@ -19,6 +19,7 @@ class HomeScreen extends StatelessWidget {
     final PatientController controller = Get.find();
 
     return SafeArea(
+      top:false,  //상단 바 투명하게
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 235, 238, 240),
         //backgroundColor: Color.fromARGB(255, 219, 225, 228),
