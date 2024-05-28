@@ -1,8 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:dowajo/Patient/patient_controller.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:get/get.dart';
 
 class NotificationManager {
   static final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -32,7 +30,9 @@ class NotificationManager {
           // print('데이터 인식'); // 디버깅 로그
           final updatedData = event.snapshot.value;
           // final patientName = await getPatientNameFromFirestore(patientId);
+          if(updatedData != null){
           showNotification(updatedData.toString(), patientId);
+          }
         }, onError: (error) {
           print('데이터베이스 리스닝 중 오류 발생: $error');
         });

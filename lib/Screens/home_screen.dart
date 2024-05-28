@@ -5,7 +5,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../components/menu_item.dart';
-import 'heart_screen.dart';
 import 'medicine_screen.dart';
 import 'alarms_screen.dart';
 import 'inject_screen.dart';

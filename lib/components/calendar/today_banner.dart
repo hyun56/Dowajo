@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:dowajo/database/medicine_database.dart';
 import 'package:provider/provider.dart';
 import 'package:dowajo/components/models/injectModel.dart';
-import 'package:dowajo/database/inject_database.dart';
 
 class TodayBanner extends StatefulWidget {
   final DateTime selectedDay;
@@ -122,7 +121,7 @@ class MedicineModel extends ChangeNotifier {
 
 //4.30 임시로 추가, 수정 필요
 class InjectModelProvider extends ChangeNotifier {
-  List<InjectModel> _injects = [];
+  final List<InjectModel> _injects = [];
 
   List<InjectModel> get injects => _injects;
 

@@ -371,7 +371,7 @@ class _InjectScreenState extends State<InjectScreen> {
                       ),
                       SizedBox(height: 2),
                       Text(
-                        "${inject.injectChange ? '교체가 필요합니다' : '교체가 필요없습니다'}",
+                        inject.injectChange ? '교체가 필요합니다' : '교체가 필요없습니다',
                       ),
                       Text("시간당 투여량: ${inject.injectAmount}"),
                       //SizedBox(height: 2),
@@ -395,7 +395,7 @@ class _AppBar extends StatelessWidget {
     return AppBar(
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
-      title: Text('투여약', style: TextStyle(fontWeight: FontWeight.bold)),
+      title: Text('주사', style: TextStyle(fontWeight: FontWeight.bold)),
       centerTitle: true,
       leading: IconButton(
         icon: Icon(Icons.arrow_back, color: Colors.black),

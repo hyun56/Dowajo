@@ -1,23 +1,22 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:dowajo/components/models/injectModel.dart';
-import 'dart:convert';
 
 class InjectDatabaseHelper {
-  static final _databaseName = "InjectDatabase.db";
-  static final _databaseVersion = 1;
+  static const _databaseName = "InjectDatabase.db";
+  static const _databaseVersion = 1;
 
-  static final table = 'inject_table';
+  static const table = 'inject_table';
 
-  static final columnId = 'id';
-  static final columnType = 'injectType';
-  static final columnName = 'injectName';
-  static final columnPicture = 'injectPicture';
-  static final columnDay = 'injectDay';
-  static final columnStartTime = 'injectStartTime';
-  static final columnEndTime = 'injectEndTime';
-  static final columnAmount = 'injectAmount';
-  static final columnChange = 'injectChange';
+  static const columnId = 'id';
+  static const columnType = 'injectType';
+  static const columnName = 'injectName';
+  static const columnPicture = 'injectPicture';
+  static const columnDay = 'injectDay';
+  static const columnStartTime = 'injectStartTime';
+  static const columnEndTime = 'injectEndTime';
+  static const columnAmount = 'injectAmount';
+  static const columnChange = 'injectChange';
 
   // Singleton class
   InjectDatabaseHelper._privateConstructor();
@@ -67,7 +66,7 @@ class InjectDatabaseHelper {
     //final db = await instance.database;
     //var res = await db.query(table);
     Database? db = await instance.database;
-    final List<Map<String, dynamic>> maps = await db!.query(table);
+    final List<Map<String, dynamic>> maps = await db.query(table);
 
     return List.generate(maps.length, (i) {
       return InjectModel(
@@ -88,7 +87,7 @@ class InjectDatabaseHelper {
 
   Future<int> update(InjectModel inject) async {
     Database? db = await instance.database;
-    return await db!.update(
+    return await db.update(
       table,
       inject.toMap(),
       where: '$columnId = ?',
