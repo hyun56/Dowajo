@@ -134,66 +134,69 @@ class _inject_UpdateState extends State<injectUpdate> {
         resizeToAvoidBottomInset: false,
         backgroundColor: Colors.white,
         body: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Column(
-              children: <Widget>[
-                AppBar(
-                  backgroundColor: Colors.white,
-                  iconTheme: const IconThemeData(color: Colors.black),
-                ),
-                const SizedBox(height: 5),
-                Container(
-                    child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      injectType(), // 상단 안내문
-                      addPhoto(), // 사진등록
-                    ])),
-                const SizedBox(height: 10),
-                injectName(), // 약 이름 입력창
-                const SizedBox(height: 20),
-                // 경계선 추가
-                const Divider(
-                  color: Color.fromARGB(255, 236, 236, 236),
-                  thickness: 4.0,
-                ),
-                const SizedBox(height: 15),
-                numOfTitle(), // 복용횟수- 타이틀
-                //numOfTakeinject(), // 복용횟수 - 횟수 설정
-                const SizedBox(height: 15),
-                //복용시간 추가
-                Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Column(children: [
-                        addTime("투여 시간", endTime, false),
-                      ]),
-                      injectAmount(),
-                    ]),
-                // 경계선 추가
-                const Divider(
-                  color: Color.fromARGB(255, 236, 236, 236),
-                  thickness: 4.0,
-                ),
-                const SizedBox(height: 15),
-                Row(
-                  children: [
-                    Checkbox(
-                        value: change,
-                        onChanged: (value) {
-                          setState(() {
-                            change = value ?? false;
-                          });
-                        }),
-                    const Text("추가 교체 여부"),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                addAlram(), //알람 추가 버튼
-                //SizedBox(height: 30),
-              ],
-            ),
+          child: Column(
+            children: <Widget>[
+              AppBar(
+                backgroundColor: Colors.white,
+                iconTheme: const IconThemeData(color: Colors.black),
+              ),
+              const SizedBox(height: 20),
+              Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                injectType(), // 상단 안내문
+                addPhoto(), // 사진등록
+              ]),
+              const SizedBox(height: 25),
+              injectName(), // 약 이름 입력창
+              const SizedBox(height: 25),
+              // 경계선 추가
+              const Divider(
+                color: Color.fromARGB(255, 236, 236, 236),
+                thickness: 4.0,
+              ),
+              const SizedBox(height: 25),
+              numOfTitle(), // 복용횟수- 타이틀
+              //numOfTakeinject(), // 복용횟수 - 횟수 설정
+              const SizedBox(height: 20),
+              //복용시간 추가
+              Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                Column(children: [
+                  addTime("투여 시간", endTime, false),
+                ]),
+                injectAmount(),
+              ]),
+              const SizedBox(height: 30),
+              // 경계선 추가
+              const Divider(
+                color: Color.fromARGB(255, 236, 236, 236),
+                thickness: 4.0,
+              ),
+              const SizedBox(height: 15),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Checkbox(
+                      value: change,
+                      onChanged: (value) {
+                        setState(() {
+                          change = value ?? false;
+                        });
+                      }),
+                  const Padding(
+                    padding: EdgeInsets.only(right: 10),
+                    child: Text(
+                      "추가 교체 여부",
+                      style: TextStyle(
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 60),
+              addAlram(), //알람 추가 버튼
+              //SizedBox(height: 30),
+            ],
           ),
         ));
   }
@@ -287,7 +290,7 @@ class _inject_UpdateState extends State<injectUpdate> {
         child: Column(children: [
       Row(children: [
         Padding(
-          padding: const EdgeInsets.only(left: 0, right: 10.0),
+          padding: const EdgeInsets.only(left: 15, right: 10.0),
           child: Image.asset(
             'repo/icons/pill.png',
             width: 25.0,
@@ -295,7 +298,7 @@ class _inject_UpdateState extends State<injectUpdate> {
           ),
         ),
         const Text(
-          "투여 약 종류",
+          "투여 주사 종류",
           style: TextStyle(
             fontSize: 17.0, // 글자크기
             fontWeight: FontWeight.bold, // 볼드체
@@ -304,44 +307,43 @@ class _inject_UpdateState extends State<injectUpdate> {
           ),
         ),
       ]),
-      SizedBox(
-          height: 200,
-          child: SingleChildScrollView(
-              physics: const NeverScrollableScrollPhysics(),
-              child: Column(
-                children: [
-                  RadioListTile(
-                    title: const Text("일반 주사"),
-                    value: type.normal,
-                    groupValue: _type,
-                    onChanged: (value) {
-                      setState(() {
-                        _type = value!;
-                      });
-                    },
-                  ),
-                  RadioListTile(
-                    title: const Text("수액"),
-                    value: type.IV,
-                    groupValue: _type,
-                    onChanged: (value) {
-                      setState(() {
-                        _type = value!;
-                      });
-                    },
-                  ),
-                  RadioListTile(
-                    title: const Text("비위관(콧줄)"),
-                    value: type.nose,
-                    groupValue: _type,
-                    onChanged: (value) {
-                      setState(() {
-                        _type = value!;
-                      });
-                    },
-                  ),
-                ],
-              )))
+      Padding(
+        padding: const EdgeInsets.only(top: 10, left: 5),
+        child: Column(
+          children: [
+            RadioListTile(
+              title: const Text("일반 주사"),
+              value: type.normal,
+              groupValue: _type,
+              onChanged: (value) {
+                setState(() {
+                  _type = value!;
+                });
+              },
+            ),
+            RadioListTile(
+              title: const Text("수액"),
+              value: type.IV,
+              groupValue: _type,
+              onChanged: (value) {
+                setState(() {
+                  _type = value!;
+                });
+              },
+            ),
+            RadioListTile(
+              title: const Text("비위관 (콧줄)"),
+              value: type.nose,
+              groupValue: _type,
+              onChanged: (value) {
+                setState(() {
+                  _type = value!;
+                });
+              },
+            ),
+          ],
+        ),
+      )
     ]));
   }
 
@@ -380,79 +382,83 @@ class _inject_UpdateState extends State<injectUpdate> {
     // ignore: unused_local_variable
     final imageSize = MediaQuery.of(context).size.width / 4;
 
-    return Column(
-      children: [
-        const Align(
-          alignment: Alignment.center,
-          child: Text(
-            "투여 수액 사진(확인용)",
-            style: TextStyle(
-              fontSize: 17.0, // 글자크기
-              fontWeight: FontWeight.bold, // 볼드체
-              color: Colors.black, // 색, // 자간
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-        if (_pickedFile == null)
-          Container(
-            constraints: BoxConstraints(
-              minHeight: imageSize,
-              minWidth: imageSize,
-            ),
-            child: GestureDetector(
-              onTap: () {
-                _showBottomSheet();
-              },
-              child: Center(
-                child: Image.asset(
-                  'repo/icons/photo.png',
-                  width: 75.0,
-                  height: 75.0,
-                ),
-                // Icon(
-                //   Icons.photo_camera,
-                //   size: imageSize,
-                // ),
+    return Padding(
+      padding: const EdgeInsets.only(right: 60, top: 40),
+      child: Column(
+        children: [
+          const Align(
+            alignment: Alignment.center,
+            child: Text(
+              "투여 주사 사진",
+              style: TextStyle(
+                fontSize: 17.0, // 글자크기
+                fontWeight: FontWeight.bold, // 볼드체
+                color: Colors.black, // 색, // 자간
               ),
             ),
-          )
-        else
-          Center(
-            child: GestureDetector(
-              onTap: requestPermission,
-              child: _pickedFile == null
-                  ? Container(
-                      constraints: BoxConstraints(
-                        minHeight: imageSize,
-                        minWidth: imageSize,
-                      ),
-                      child: Center(
-                        child: Image.asset(
-                          'repo/icons/photo.png',
-                          width: 75.0,
-                          height: 75.0,
-                        ),
-                      ),
-                    )
-                  : Center(
-                      child: Container(
-                        width: imageSize,
-                        height: imageSize,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          border: Border.all(
-                              width: 3,
-                              color: const Color.fromARGB(255, 217, 217, 217)),
-                          image: DecorationImage(
-                              image: FileImage(File(_pickedFile!.path)),
-                              fit: BoxFit.cover),
-                        ),
-                      ),
-                    ),
-            ),
           ),
-      ],
+          const SizedBox(height: 10),
+          if (_pickedFile == null)
+            Container(
+              constraints: BoxConstraints(
+                minHeight: imageSize,
+                minWidth: imageSize,
+              ),
+              child: GestureDetector(
+                onTap: () {
+                  _showBottomSheet();
+                },
+                child: Center(
+                  child: Image.asset(
+                    'repo/icons/photo.png',
+                    width: 75.0,
+                    height: 75.0,
+                  ),
+                  // Icon(
+                  //   Icons.photo_camera,
+                  //   size: imageSize,
+                  // ),
+                ),
+              ),
+            )
+          else
+            Center(
+              child: GestureDetector(
+                onTap: requestPermission,
+                child: _pickedFile == null
+                    ? Container(
+                        constraints: BoxConstraints(
+                          minHeight: imageSize,
+                          minWidth: imageSize,
+                        ),
+                        child: Center(
+                          child: Image.asset(
+                            'repo/icons/photo.png',
+                            width: 75.0,
+                            height: 75.0,
+                          ),
+                        ),
+                      )
+                    : Center(
+                        child: Container(
+                          width: imageSize,
+                          height: imageSize,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                width: 3,
+                                color:
+                                    const Color.fromARGB(255, 217, 217, 217)),
+                            image: DecorationImage(
+                                image: FileImage(File(_pickedFile!.path)),
+                                fit: BoxFit.cover),
+                          ),
+                        ),
+                      ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 
@@ -460,12 +466,12 @@ class _inject_UpdateState extends State<injectUpdate> {
     return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             const Padding(
                 padding: EdgeInsets.symmetric(horizontal: 10),
                 child: Text(
-                  "약의 이름을 입력하세요",
+                  "주사 이름을 입력하세요",
                   style: TextStyle(
                     fontSize: 15.0, // 글자크기
                     color: Colors.black, // 색상
@@ -481,12 +487,13 @@ class _inject_UpdateState extends State<injectUpdate> {
               child: TextField(
                 controller: _injectNameController,
                 decoration: InputDecoration(
-                  hintText: '예) 혈압약',
+                  hintText: '예) 일반 수액',
                   hintStyle: const TextStyle(
                     fontSize: 13.0,
                     color: Color.fromARGB(255, 171, 171, 171),
                   ),
-                  contentPadding: const EdgeInsets.fromLTRB(15.0, 10.0, 10.0, 10.0),
+                  contentPadding:
+                      const EdgeInsets.fromLTRB(15.0, 10.0, 10.0, 10.0),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10.0),
                     borderSide: const BorderSide(
@@ -562,13 +569,14 @@ class _inject_UpdateState extends State<injectUpdate> {
             // letterSpacing: 2.0, // 자간
           ),
         ),
-        const SizedBox(height: 10),
         SizedBox(
-          width: 80, // TextField 가로 길이
+          width: 70, // TextField 가로 길이
           height: 45,
           child: TextField(
             controller: _injectAmountController,
-            decoration: const InputDecoration(),
+            keyboardType: TextInputType.number,
+            textAlign: TextAlign.center,
+            // decoration: const InputDecoration(),
           ),
         ),
       ],
@@ -669,7 +677,7 @@ class _inject_UpdateState extends State<injectUpdate> {
             elevation: MaterialStateProperty.all<double>(0),
           ),
           child: const Text(
-            "알람 수정하기",
+            "수정하기",
             style: TextStyle(
               color: Colors.white,
               fontWeight: FontWeight.bold,
