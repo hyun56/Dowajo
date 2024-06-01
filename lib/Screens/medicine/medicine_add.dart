@@ -63,19 +63,19 @@ class _medicine_addState extends State<medicine_add> {
               backgroundColor: Colors.white,
               iconTheme: IconThemeData(color: Colors.black),
             ),
-            SizedBox(height: 5),
+            SizedBox(height: 20),
             topMessage(), // 상단 안내문
             addPhoto(), // 사진등록
             SizedBox(height: 10),
             medicineName(), // 약 이름 입력창
 
-            SizedBox(height: 20),
+            SizedBox(height: 25),
             // 경계선 추가
             Divider(
               color: Color.fromARGB(255, 236, 236, 236),
               thickness: 4.0,
             ),
-            SizedBox(height: 15),
+            SizedBox(height: 25),
 
             textWeekday(), // 요일설정
             WeekdayButtons(
@@ -87,13 +87,13 @@ class _medicine_addState extends State<medicine_add> {
               },
               initialSelectedDays: const [],
             ), // 요일설정 - 스위치, 월 ~ 일 선택버튼
-
+            SizedBox(height: 10),
             // 경계선 추가
             Divider(
               color: Color.fromARGB(255, 236, 236, 236),
               thickness: 4.0,
             ),
-            SizedBox(height: 15),
+            SizedBox(height: 25),
 
             numOfTitle(), // 복용횟수- 타이틀
             //numOfTakeMedicine(), // 복용횟수 - 횟수 설정
@@ -101,7 +101,7 @@ class _medicine_addState extends State<medicine_add> {
             //복용시간 추가
             for (int i = 1; i < selectedRepeat + 1; i++) addTime(i),
 
-            SizedBox(height: 20),
+            SizedBox(height: 40),
             addAlram(), //알람 추가 버튼
             //SizedBox(height: 30),
           ],
@@ -134,7 +134,7 @@ class _medicine_addState extends State<medicine_add> {
               child: const Text('사진 찍기'),
             ),
             const SizedBox(height: 5),
-            const Divider(thickness: 4),
+            const Divider(thickness: 2),
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () => _getPhotoLibraryImage(),
@@ -146,7 +146,7 @@ class _medicine_addState extends State<medicine_add> {
               child: const Text('라이브러리에서 불러오기'),
             ),
             const SizedBox(height: 10),
-            const Divider(thickness: 4),
+            const Divider(thickness: 2),
             const SizedBox(height: 5),
             ElevatedButton(
               onPressed: () => Navigator.pop(context),

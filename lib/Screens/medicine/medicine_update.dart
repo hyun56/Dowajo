@@ -82,19 +82,19 @@ class _medicineUpdateState extends State<medicineUpdate> {
               backgroundColor: Colors.white,
               iconTheme: IconThemeData(color: Colors.black),
             ),
-            SizedBox(height: 5),
+            SizedBox(height: 20),
             topMessage(), // 상단 안내문
             addPhoto(), // 사진등록
             SizedBox(height: 10),
             medicineName(), // 약 이름 입력창
 
-            SizedBox(height: 20),
+            SizedBox(height: 25),
             // 경계선 추가
             Divider(
               color: Color.fromARGB(255, 236, 236, 236),
               thickness: 4.0,
             ),
-            SizedBox(height: 15),
+            SizedBox(height: 25),
 
             textWeekday(), // 요일설정
             WeekdayButtons(
@@ -106,13 +106,14 @@ class _medicineUpdateState extends State<medicineUpdate> {
               },
               initialSelectedDays: selectedDays,
             ), // 요일설정 - 스위치, 월 ~ 일 선택버튼
+            SizedBox(height: 10),
 
             // 경계선 추가
             Divider(
               color: Color.fromARGB(255, 236, 236, 236),
               thickness: 4.0,
             ),
-            SizedBox(height: 15),
+            SizedBox(height: 25),
 
             numOfTitle(), // 복용횟수- 타이틀
             //numOfTakeMedicine(), // 복용횟수 - 횟수 설정
@@ -120,7 +121,7 @@ class _medicineUpdateState extends State<medicineUpdate> {
             //복용시간 추가
             for (int i = 1; i < selectedRepeat + 1; i++) addTime(i),
 
-            SizedBox(height: 20),
+            SizedBox(height: 40),
             addAlram(), //알람 추가 버튼
             //SizedBox(height: 30),
           ],
@@ -153,7 +154,7 @@ class _medicineUpdateState extends State<medicineUpdate> {
               child: const Text('사진 찍기'),
             ),
             const SizedBox(height: 5),
-            const Divider(thickness: 4),
+            const Divider(thickness: 2),
             const SizedBox(height: 10),
             ElevatedButton(
               onPressed: () => _getPhotoLibraryImage(),
@@ -165,7 +166,7 @@ class _medicineUpdateState extends State<medicineUpdate> {
               child: const Text('라이브러리에서 불러오기'),
             ),
             const SizedBox(height: 10),
-            const Divider(thickness: 4),
+            const Divider(thickness: 2),
             const SizedBox(height: 5),
             ElevatedButton(
               onPressed: () => Navigator.pop(context),
@@ -343,34 +344,33 @@ class _medicineUpdateState extends State<medicineUpdate> {
         SizedBox(
           width: 330, // TextField 가로 길이
           height: 45,
-          
-            child: TextField(
-              controller: _medicineNameController,
-              decoration: InputDecoration(
-                hintText: '예) 혈압약',
-                hintStyle: TextStyle(
-                  fontSize: 13.0,
-                  color: Color.fromARGB(255, 171, 171, 171),
+
+          child: TextField(
+            controller: _medicineNameController,
+            decoration: InputDecoration(
+              hintText: '예) 혈압약',
+              hintStyle: TextStyle(
+                fontSize: 13.0,
+                color: Color.fromARGB(255, 171, 171, 171),
+              ),
+              contentPadding: EdgeInsets.fromLTRB(15.0, 10.0, 10.0, 10.0),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(
+                  color: Color.fromARGB(255, 221, 221, 221),
+                  width: 2.0,
                 ),
-                contentPadding: EdgeInsets.fromLTRB(15.0, 10.0, 10.0, 10.0),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(
-                    color: Color.fromARGB(255, 221, 221, 221),
-                    width: 2.0,
-                  ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: BorderSide(
-                    color: Color(0xFFA6CBA5),
-                    width: 2.0,
-                  ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10.0),
+                borderSide: BorderSide(
+                  color: Color(0xFFA6CBA5),
+                  width: 2.0,
                 ),
               ),
             ),
           ),
-        
+        ),
       ],
     );
   }
@@ -522,19 +522,19 @@ class _medicineUpdateState extends State<medicineUpdate> {
       ),
     );
   }
+
   void updateMedicine(Medicine medicine) async {
-  DatabaseHelper db = DatabaseHelper.instance;
+    DatabaseHelper db = DatabaseHelper.instance;
 
-  // 약 정보를 업데이트하는 코드
-  await db.update(medicine);
+    // 약 정보를 업데이트하는 코드
+    await db.update(medicine);
 
-  // 기존 알람을 취소합니다.
-  if (medicine.id != null) {
-    await AndroidAlarmManager.cancel(medicine.id!);
+    // 기존 알람을 취소합니다.
+    if (medicine.id != null) {
+      await AndroidAlarmManager.cancel(medicine.id!);
+    }
+
+    // 새로운 알람을 스케줄링합니다.
+    scheduleAlarm();
   }
-
-  // 새로운 알람을 스케줄링합니다.
-  scheduleAlarm();
-}
-
 }

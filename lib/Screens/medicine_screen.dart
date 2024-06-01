@@ -239,25 +239,28 @@ class _MedicineScreen extends State<MedicineScreen> {
             (BuildContext context, AsyncSnapshot<List<Medicine>> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-              return FloatingActionButton(
-                onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (_) => medicine_add()),
-                  );
-                  setState(() {
-                    futureMedicines = dbHelper.getAllMedicines();
-                  });
-                },
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                backgroundColor: Colors.transparent,
-                elevation: 0.0,
-                child: Image.asset(
-                  'repo/icons/plus.png', // Image asset 사용
-                  //width: 24.0, // 원하는 너비로 조절
-                  //height: 24.0, // 원하는 높이로 조절
+              return Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: FloatingActionButton(
+                  onPressed: () async {
+                    await Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => medicine_add()),
+                    );
+                    setState(() {
+                      futureMedicines = dbHelper.getAllMedicines();
+                    });
+                  },
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  backgroundColor: Colors.transparent,
+                  elevation: 0.0,
+                  child: Image.asset(
+                    'repo/icons/plus.png', // Image asset 사용
+                    //width: 24.0, // 원하는 너비로 조절
+                    //height: 24.0, // 원하는 높이로 조절
+                  ),
                 ),
               );
             } else {
@@ -552,8 +555,8 @@ class _AppBar extends StatelessWidget {
         icon: Icon(Icons.arrow_back, color: Colors.black),
         onPressed: () {
           // 메인 화면으로 돌아가기
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => HomeScreen()));
+          Navigator.push(
+              context, MaterialPageRoute(builder: (context) => HomeScreen()));
         },
       ),
     );
