@@ -15,6 +15,7 @@ class PatientSearchScreen extends StatefulWidget {
 
 class _PatientSearchScreenState extends State<PatientSearchScreen> {
   final PatientController controller = Get.put(PatientController());
+  final TextEditingController _textController = TextEditingController();
 
   @override
   void initState() {
@@ -23,12 +24,27 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
     FcmManager.initialize();
   }
 
+  void _onSearch() async {
+    FocusScope.of(context).unfocus();
+
+    String? id = _textController.text;
+
+    controller.searchPatient(id);
+    // searchResult가 업데이트 될 때까지 기다립니다.
+    once(controller.searchResult, (_) {
+      // searchResult의 값이 null이거나 비어있는지 확인합니다.
+      if (controller.searchResult.value == null ||
+          controller.searchResult.value!.isEmpty) {
+        Get.snackbar('알림', '환자 정보를 찾을 수 없습니다. 다시 확인해 주세요.');
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false, //자동으로 생성되는 뒤로가기 제거
-
         title: const Text(
           '환자 검색',
           style: TextStyle(
@@ -59,41 +75,52 @@ class _PatientSearchScreenState extends State<PatientSearchScreen> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-            child: TextField(
-              keyboardType: TextInputType.number,
-              textAlign: TextAlign.center,
-              decoration: InputDecoration(
-// labelText: '환자 고유번호 입력',
-                contentPadding:
-                    const EdgeInsets.fromLTRB(15.0, 10.0, 10.0, 10.0),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: const BorderSide(
-                    color: Color.fromARGB(255, 194, 193, 193),
-                    width: 1.5,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: _textController,
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.center,
+                    decoration: InputDecoration(
+                      contentPadding:
+                          const EdgeInsets.fromLTRB(15.0, 10.0, 10.0, 10.0),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: const BorderSide(
+                          color: Color.fromARGB(255, 194, 193, 193),
+                          width: 1.5,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: const BorderSide(
+                          color: Color(0xFFA6CBA5),
+                          width: 1.5,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                  borderSide: const BorderSide(
-                    color: Color(0xFFA6CBA5),
-                    width: 1.5,
+                const SizedBox(width: 10),
+                ElevatedButton(
+                  onPressed: _onSearch,
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 15),
+                    backgroundColor: const Color(0xFFA6CBA5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: const Text(
+                    '검색',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
                   ),
                 ),
-              ),
-              onSubmitted: (String value) async {
-                String? id = value;
-
-                controller.searchPatient(id);
-                // searchResult가 업데이트 될 때까지 기다립니다.
-                once(controller.searchResult, (_) {
-                  // searchResult의 값이 null이거나 비어있는지 확인합니다.
-                  if (controller.searchResult.value == null ||
-                      controller.searchResult.value!.isEmpty) {
-                    Get.snackbar('알림', '환자 정보를 찾을 수 없습니다. 다시 확인해 주세요.');
-                  }
-                });
-              },
+              ],
             ),
           ),
           Expanded(

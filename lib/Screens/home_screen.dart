@@ -19,7 +19,7 @@ class HomeScreen extends StatelessWidget {
     final PatientController controller = Get.find();
 
     return SafeArea(
-      top:false,  //상단 바 투명하게
+      top: false, //상단 바 투명하게
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 235, 238, 240),
         //backgroundColor: Color.fromARGB(255, 219, 225, 228),
@@ -62,6 +62,63 @@ class HomeScreen extends StatelessWidget {
                 buildHeading(),
                 buildMenu1(context),
                 buildMenu2(context),
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15.0),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color.fromARGB(255, 214, 212, 212), // 그림자 색상
+                          spreadRadius: 0, // 그림자 확산 정도
+                          blurRadius: 3, // 그림자 흐림 정도
+                          offset: Offset(0, 0), // 그림자 위치 (가로, 세로)
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              controller.searchResult.value = null;
+                              Get.offAll(() => const PatientSearchScreen());
+                            },
+                            style: ElevatedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 20, vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              side: BorderSide.none,
+                              elevation: 0,
+                              backgroundColor: Colors.white,
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  CupertinoIcons.arrow_left_circle,
+                                  color: Color.fromARGB(221, 46, 46, 46),
+                                ),
+                                SizedBox(width: 10),
+                                Text(
+                                  '환자 검색 화면으로 돌아가기',
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    color: Color.fromARGB(221, 46, 46, 46),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -73,7 +130,7 @@ class HomeScreen extends StatelessWidget {
   Padding buildHeading() {
     final patient = controller.searchResult.value!.first;
     return Padding(
-      padding: const EdgeInsets.only(top: 50, bottom: 25, left: 5, right: 5),
+      padding: const EdgeInsets.only(top: 45, bottom: 25, left: 5, right: 5),
       child: Container(
         padding: const EdgeInsets.all(10.0),
         decoration: BoxDecoration(
@@ -126,75 +183,78 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Text(
-                      '${patient.name}(${patient.gender})',
-                      style: const TextStyle(
-                        color: Color.fromARGB(255, 98, 98, 98),
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
+                Padding(
+                  padding: const EdgeInsets.only(left: 10),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Text(
+                        '${patient.name} (${patient.gender})',
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 98, 98, 98),
+                          fontSize: 20,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 18,
-                    ),
-                    Row(
-                      //mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          '생년월일: ',
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          patient.birth,
-                          style:
-                              const TextStyle(fontSize: 15, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      //mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          '병명: ',
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          patient.disease,
-                          style:
-                              const TextStyle(fontSize: 15, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          '병실: ',
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: Colors.grey,
-                              fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          '${patient.room}',
-                          style:
-                              const TextStyle(fontSize: 15, color: Colors.grey),
-                        ),
-                      ],
-                    ),
-                  ],
+                      const SizedBox(
+                        height: 18,
+                      ),
+                      Row(
+                        //mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            '생년월일: ',
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            patient.birth,
+                            style: const TextStyle(
+                                fontSize: 15, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        //mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            '병명: ',
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            patient.disease,
+                            style: const TextStyle(
+                                fontSize: 15, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text(
+                            '병실: ',
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: Colors.grey,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            '${patient.room}호',
+                            style: const TextStyle(
+                                fontSize: 15, color: Colors.grey),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 )
               ],
             ),
